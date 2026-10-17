@@ -1,0 +1,4 @@
+# install torch + torchvision for your platform first (CUDA / ROCm / CPU), then:
+anomalib==2.7.0
+huggingface_hub
+scikit-learn

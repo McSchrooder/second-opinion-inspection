@@ -1,0 +1,26 @@
+# data and model artifacts
+data/
+outputs/
+results/
+*.ckpt
+*.pt
+*.pth
+*.onnx
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# editors and os
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# local tooling
+.claude/
+.env

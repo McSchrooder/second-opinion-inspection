@@ -28,6 +28,28 @@ MODELS = {
     "rd": ReverseDistillation,
 }
 ESCAPE_RATES = (0.0, 0.01, 0.05)
+MAP_STAT_NAMES = ("map_max", "map_mean", "map_std", "map_p90", "map_p99", "map_frac_hi", "map_cx", "map_cy")
+
+
+def anomaly_map_stats(amap: torch.Tensor) -> np.ndarray:
+    """Cheap per-image summary of the anomaly map: spread, tail, how much of the image fires, where."""
+    m = amap.detach().float().cpu()
+    if m.ndim == 4:
+        m = m[:, 0]
+    n, h, w = m.shape
+    flat = m.reshape(n, -1)
+    mx = flat.max(1).values
+    hi = flat >= (0.5 * mx[:, None])
+    ys = torch.arange(h).float()[:, None].expand(h, w).reshape(-1)
+    xs = torch.arange(w).float()[None, :].expand(h, w).reshape(-1)
+    wsum = hi.float().sum(1).clamp(min=1)
+    cy = (hi.float() * ys).sum(1) / wsum / h
+    cx = (hi.float() * xs).sum(1) / wsum / w
+    return torch.stack([
+        mx, flat.mean(1), flat.std(1),
+        torch.quantile(flat, 0.90, dim=1), torch.quantile(flat, 0.99, dim=1),
+        hi.float().mean(1), cx, cy,
+    ], dim=1).numpy()
 
 
 def recovery_at_escape(scores: np.ndarray, labels: np.ndarray, escape: float) -> tuple[float, float]:
@@ -48,6 +70,8 @@ def main() -> None:
     p.add_argument("--root", default="data")
     p.add_argument("--out", default="results")
     p.add_argument("--epochs", type=int, default=None)
+    p.add_argument("--steps", type=int, default=None, help="max training steps (EfficientAD)")
+    p.add_argument("--size", type=int, default=256, help="input resolution")
     p.add_argument("--batch", type=int, default=16)
     a = p.parse_args()
 
@@ -56,11 +80,17 @@ def main() -> None:
         train_batch_size=a.batch, eval_batch_size=a.batch, num_workers=4,
     )
     # raw scores: no normalisation, no F1 threshold; we set the operating point ourselves
-    model = MODELS[a.model](
+    cls = MODELS[a.model]
+    model = cls(
+        pre_processor=cls.configure_pre_processor(image_size=(a.size, a.size)),
         post_processor=PostProcessor(enable_normalization=False, enable_thresholding=False),
         evaluator=False, visualizer=False,
     )
-    kw = {"max_epochs": a.epochs} if a.epochs else {}
+    kw = {}
+    if a.epochs:
+        kw["max_epochs"] = a.epochs
+    if a.steps:
+        kw["max_steps"] = a.steps
     engine = Engine(accelerator="auto", devices=1, logger=False, default_root_dir=a.out, **kw)
 
     t = time.time()
@@ -73,9 +103,22 @@ def main() -> None:
 
     scores = torch.cat([b.pred_score.flatten().cpu() for b in preds]).numpy()
     labels = torch.cat([b.gt_label.flatten().cpu() for b in preds]).numpy().astype(int)
+    paths = [str(Path(pth).relative_to(Path(a.root) / a.dataset)) for b in preds for pth in b.image_path]
+    map_stats = np.concatenate([anomaly_map_stats(b.anomaly_map) for b in preds])
+
+    # per-image scores plus anomaly-map statistics, so lane evaluation,
+    # calibration and a second-stage classifier can run offline
+    tag = f"{a.dataset}_{a.category}_{a.model}"
+    score_file = Path(a.out) / "scores" / f"{tag}.csv"
+    score_file.parent.mkdir(parents=True, exist_ok=True)
+    with score_file.open("w") as f:
+        f.write("image,label,score," + ",".join(MAP_STAT_NAMES) + "\n")
+        for pth, lab, sc, ms in zip(paths, labels, scores, map_stats):
+            f.write(f"{pth},{lab},{sc:.6f}," + ",".join(f"{v:.6f}" for v in ms) + "\n")
 
     res = {
-        "dataset": a.dataset, "category": a.category, "model": a.model,
+        "dataset": a.dataset, "category": a.category, "model": a.model, "size": a.size,
+        "epochs": a.epochs, "steps": a.steps,
         "n_good": int((labels == 0).sum()), "n_defect": int((labels == 1).sum()),
         "auroc": round(float(roc_auc_score(labels, scores)), 4),
         "fit_s": round(fit_s, 1), "predict_s": round(pred_s, 1),
@@ -86,8 +129,7 @@ def main() -> None:
         res[f"recovery@{e:g}"] = round(r, 4)
         res[f"thr@{e:g}"] = round(thr, 4)
 
-    out = Path(a.out) / f"{a.dataset}_{a.category}_{a.model}.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
+    out = Path(a.out) / f"{tag}.json"
     out.write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=2))
 

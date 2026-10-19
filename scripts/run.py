@@ -82,10 +82,11 @@ def main() -> None:
     )
     # raw scores: no normalisation, no F1 threshold; we set the operating point ourselves
     cls = MODELS[a.model]
+    extra = {"imagenet_dir": Path(a.root) / "imagenette"} if a.model == "efficientad" else {}
     model = cls(
         pre_processor=cls.configure_pre_processor(image_size=(a.size, a.size)),
         post_processor=PostProcessor(enable_normalization=False, enable_thresholding=False),
-        evaluator=False, visualizer=False,
+        evaluator=False, visualizer=False, **extra,
     )
     kw = {}
     if a.epochs:

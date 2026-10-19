@@ -75,9 +75,10 @@ def main() -> None:
     p.add_argument("--batch", type=int, default=16)
     a = p.parse_args()
 
+    train_batch = 1 if a.model == "efficientad" else a.batch  # anomalib requires 1 for EfficientAD
     dm = DATASETS[a.dataset](
         root=Path(a.root) / a.dataset, category=a.category,
-        train_batch_size=a.batch, eval_batch_size=a.batch, num_workers=4,
+        train_batch_size=train_batch, eval_batch_size=a.batch, num_workers=4,
     )
     # raw scores: no normalisation, no F1 threshold; we set the operating point ourselves
     cls = MODELS[a.model]

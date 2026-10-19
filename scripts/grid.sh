@@ -36,9 +36,10 @@ for c in $VISA;  do standin visa  "$c"; done
 for c in $MVTEC; do run mvtec "$c" padim; run mvtec "$c" patchcore; done
 for c in $VISA;  do run visa  "$c" padim; run visa  "$c" patchcore; done
 
-# pass 2: reverse distillation, capped epochs
-for c in $MVTEC; do run mvtec "$c" rd --epochs 30; done
-for c in $VISA;  do run visa  "$c" rd --epochs 30; done
+# pass 2: reverse distillation, capped epochs (ROCm/WSL needs MIOPEN_FIND_MODE=2 for the backward conv)
+export MIOPEN_FIND_MODE="${MIOPEN_FIND_MODE:-2}"
+for c in $MVTEC; do run mvtec "$c" rd --epochs 10; done
+for c in $VISA;  do run visa  "$c" rd --epochs 10; done
 
 # pass 3: efficientad, capped steps
 for c in $MVTEC; do run mvtec "$c" efficientad --steps 5000; done

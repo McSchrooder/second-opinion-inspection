@@ -65,10 +65,12 @@ export MIOPEN_FIND_MODE="${MIOPEN_FIND_MODE:-2}"
 for c in $MVTEC; do run mvtec "$c" rd "" --epochs 10; done
 for c in $VISA;  do run visa  "$c" rd "" --epochs 10; done
 
-# pass 3: does resolution fix the multi-instance categories? PatchCore memory bank grows
-# with pixels x images, so higher resolution comes with a capped train subset.
-for c in $WEAK;  do run visa  "$c" patchcore "-384-n300" --size 384 --train-n 300; done
-for c in $WEAK;  do run visa  "$c" patchcore "-256-n300" --train-n 300; done   # control: subset alone
+# pass 3: does resolution fix the multi-instance categories? PatchCore keeps every
+# training patch in VRAM and grows the bank with torch.cat (peak = 2x bank), so higher
+# resolution comes with a small, fixed train subset; same subset at 256 is the control.
+for c in $WEAK;  do run visa  "$c" patchcore "-384-n150" --size 384 --train-n 150; done
+for c in $WEAK;  do run visa  "$c" patchcore "-256-n150" --train-n 150; done   # control: subset alone
+for c in $WEAK;  do run visa  "$c" patchcore "-320-n150" --size 320 --train-n 150; done
 for c in $MVTEC; do run mvtec "$c" patchcore "-320-n300" --size 320 --train-n 300; done
 for c in $VISA;  do run visa  "$c" patchcore "-320-n300" --size 320 --train-n 300; done
 

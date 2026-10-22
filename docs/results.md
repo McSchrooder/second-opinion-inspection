@@ -17,33 +17,71 @@ recovery (auto-good), escape (defects auto-recovered), review (sent to a human).
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | mvtec | bottle | padim | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.95 | 1.00 | 0.80 | 0.94 | 0.94 | 1.00 | 10.70 |
 | mvtec | bottle | patchcore | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 1.00 | 1.00 | 0.80 | 1.00 | 1.00 | 1.00 | 18.70 |
+| mvtec | bottle | patchcore-320-n300 | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 1.00 | 1.00 | 0.80 | 1.00 | 1.00 | 1.00 | 30.70 |
+| mvtec | bottle | patchcore-r18 | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 1.00 | 1.00 | 0.80 | 1.00 | 1.00 | 1.00 | 11.30 |
 | mvtec | bottle | rd | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.95 | 1.00 | 0.80 | 0.94 | 0.94 | 1.00 | 128.20 |
 | mvtec | hazelnut | padim | 40/70 | 0.62 | 0.15 | 0.15 | 0.30 | 0.93 | 0.16 | 0.16 | 0.32 | 0.78 | 0.10 | 0.10 | 0.29 | 13.00 |
 | mvtec | hazelnut | patchcore | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.93 | 1.00 | 1.00 | 1.00 | 0.78 | 1.00 | 1.00 | 1.00 | 25.80 |
+| mvtec | hazelnut | patchcore-320-n300 | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.93 | 1.00 | 1.00 | 1.00 | 0.78 | 1.00 | 1.00 | 1.00 | 36.00 |
+| mvtec | hazelnut | patchcore-r18 | 40/70 | 1.00 | 0.95 | 0.95 | 1.00 | 0.93 | 0.95 | 0.95 | 1.00 | 0.78 | 0.94 | 0.94 | 1.00 | 14.40 |
 | mvtec | hazelnut | rd | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.93 | 1.00 | 1.00 | 1.00 | 0.78 | 1.00 | 1.00 | 1.00 | 130.40 |
 | visa | candle | padim | 100/100 | 0.93 | 0.55 | 0.58 | 0.68 | 0.92 | 0.54 | 0.55 | 0.66 | 0.95 | 0.56 | 0.58 | 0.67 | 8.90 |
 | visa | candle | patchcore | 100/100 | 0.97 | 0.33 | 0.66 | 0.93 | 0.92 | 0.34 | 0.65 | 0.92 | 0.95 | 0.33 | 0.65 | 0.93 | 37.30 |
+| visa | candle | patchcore-320-n150 | 100/100 | 0.96 | 0.38 | 0.75 | 0.85 | 0.92 | 0.38 | 0.74 | 0.85 | 0.95 | 0.38 | 0.74 | 0.84 | 20.20 |
+| visa | candle | patchcore-320-n300 | 100/100 | 0.97 | 0.60 | 0.68 | 0.86 | 0.92 | 0.58 | 0.66 | 0.86 | 0.95 | 0.58 | 0.66 | 0.85 | 31.10 |
+| visa | candle | patchcore-384-n150 | 100/100 | 0.95 | 0.52 | 0.67 | 0.82 | 0.92 | 0.52 | 0.68 | 0.82 | 0.95 | 0.51 | 0.66 | 0.81 | 38.20 |
+| visa | candle | patchcore-n150 | 100/100 | 0.95 | 0.44 | 0.69 | 0.85 | 0.92 | 0.42 | 0.67 | 0.85 | 0.95 | 0.43 | 0.67 | 0.84 | 13.80 |
+| visa | candle | patchcore-r18 | 100/100 | 0.97 | 0.58 | 0.67 | 0.81 | 0.92 | 0.57 | 0.66 | 0.80 | 0.95 | 0.59 | 0.68 | 0.80 | 17.60 |
 | visa | candle | rd | 100/100 | 0.95 | 0.42 | 0.67 | 0.78 | 0.92 | 0.43 | 0.65 | 0.77 | 0.95 | 0.42 | 0.65 | 0.77 | 123.00 |
 | visa | capsules | padim | 60/100 | 0.58 | 0.00 | 0.02 | 0.12 | 0.93 | 0.00 | 0.02 | 0.11 | 0.97 | 0.00 | 0.02 | 0.10 | 10.10 |
 | visa | capsules | patchcore | 60/100 | 0.72 | 0.02 | 0.03 | 0.05 | 0.93 | 0.02 | 0.04 | 0.05 | 0.97 | 0.02 | 0.03 | 0.03 | 25.70 |
+| visa | capsules | patchcore-320-n150 | 60/100 | 0.78 | 0.03 | 0.08 | 0.18 | 0.93 | 0.04 | 0.09 | 0.18 | 0.97 | 0.03 | 0.07 | 0.16 | 21.70 |
+| visa | capsules | patchcore-320-n300 | 60/100 | 0.80 | 0.27 | 0.27 | 0.33 | 0.93 | 0.27 | 0.27 | 0.34 | 0.97 | 0.24 | 0.24 | 0.31 | 31.80 |
+| visa | capsules | patchcore-384-n150 | 60/100 | 0.84 | 0.02 | 0.12 | 0.25 | 0.93 | 0.02 | 0.12 | 0.25 | 0.97 | 0.02 | 0.09 | 0.22 | 39.80 |
+| visa | capsules | patchcore-n150 | 60/100 | 0.72 | 0.02 | 0.02 | 0.15 | 0.93 | 0.02 | 0.02 | 0.16 | 0.97 | 0.02 | 0.02 | 0.14 | 12.60 |
+| visa | capsules | patchcore-r18 | 60/100 | 0.68 | 0.02 | 0.05 | 0.10 | 0.93 | 0.02 | 0.05 | 0.09 | 0.97 | 0.00 | 0.03 | 0.09 | 14.00 |
 | visa | capsules | rd | 60/100 | 0.79 | 0.10 | 0.10 | 0.13 | 0.93 | 0.11 | 0.11 | 0.14 | 0.97 | 0.09 | 0.09 | 0.12 | 131.50 |
 | visa | cashew | padim | 50/100 | 0.84 | 0.06 | 0.20 | 0.28 | 0.72 | 0.00 | 0.06 | 0.17 | 0.78 | 0.03 | 0.15 | 0.26 | 10.90 |
 | visa | cashew | patchcore | 50/100 | 0.97 | 0.66 | 0.66 | 0.80 | 0.72 | 0.61 | 0.61 | 0.78 | 0.78 | 0.62 | 0.62 | 0.77 | 25.10 |
+| visa | cashew | patchcore-320-n150 | 50/100 | 0.97 | 0.44 | 0.78 | 0.84 | 0.72 | 0.39 | 0.78 | 0.81 | 0.78 | 0.38 | 0.77 | 0.82 | 21.30 |
+| visa | cashew | patchcore-320-n300 | 50/100 | 0.98 | 0.52 | 0.82 | 0.88 | 0.72 | 0.53 | 0.75 | 0.83 | 0.78 | 0.46 | 0.77 | 0.85 | 33.00 |
+| visa | cashew | patchcore-384-n150 | 50/100 | 0.96 | 0.24 | 0.66 | 0.78 | 0.72 | 0.17 | 0.64 | 0.75 | 0.78 | 0.18 | 0.67 | 0.77 | 40.50 |
+| visa | cashew | patchcore-n150 | 50/100 | 0.96 | 0.48 | 0.56 | 0.74 | 0.72 | 0.42 | 0.50 | 0.72 | 0.78 | 0.44 | 0.51 | 0.72 | 14.80 |
+| visa | cashew | patchcore-r18 | 50/100 | 0.95 | 0.40 | 0.64 | 0.70 | 0.72 | 0.33 | 0.58 | 0.67 | 0.78 | 0.33 | 0.59 | 0.67 | 12.90 |
 | visa | cashew | rd | 50/100 | 0.87 | 0.38 | 0.38 | 0.52 | 0.72 | 0.33 | 0.33 | 0.50 | 0.78 | 0.41 | 0.41 | 0.54 | 126.80 |
 | visa | chewinggum | padim | 50/100 | 0.98 | 0.46 | 0.54 | 0.92 | 1.00 | 0.46 | 0.54 | 0.92 | 0.86 | 0.47 | 0.53 | 0.91 | 10.40 |
 | visa | chewinggum | patchcore | 50/100 | 1.00 | 0.80 | 0.84 | 1.00 | 1.00 | 0.80 | 0.84 | 1.00 | 0.86 | 0.79 | 0.84 | 1.00 | 24.60 |
+| visa | chewinggum | patchcore-320-n300 | 50/100 | 0.99 | 0.36 | 0.78 | 1.00 | 1.00 | 0.36 | 0.78 | 1.00 | 0.86 | 0.37 | 0.77 | 1.00 | 37.20 |
+| visa | chewinggum | patchcore-r18 | 50/100 | 0.99 | 0.62 | 0.76 | 1.00 | 1.00 | 0.62 | 0.76 | 1.00 | 0.86 | 0.60 | 0.74 | 1.00 | 12.90 |
 | visa | chewinggum | rd | 50/100 | 0.99 | 0.44 | 0.72 | 0.98 | 1.00 | 0.44 | 0.72 | 0.98 | 0.86 | 0.40 | 0.70 | 0.98 | 125.70 |
 | visa | fryum | padim | 50/100 | 0.84 | 0.36 | 0.36 | 0.44 | 0.92 | 0.33 | 0.33 | 0.41 | 0.98 | 0.35 | 0.35 | 0.43 | 9.40 |
 | visa | fryum | patchcore | 50/100 | 0.96 | 0.46 | 0.56 | 0.68 | 0.92 | 0.43 | 0.54 | 0.65 | 0.98 | 0.47 | 0.57 | 0.67 | 22.50 |
+| visa | fryum | patchcore-320-n150 | 50/100 | 0.95 | 0.08 | 0.36 | 0.72 | 0.92 | 0.07 | 0.35 | 0.72 | 0.98 | 0.08 | 0.37 | 0.73 | 21.20 |
+| visa | fryum | patchcore-320-n300 | 50/100 | 0.95 | 0.22 | 0.36 | 0.70 | 0.92 | 0.22 | 0.33 | 0.70 | 0.98 | 0.22 | 0.37 | 0.71 | 33.40 |
+| visa | fryum | patchcore-384-n150 | 50/100 | 0.95 | 0.08 | 0.54 | 0.74 | 0.92 | 0.09 | 0.52 | 0.74 | 0.98 | 0.08 | 0.55 | 0.76 | 38.40 |
+| visa | fryum | patchcore-n150 | 50/100 | 0.95 | 0.26 | 0.28 | 0.76 | 0.92 | 0.22 | 0.24 | 0.76 | 0.98 | 0.27 | 0.29 | 0.78 | 12.50 |
+| visa | fryum | patchcore-r18 | 50/100 | 0.91 | 0.12 | 0.32 | 0.44 | 0.92 | 0.11 | 0.30 | 0.43 | 0.98 | 0.12 | 0.33 | 0.45 | 13.20 |
 | visa | fryum | rd | 50/100 | 0.88 | 0.20 | 0.24 | 0.52 | 0.92 | 0.22 | 0.26 | 0.54 | 0.98 | 0.20 | 0.24 | 0.53 | 124.50 |
 | visa | macaroni1 | padim | 100/100 | 0.70 | 0.20 | 0.28 | 0.38 | 0.93 | 0.19 | 0.27 | 0.37 | 0.99 | 0.20 | 0.28 | 0.38 | 7.90 |
 | visa | macaroni1 | patchcore | 100/100 | 0.81 | 0.16 | 0.24 | 0.38 | 0.93 | 0.16 | 0.25 | 0.39 | 0.99 | 0.16 | 0.24 | 0.38 | 35.10 |
+| visa | macaroni1 | patchcore-320-n150 | 100/100 | 0.87 | 0.22 | 0.33 | 0.58 | 0.93 | 0.24 | 0.33 | 0.56 | 0.99 | 0.22 | 0.33 | 0.58 | 20.70 |
+| visa | macaroni1 | patchcore-320-n300 | 100/100 | 0.85 | 0.21 | 0.23 | 0.51 | 0.93 | 0.22 | 0.24 | 0.51 | 0.99 | 0.21 | 0.23 | 0.51 | 30.90 |
+| visa | macaroni1 | patchcore-384-n150 | 100/100 | 0.89 | 0.33 | 0.39 | 0.63 | 0.93 | 0.32 | 0.38 | 0.61 | 0.99 | 0.32 | 0.38 | 0.63 | 36.10 |
+| visa | macaroni1 | patchcore-n150 | 100/100 | 0.81 | 0.13 | 0.24 | 0.37 | 0.93 | 0.13 | 0.24 | 0.35 | 0.99 | 0.13 | 0.24 | 0.36 | 12.60 |
+| visa | macaroni1 | patchcore-r18 | 100/100 | 0.89 | 0.27 | 0.53 | 0.61 | 0.93 | 0.26 | 0.52 | 0.60 | 0.99 | 0.27 | 0.54 | 0.62 | 17.40 |
 | visa | macaroni1 | rd | 100/100 | 0.89 | 0.31 | 0.48 | 0.64 | 0.93 | 0.31 | 0.47 | 0.62 | 0.99 | 0.31 | 0.48 | 0.64 | 123.10 |
 | visa | macaroni2 | padim | 100/100 | 0.60 | 0.12 | 0.14 | 0.15 | 0.93 | 0.11 | 0.13 | 0.14 | 0.96 | 0.10 | 0.12 | 0.14 | 8.00 |
 | visa | macaroni2 | patchcore | 100/100 | 0.66 | 0.02 | 0.11 | 0.15 | 0.93 | 0.02 | 0.11 | 0.15 | 0.96 | 0.02 | 0.10 | 0.15 | 35.50 |
+| visa | macaroni2 | patchcore-320-n150 | 100/100 | 0.64 | 0.00 | 0.06 | 0.21 | 0.93 | 0.00 | 0.05 | 0.20 | 0.96 | 0.00 | 0.05 | 0.20 | 20.00 |
+| visa | macaroni2 | patchcore-320-n300 | 100/100 | 0.69 | 0.00 | 0.12 | 0.27 | 0.93 | 0.00 | 0.11 | 0.26 | 0.96 | 0.00 | 0.10 | 0.26 | 31.20 |
+| visa | macaroni2 | patchcore-384-n150 | 100/100 | 0.68 | 0.00 | 0.07 | 0.12 | 0.93 | 0.00 | 0.06 | 0.12 | 0.96 | 0.00 | 0.06 | 0.11 | 34.20 |
+| visa | macaroni2 | patchcore-n150 | 100/100 | 0.60 | 0.03 | 0.05 | 0.17 | 0.93 | 0.02 | 0.04 | 0.16 | 0.96 | 0.02 | 0.04 | 0.17 | 11.80 |
+| visa | macaroni2 | patchcore-r18 | 100/100 | 0.72 | 0.04 | 0.23 | 0.31 | 0.93 | 0.03 | 0.22 | 0.30 | 0.96 | 0.03 | 0.22 | 0.30 | 18.00 |
 | visa | macaroni2 | rd | 100/100 | 0.64 | 0.00 | 0.02 | 0.14 | 0.93 | 0.00 | 0.02 | 0.14 | 0.96 | 0.00 | 0.02 | 0.15 | 125.40 |
 | visa | pipe_fryum | padim | 50/100 | 0.89 | 0.34 | 0.38 | 0.54 | 1.00 | 0.34 | 0.38 | 0.54 | 1.00 | 0.34 | 0.38 | 0.54 | 9.80 |
 | visa | pipe_fryum | patchcore | 50/100 | 0.99 | 0.68 | 0.94 | 0.94 | 1.00 | 0.68 | 0.94 | 0.94 | 1.00 | 0.68 | 0.94 | 0.94 | 22.80 |
+| visa | pipe_fryum | patchcore-320-n300 | 50/100 | 1.00 | 0.86 | 0.90 | 0.98 | 1.00 | 0.86 | 0.90 | 0.98 | 1.00 | 0.86 | 0.90 | 0.98 | 31.70 |
+| visa | pipe_fryum | patchcore-r18 | 50/100 | 0.98 | 0.34 | 0.62 | 0.96 | 1.00 | 0.34 | 0.62 | 0.96 | 1.00 | 0.34 | 0.62 | 0.96 | 12.60 |
 | visa | pipe_fryum | rd | 50/100 | 0.99 | 0.86 | 0.86 | 0.96 | 1.00 | 0.86 | 0.86 | 0.96 | 1.00 | 0.86 | 0.86 | 0.96 | 133.30 |
 
 ## Calibrated band on the lane (held-out folds, escape target 1%)
@@ -54,60 +92,136 @@ recovery (auto-good), escape (defects auto-recovered), review (sent to a human).
 | mvtec | bottle | padim | pca | 16 | 0.93 | 0.02 | 0.00 | 0.98 | 0.06 |
 | mvtec | bottle | patchcore | template | 19 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | patchcore | pca | 16 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | patchcore-320-n300 | template | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | patchcore-320-n300 | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | patchcore-r18 | template | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | patchcore-r18 | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | rd | template | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | rd | pca | 16 | 0.93 | 0.02 | 0.00 | 0.99 | 0.06 |
 | mvtec | hazelnut | padim | template | 37 | 0.16 | 0.01 | 0.89 | 0.83 | 0.05 |
 | mvtec | hazelnut | padim | pca | 31 | 0.10 | 0.01 | 0.90 | 0.89 | 0.05 |
 | mvtec | hazelnut | patchcore | template | 37 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | patchcore | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | patchcore-320-n300 | template | 37 | 1.00 | 0.03 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | patchcore-320-n300 | pca | 31 | 1.00 | 0.03 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | patchcore-r18 | template | 37 | 0.95 | 0.01 | 0.01 | 0.99 | 0.05 |
+| mvtec | hazelnut | patchcore-r18 | pca | 31 | 0.93 | 0.01 | 0.01 | 0.99 | 0.05 |
 | mvtec | hazelnut | rd | template | 37 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | rd | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | visa | candle | padim | template | 92 | 0.55 | 0.02 | 0.41 | 0.97 | 0.04 |
 | visa | candle | padim | pca | 95 | 0.57 | 0.02 | 0.38 | 0.96 | 0.04 |
 | visa | candle | patchcore | template | 92 | 0.38 | 0.01 | 0.41 | 0.96 | 0.04 |
 | visa | candle | patchcore | pca | 95 | 0.37 | 0.01 | 0.42 | 0.96 | 0.04 |
+| visa | candle | patchcore-320-n150 | template | 92 | 0.45 | 0.01 | 0.43 | 0.97 | 0.04 |
+| visa | candle | patchcore-320-n150 | pca | 95 | 0.42 | 0.01 | 0.45 | 0.96 | 0.04 |
+| visa | candle | patchcore-320-n300 | template | 92 | 0.57 | 0.01 | 0.35 | 0.96 | 0.04 |
+| visa | candle | patchcore-320-n300 | pca | 95 | 0.60 | 0.01 | 0.36 | 0.97 | 0.04 |
+| visa | candle | patchcore-384-n150 | template | 92 | 0.55 | 0.01 | 0.40 | 0.97 | 0.04 |
+| visa | candle | patchcore-384-n150 | pca | 95 | 0.54 | 0.01 | 0.39 | 0.95 | 0.04 |
+| visa | candle | patchcore-n150 | template | 92 | 0.49 | 0.02 | 0.46 | 0.97 | 0.04 |
+| visa | candle | patchcore-n150 | pca | 95 | 0.51 | 0.02 | 0.45 | 0.96 | 0.04 |
+| visa | candle | patchcore-r18 | template | 92 | 0.59 | 0.01 | 0.32 | 0.97 | 0.04 |
+| visa | candle | patchcore-r18 | pca | 95 | 0.60 | 0.01 | 0.32 | 0.97 | 0.04 |
 | visa | candle | rd | template | 92 | 0.51 | 0.01 | 0.45 | 0.97 | 0.04 |
 | visa | candle | rd | pca | 95 | 0.44 | 0.01 | 0.47 | 0.96 | 0.04 |
 | visa | capsules | padim | template | 56 | 0.00 | 0.01 | 0.88 | 0.88 | 0.04 |
 | visa | capsules | padim | pca | 58 | 0.02 | 0.01 | 0.89 | 0.88 | 0.04 |
 | visa | capsules | patchcore | template | 56 | 0.02 | 0.01 | 0.71 | 0.95 | 0.04 |
 | visa | capsules | patchcore | pca | 58 | 0.02 | 0.01 | 0.71 | 0.96 | 0.04 |
+| visa | capsules | patchcore-320-n150 | template | 56 | 0.03 | 0.01 | 0.72 | 0.95 | 0.04 |
+| visa | capsules | patchcore-320-n150 | pca | 58 | 0.05 | 0.01 | 0.72 | 0.93 | 0.04 |
+| visa | capsules | patchcore-320-n300 | template | 56 | 0.27 | 0.01 | 0.62 | 0.95 | 0.04 |
+| visa | capsules | patchcore-320-n300 | pca | 58 | 0.24 | 0.01 | 0.63 | 0.95 | 0.04 |
+| visa | capsules | patchcore-384-n150 | template | 56 | 0.03 | 0.01 | 0.61 | 0.95 | 0.04 |
+| visa | capsules | patchcore-384-n150 | pca | 58 | 0.03 | 0.01 | 0.62 | 0.93 | 0.04 |
+| visa | capsules | patchcore-n150 | template | 56 | 0.02 | 0.01 | 0.73 | 0.96 | 0.04 |
+| visa | capsules | patchcore-n150 | pca | 58 | 0.02 | 0.01 | 0.73 | 0.96 | 0.04 |
+| visa | capsules | patchcore-r18 | template | 56 | 0.02 | 0.01 | 0.76 | 0.96 | 0.04 |
+| visa | capsules | patchcore-r18 | pca | 58 | 0.00 | 0.01 | 0.77 | 0.95 | 0.04 |
 | visa | capsules | rd | template | 56 | 0.10 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | capsules | rd | pca | 58 | 0.08 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | cashew | padim | template | 36 | 0.03 | 0.01 | 0.60 | 0.98 | 0.04 |
 | visa | cashew | padim | pca | 39 | 0.05 | 0.01 | 0.60 | 0.98 | 0.04 |
 | visa | cashew | patchcore | template | 36 | 0.61 | 0.01 | 0.24 | 0.98 | 0.04 |
 | visa | cashew | patchcore | pca | 39 | 0.61 | 0.01 | 0.24 | 0.97 | 0.04 |
+| visa | cashew | patchcore-320-n150 | template | 36 | 0.45 | 0.01 | 0.28 | 0.98 | 0.04 |
+| visa | cashew | patchcore-320-n150 | pca | 39 | 0.45 | 0.01 | 0.27 | 0.98 | 0.04 |
+| visa | cashew | patchcore-320-n300 | template | 36 | 0.61 | 0.01 | 0.25 | 0.99 | 0.04 |
+| visa | cashew | patchcore-320-n300 | pca | 39 | 0.54 | 0.01 | 0.24 | 0.98 | 0.04 |
+| visa | cashew | patchcore-384-n150 | template | 36 | 0.29 | 0.02 | 0.33 | 0.97 | 0.04 |
+| visa | cashew | patchcore-384-n150 | pca | 39 | 0.23 | 0.02 | 0.36 | 0.98 | 0.04 |
+| visa | cashew | patchcore-n150 | template | 36 | 0.44 | 0.01 | 0.29 | 0.97 | 0.04 |
+| visa | cashew | patchcore-n150 | pca | 39 | 0.51 | 0.01 | 0.28 | 0.97 | 0.04 |
+| visa | cashew | patchcore-r18 | template | 36 | 0.45 | 0.01 | 0.36 | 0.97 | 0.04 |
+| visa | cashew | patchcore-r18 | pca | 39 | 0.41 | 0.01 | 0.34 | 0.95 | 0.04 |
 | visa | cashew | rd | template | 36 | 0.33 | 0.01 | 0.51 | 0.95 | 0.04 |
 | visa | cashew | rd | pca | 39 | 0.41 | 0.01 | 0.50 | 0.97 | 0.04 |
 | visa | chewinggum | padim | template | 50 | 0.48 | 0.01 | 0.21 | 0.98 | 0.04 |
 | visa | chewinggum | padim | pca | 43 | 0.49 | 0.01 | 0.20 | 0.97 | 0.04 |
 | visa | chewinggum | patchcore | template | 50 | 0.82 | 0.01 | 0.06 | 0.98 | 0.04 |
 | visa | chewinggum | patchcore | pca | 43 | 0.79 | 0.01 | 0.06 | 0.97 | 0.04 |
+| visa | chewinggum | patchcore-320-n300 | template | 50 | 0.42 | 0.01 | 0.20 | 0.98 | 0.04 |
+| visa | chewinggum | patchcore-320-n300 | pca | 43 | 0.40 | 0.01 | 0.18 | 0.98 | 0.04 |
+| visa | chewinggum | patchcore-r18 | template | 50 | 0.62 | 0.02 | 0.13 | 0.98 | 0.04 |
+| visa | chewinggum | patchcore-r18 | pca | 43 | 0.63 | 0.02 | 0.12 | 0.99 | 0.04 |
 | visa | chewinggum | rd | template | 50 | 0.48 | 0.01 | 0.19 | 0.99 | 0.04 |
 | visa | chewinggum | rd | pca | 43 | 0.44 | 0.01 | 0.18 | 0.98 | 0.04 |
 | visa | fryum | padim | template | 46 | 0.33 | 0.01 | 0.66 | 0.95 | 0.04 |
 | visa | fryum | padim | pca | 49 | 0.35 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | fryum | patchcore | template | 46 | 0.50 | 0.03 | 0.23 | 0.99 | 0.04 |
 | visa | fryum | patchcore | pca | 49 | 0.51 | 0.03 | 0.24 | 0.99 | 0.04 |
+| visa | fryum | patchcore-320-n150 | template | 46 | 0.18 | 0.02 | 0.36 | 0.97 | 0.04 |
+| visa | fryum | patchcore-320-n150 | pca | 49 | 0.18 | 0.02 | 0.37 | 0.98 | 0.04 |
+| visa | fryum | patchcore-320-n300 | template | 46 | 0.22 | 0.01 | 0.34 | 0.96 | 0.04 |
+| visa | fryum | patchcore-320-n300 | pca | 49 | 0.22 | 0.01 | 0.36 | 0.98 | 0.04 |
+| visa | fryum | patchcore-384-n150 | template | 46 | 0.18 | 0.01 | 0.38 | 0.96 | 0.04 |
+| visa | fryum | patchcore-384-n150 | pca | 49 | 0.16 | 0.01 | 0.40 | 0.98 | 0.04 |
+| visa | fryum | patchcore-n150 | template | 46 | 0.29 | 0.02 | 0.32 | 0.98 | 0.04 |
+| visa | fryum | patchcore-n150 | pca | 49 | 0.30 | 0.02 | 0.32 | 0.98 | 0.04 |
+| visa | fryum | patchcore-r18 | template | 46 | 0.16 | 0.02 | 0.45 | 0.97 | 0.04 |
+| visa | fryum | patchcore-r18 | pca | 49 | 0.18 | 0.02 | 0.44 | 0.98 | 0.04 |
 | visa | fryum | rd | template | 46 | 0.24 | 0.01 | 0.54 | 0.97 | 0.04 |
 | visa | fryum | rd | pca | 49 | 0.22 | 0.01 | 0.52 | 0.98 | 0.04 |
 | visa | macaroni1 | padim | template | 93 | 0.20 | 0.01 | 0.84 | 0.50 | 0.04 |
 | visa | macaroni1 | padim | pca | 99 | 0.21 | 0.01 | 0.84 | 0.46 | 0.04 |
 | visa | macaroni1 | patchcore | template | 93 | 0.19 | 0.02 | 0.71 | 0.93 | 0.04 |
 | visa | macaroni1 | patchcore | pca | 99 | 0.16 | 0.02 | 0.73 | 0.93 | 0.04 |
+| visa | macaroni1 | patchcore-320-n150 | template | 93 | 0.27 | 0.02 | 0.66 | 0.93 | 0.04 |
+| visa | macaroni1 | patchcore-320-n150 | pca | 99 | 0.25 | 0.02 | 0.68 | 0.94 | 0.04 |
+| visa | macaroni1 | patchcore-320-n300 | template | 93 | 0.22 | 0.01 | 0.72 | 0.93 | 0.04 |
+| visa | macaroni1 | patchcore-320-n300 | pca | 99 | 0.22 | 0.01 | 0.71 | 0.94 | 0.04 |
+| visa | macaroni1 | patchcore-384-n150 | template | 93 | 0.32 | 0.01 | 0.62 | 0.95 | 0.04 |
+| visa | macaroni1 | patchcore-384-n150 | pca | 99 | 0.33 | 0.01 | 0.61 | 0.95 | 0.04 |
+| visa | macaroni1 | patchcore-n150 | template | 93 | 0.17 | 0.01 | 0.70 | 0.94 | 0.04 |
+| visa | macaroni1 | patchcore-n150 | pca | 99 | 0.13 | 0.01 | 0.73 | 0.94 | 0.04 |
+| visa | macaroni1 | patchcore-r18 | template | 93 | 0.31 | 0.02 | 0.68 | 0.96 | 0.04 |
+| visa | macaroni1 | patchcore-r18 | pca | 99 | 0.30 | 0.02 | 0.67 | 0.94 | 0.04 |
 | visa | macaroni1 | rd | template | 93 | 0.34 | 0.01 | 0.60 | 0.94 | 0.04 |
 | visa | macaroni1 | rd | pca | 99 | 0.35 | 0.01 | 0.59 | 0.95 | 0.04 |
 | visa | macaroni2 | padim | template | 93 | 0.11 | 0.01 | 0.88 | 0.84 | 0.04 |
 | visa | macaroni2 | padim | pca | 96 | 0.11 | 0.01 | 0.88 | 0.75 | 0.04 |
 | visa | macaroni2 | patchcore | template | 93 | 0.02 | 0.01 | 0.88 | 0.86 | 0.04 |
 | visa | macaroni2 | patchcore | pca | 96 | 0.04 | 0.01 | 0.88 | 0.89 | 0.04 |
+| visa | macaroni2 | patchcore-320-n150 | template | 93 | 0.00 | 0.01 | 0.92 | 0.90 | 0.04 |
+| visa | macaroni2 | patchcore-320-n150 | pca | 96 | 0.01 | 0.01 | 0.91 | 0.79 | 0.04 |
+| visa | macaroni2 | patchcore-320-n300 | template | 93 | 0.01 | 0.01 | 0.92 | 0.85 | 0.04 |
+| visa | macaroni2 | patchcore-320-n300 | pca | 96 | 0.02 | 0.01 | 0.93 | 0.78 | 0.04 |
+| visa | macaroni2 | patchcore-384-n150 | template | 93 | 0.00 | 0.01 | 0.86 | 0.88 | 0.04 |
+| visa | macaroni2 | patchcore-384-n150 | pca | 96 | 0.01 | 0.01 | 0.87 | 0.89 | 0.04 |
+| visa | macaroni2 | patchcore-n150 | template | 93 | 0.02 | 0.01 | 0.93 | 0.73 | 0.04 |
+| visa | macaroni2 | patchcore-n150 | pca | 96 | 0.03 | 0.01 | 0.92 | 0.80 | 0.04 |
+| visa | macaroni2 | patchcore-r18 | template | 93 | 0.07 | 0.02 | 0.85 | 0.89 | 0.04 |
+| visa | macaroni2 | patchcore-r18 | pca | 96 | 0.03 | 0.02 | 0.87 | 0.89 | 0.04 |
 | visa | macaroni2 | rd | template | 93 | 0.01 | 0.01 | 0.91 | 0.72 | 0.04 |
 | visa | macaroni2 | rd | pca | 96 | 0.01 | 0.01 | 0.92 | 0.82 | 0.04 |
 | visa | pipe_fryum | padim | template | 50 | 0.36 | 0.01 | 0.55 | 0.98 | 0.04 |
 | visa | pipe_fryum | padim | pca | 50 | 0.36 | 0.01 | 0.55 | 0.98 | 0.04 |
 | visa | pipe_fryum | patchcore | template | 50 | 0.76 | 0.01 | 0.09 | 0.98 | 0.04 |
 | visa | pipe_fryum | patchcore | pca | 50 | 0.76 | 0.01 | 0.09 | 0.98 | 0.04 |
+| visa | pipe_fryum | patchcore-320-n300 | template | 50 | 0.88 | 0.01 | 0.03 | 0.97 | 0.04 |
+| visa | pipe_fryum | patchcore-320-n300 | pca | 50 | 0.88 | 0.01 | 0.03 | 0.97 | 0.04 |
+| visa | pipe_fryum | patchcore-r18 | template | 50 | 0.40 | 0.01 | 0.25 | 0.97 | 0.04 |
+| visa | pipe_fryum | patchcore-r18 | pca | 50 | 0.40 | 0.01 | 0.25 | 0.97 | 0.04 |
 | visa | pipe_fryum | rd | template | 50 | 0.86 | 0.01 | 0.05 | 0.96 | 0.04 |
 | visa | pipe_fryum | rd | pca | 50 | 0.86 | 0.01 | 0.05 | 0.96 | 0.04 |
 
@@ -141,6 +255,44 @@ Figures: `docs/figures/auroc_vs_recovery.png`, `docs/figures/recovery_curves.png
 | macaroni1 | patchcore | 93 | 0.19 | 0.02 | 0.06 | 0.02 | 0.12 | 0.67 |
 | macaroni2 | patchcore | 93 | 0.02 | 0.01 | 0.00 | 0.02 | 0.03 | 0.57 |
 | pipe_fryum | patchcore | 50 | 0.76 | 0.01 | 0.50 | 0.01 | 0.20 | 0.94 |
+| candle | patchcore-320-n150 | 92 | 0.45 | 0.01 | 0.25 | 0.02 | 0.33 | 0.87 |
+| capsules | patchcore-320-n150 | 56 | 0.03 | 0.01 | 0.05 | 0.01 | 0.03 | 0.64 |
+| cashew | patchcore-320-n150 | 36 | 0.45 | 0.01 | 0.50 | 0.01 | 0.04 | 0.89 |
+| fryum | patchcore-320-n150 | 46 | 0.18 | 0.02 | 0.76 | 0.01 | 0.22 | 0.90 |
+| macaroni1 | patchcore-320-n150 | 93 | 0.27 | 0.02 | 0.03 | 0.00 | 0.12 | 0.68 |
+| macaroni2 | patchcore-320-n150 | 93 | 0.00 | 0.01 | 0.07 | 0.00 | 0.02 | 0.55 |
+| bottle | patchcore-320-n300 | 19 | 1.00 | 0.02 | 1.00 | 0.02 | 0.46 | 1.00 |
+| hazelnut | patchcore-320-n300 | 37 | 1.00 | 0.03 | 1.00 | 0.00 | 0.46 | 1.00 |
+| candle | patchcore-320-n300 | 92 | 0.57 | 0.01 | 0.34 | 0.01 | 0.34 | 0.88 |
+| capsules | patchcore-320-n300 | 56 | 0.27 | 0.01 | 0.04 | 0.00 | 0.03 | 0.66 |
+| cashew | patchcore-320-n300 | 36 | 0.61 | 0.01 | 0.75 | 0.00 | 0.06 | 0.91 |
+| chewinggum | patchcore-320-n300 | 50 | 0.42 | 0.01 | 0.32 | 0.01 | 0.31 | 0.94 |
+| fryum | patchcore-320-n300 | 46 | 0.22 | 0.01 | 0.67 | 0.01 | 0.21 | 0.89 |
+| macaroni1 | patchcore-320-n300 | 93 | 0.22 | 0.01 | 0.13 | 0.00 | 0.13 | 0.66 |
+| macaroni2 | patchcore-320-n300 | 93 | 0.01 | 0.01 | 0.00 | 0.00 | 0.03 | 0.59 |
+| pipe_fryum | patchcore-320-n300 | 50 | 0.88 | 0.01 | 0.24 | 0.00 | 0.25 | 0.94 |
+| candle | patchcore-384-n150 | 92 | 0.55 | 0.01 | 0.12 | 0.00 | 0.33 | 0.87 |
+| capsules | patchcore-384-n150 | 56 | 0.03 | 0.01 | 0.00 | 0.02 | 0.06 | 0.67 |
+| cashew | patchcore-384-n150 | 36 | 0.29 | 0.02 | 0.42 | 0.00 | 0.05 | 0.88 |
+| fryum | patchcore-384-n150 | 46 | 0.18 | 0.01 | 0.64 | 0.01 | 0.25 | 0.92 |
+| macaroni1 | patchcore-384-n150 | 93 | 0.32 | 0.01 | 0.16 | 0.00 | 0.14 | 0.70 |
+| macaroni2 | patchcore-384-n150 | 93 | 0.00 | 0.01 | 0.02 | 0.01 | 0.02 | 0.56 |
+| candle | patchcore-n150 | 92 | 0.49 | 0.02 | 0.28 | 0.01 | 0.31 | 0.89 |
+| capsules | patchcore-n150 | 56 | 0.02 | 0.01 | 0.00 | 0.00 | 0.02 | 0.62 |
+| cashew | patchcore-n150 | 36 | 0.44 | 0.01 | 0.56 | 0.01 | 0.04 | 0.90 |
+| fryum | patchcore-n150 | 46 | 0.29 | 0.02 | 0.54 | 0.02 | 0.18 | 0.86 |
+| macaroni1 | patchcore-n150 | 93 | 0.17 | 0.01 | 0.08 | 0.02 | 0.09 | 0.64 |
+| macaroni2 | patchcore-n150 | 93 | 0.02 | 0.01 | 0.02 | 0.01 | 0.02 | 0.53 |
+| bottle | patchcore-r18 | 19 | 1.00 | 0.02 | 1.00 | 0.02 | 0.43 | 0.99 |
+| hazelnut | patchcore-r18 | 37 | 0.95 | 0.01 | 0.70 | 0.01 | 0.38 | 0.97 |
+| candle | patchcore-r18 | 92 | 0.59 | 0.01 | 0.36 | 0.02 | 0.32 | 0.88 |
+| capsules | patchcore-r18 | 56 | 0.02 | 0.01 | 0.02 | 0.01 | 0.01 | 0.64 |
+| cashew | patchcore-r18 | 36 | 0.45 | 0.01 | 0.59 | 0.00 | 0.02 | 0.88 |
+| chewinggum | patchcore-r18 | 50 | 0.62 | 0.02 | 0.36 | 0.00 | 0.26 | 0.93 |
+| fryum | patchcore-r18 | 46 | 0.16 | 0.02 | 0.37 | 0.01 | 0.12 | 0.83 |
+| macaroni1 | patchcore-r18 | 93 | 0.31 | 0.02 | 0.06 | 0.00 | 0.18 | 0.74 |
+| macaroni2 | patchcore-r18 | 93 | 0.07 | 0.02 | 0.02 | 0.01 | 0.05 | 0.62 |
+| pipe_fryum | patchcore-r18 | 50 | 0.40 | 0.01 | 0.26 | 0.01 | 0.21 | 0.89 |
 | bottle | rd | 19 | 1.00 | 0.02 | 0.95 | 0.02 | 0.34 | 0.97 |
 | hazelnut | rd | 37 | 1.00 | 0.01 | 1.00 | 0.00 | 0.44 | 1.00 |
 | candle | rd | 92 | 0.51 | 0.01 | 0.38 | 0.01 | 0.29 | 0.87 |

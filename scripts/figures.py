@@ -113,7 +113,7 @@ def speed(df: pd.DataFrame, out: Path) -> None:
     # only models that ran on all 10 categories, so the means are comparable
     names = dict(MODELS)
     g = df[df.model.isin(names)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean")).reset_index()
-    offsets = {"patchcore": (6, -9), "patchcore-320-n300": (6, 4)}
+    offsets = {"patchcore": (6, -10), "patchcore-320-n300": (6, 4), "patchcore-r18": (6, -11)}
     fig, ax = plt.subplots(figsize=(6.4, 4.2))
     for i, r in g.iterrows():
         ax.scatter(r.ms, r.rec, s=48, color=SERIES[0] if r.model != "rd" else SERIES[1], edgecolor="#ffffff", linewidth=1.5, zorder=3)

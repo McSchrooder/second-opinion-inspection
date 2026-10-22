@@ -134,6 +134,7 @@ def main() -> None:
         rng = np.random.default_rng(0)
         idx = sorted(rng.choice(len(dm.train_data), a.train_n, replace=False).tolist())
         dm.train_data.subsample(idx, inplace=True)
+    dm._is_setup = True  # keep the subset: without this the trainer's setup() rebuilds train_data from scratch
     n_train = len(dm.train_data)
 
     model = build_model(a)

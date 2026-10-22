@@ -137,7 +137,7 @@ def main() -> None:
 
     out = pd.DataFrame(rows).sort_values(["dataset", "category", "model"])
     out.to_csv(res / "lane_summary.csv", index=False)
-    write_docs(out, Path(a.docs), a.escape)
+    write_docs(out, Path(a.docs), a.escape, res / "classify_summary.csv")
     make_figures(out, scores, standins, res / "figures")
     print(out.to_string(index=False, float_format=lambda v: f"{v:.3f}"))
 
@@ -146,7 +146,7 @@ def fmt(v) -> str:
     return "" if v is None or (isinstance(v, float) and np.isnan(v)) else (f"{v:.2f}" if isinstance(v, float) else str(v))
 
 
-def write_docs(df: pd.DataFrame, path: Path, escape: float) -> None:
+def write_docs(df: pd.DataFrame, path: Path, escape: float, classify_csv: Path) -> None:
     lines = [
         "# Results",
         "",
@@ -196,10 +196,37 @@ def write_docs(df: pd.DataFrame, path: Path, escape: float) -> None:
         "when zero escapes are observed on the calibration defects (80% of the test defects).",
         "It is what we can honestly claim, not the observed 0.",
         "",
-        "Figures: `results/figures/auroc_vs_recovery.png`, `results/figures/recovery_curves.png`.",
+        "Figures: `docs/figures/auroc_vs_recovery.png`, `docs/figures/recovery_curves.png`.",
     ]
+    lines += classifier_section(classify_csv, escape)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines) + "\n")
+
+
+def classifier_section(csv: Path, escape: float) -> list[str]:
+    """Append the second-stage comparison written by classify.py, if it exists."""
+    if not csv.exists():
+        return []
+    c = pd.read_csv(csv)
+    lines = [
+        "",
+        f"## Second stage: trees on anomaly-map features vs raw score (lane, {escape:.0%} escape, held-out folds)",
+        "",
+        "| category | model | lane goods | raw recovery | raw escape | trees recovery | trees escape | silhouette | nn purity |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for _, r in c.iterrows():
+        lines.append("| " + " | ".join([
+            r.category, r.model, str(int(r.lane_good)), fmt(r.raw_recovery), fmt(r.raw_escape),
+            fmt(r.gbt_recovery), fmt(r.gbt_escape), fmt(r.silhouette), fmt(r.nn_purity),
+        ]) + " |")
+    lines += [
+        "",
+        "Reading: with 40 to 90 lane goods per category the classifier does not beat the raw score;",
+        "the map statistics carry no information the max does not. Separability (nn purity up to 0.94)",
+        "is real but already captured by the score. Revisit when a line provides hundreds of labelled rejects.",
+    ]
+    return lines
 
 
 def make_figures(df: pd.DataFrame, scores: dict, standins: dict, out: Path) -> None:

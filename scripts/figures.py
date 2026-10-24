@@ -116,7 +116,7 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     names = dict(MODELS)
     gpu = df[df.model.isin(names)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
     cpu = df[df.model.str.endswith("-cpu")].groupby("model").agg(ms=("ms_per_image", "mean"))
-    offsets = {"patchcore": (-6, -12), "patchcore-320-n300": (6, 4)}
+    offsets = {"patchcore": (-6, 8), "patchcore-320-n300": (6, 4), "patchcore-r18": (6, -11)}
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     for m, r in gpu.iterrows():
         ax.scatter(r.ms, r.rec, s=48, color=SERIES[0], edgecolor="#ffffff", linewidth=1.5, zorder=3)

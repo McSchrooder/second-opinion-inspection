@@ -191,7 +191,7 @@ def classifier_section(csv: Path, escape: float) -> list[str]:
         ]) + " |")
     lines += [
         "",
-        "Reading: with 40 to 90 lane goods per category the classifier does not beat the raw score;",
+        "Reading: with 40 to 90 lane goods per category the classifier does not beat the raw score.",
         "the map statistics carry no information the max does not. Separability (nn purity up to 0.94)",
         "is real but already captured by the score. Revisit when a line provides hundreds of labelled rejects.",
     ]

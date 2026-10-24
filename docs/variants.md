@@ -2,7 +2,7 @@
 
 Generated from `results/*.json` (recovery of goods at 1% escape, all test goods). Baseline is
 wide_resnet50_2 at 256 px on the full training split. `n150`/`n300` = random 150/300 training
-images (seeded); `r18` = resnet18 backbone at 256 px. The 256 n150 column is the control that
+images (seeded). `r18` = resnet18 backbone at 256 px. The 256 n150 column is the control that
 separates the cost of fewer training images from the effect of resolution.
 
 | dataset | category | 256 all | 256 n150 | 320 n150 | 384 n150 | 320 n300 | 256 r18 | best |

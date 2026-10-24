@@ -304,6 +304,6 @@ Figures: `docs/figures/auroc_vs_recovery.png`, `docs/figures/recovery_curves.png
 | macaroni2 | rd | 93 | 0.01 | 0.01 | 0.04 | 0.00 | 0.02 | 0.56 |
 | pipe_fryum | rd | 50 | 0.86 | 0.01 | 0.50 | 0.01 | 0.28 | 0.93 |
 
-Reading: with 40 to 90 lane goods per category the classifier does not beat the raw score;
+Reading: with 40 to 90 lane goods per category the classifier does not beat the raw score.
 the map statistics carry no information the max does not. Separability (nn purity up to 0.94)
 is real but already captured by the score. Revisit when a line provides hundreds of labelled rejects.

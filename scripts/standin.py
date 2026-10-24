@@ -109,7 +109,7 @@ def main() -> None:
     p.add_argument("--out", default="results")
     p.add_argument("--size", type=int, default=128)
     p.add_argument("--only", choices=["template", "pca", "tinypadim"], default=None,
-                   help="default runs template and pca; tinypadim is opt-in (hangs on ROCm/WSL)")
+                   help="default runs template and pca. tinypadim is opt-in (hangs on ROCm/WSL)")
     a = p.parse_args()
 
     root = Path(a.root) / a.dataset

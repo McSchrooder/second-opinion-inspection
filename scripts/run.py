@@ -6,7 +6,7 @@ usage: python scripts/run.py visa candle patchcore [--root data] [--out results]
 
 Output: results/scores/<tag>.csv (one row per test image: label, raw score, heatmap stats)
 and results/<tag>.json (AUROC, recovery at 0/1/5% escape, latency, peak VRAM).
-No threshold is set here; lane.py does that from the CSVs. The model is not saved.
+No threshold is set here. lane.py does that from the CSVs. The model is not saved.
 """
 import argparse
 import json
@@ -50,10 +50,10 @@ def build_model(a):
     """Stock anomalib model with its own post-processing and metrics switched off.
 
     Thresholding off: anomalib picks the F1-best threshold, which weighs a missed defect like a
-    false reject; we set thresholds at a fixed escape rate in lane.py instead.
+    false reject. We set thresholds at a fixed escape rate in lane.py instead.
     Normalisation off: its 0-1 rescale clamps scores far from the threshold to exactly 0 or 1,
     which erases the tails where our operating point sits.
-    Evaluator off: its AUROC sigmoids raw scores and reports 0.5; we use scikit-learn.
+    Evaluator off: its AUROC sigmoids raw scores and reports 0.5. We use scikit-learn.
     Visualizer off: it only writes overlay PNGs per image.
     """
     cls = MODELS[a.model]
@@ -118,7 +118,7 @@ def main() -> None:
     p.add_argument("--backbone", default=None)
     p.add_argument("--coreset", type=float, default=None, help="patchcore coreset ratio")
     p.add_argument("--train-n", type=int, default=None, help="random subset of training goods")
-    p.add_argument("--mem-frac", type=float, default=0.6, help="VRAM share this process may use; fail fast past it")
+    p.add_argument("--mem-frac", type=float, default=0.6, help="VRAM share this process may use, fails fast past it")
     a = p.parse_args()
 
     if torch.cuda.is_available() and 0 < a.mem_frac < 1:

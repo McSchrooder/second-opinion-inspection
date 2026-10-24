@@ -29,6 +29,6 @@ def t_recover(defect_scores: np.ndarray, escape: float) -> float:
 
 
 def recovery_at(scores: np.ndarray, labels: np.ndarray, escape: float) -> float:
-    """Share of goods below t_recover. Same quantity as anomalib's PGn; threshold set on these defects (optimistic)."""
+    """Share of goods below t_recover. Same quantity as anomalib's PGn, threshold set on these defects, so optimistic."""
     thr = t_recover(scores[labels == 1], escape)
     return float((scores[labels == 0] < thr).mean()) if (labels == 0).any() else float("nan")

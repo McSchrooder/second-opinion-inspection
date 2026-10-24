@@ -17,11 +17,14 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
+from common import is_main  # noqa: E402
+
 # tiers: rigid single objects / textured single items / multi-instance trays
 TIERS = [
     ("rigid object", ["bottle", "hazelnut"]),
     ("textured single item", ["pipe_fryum", "chewinggum", "cashew", "candle", "fryum"]),
     ("multi-instance tray", ["macaroni1", "capsules", "macaroni2"]),
+    ("packaged goods", ["drink_can", "drink_bottle", "food_bottle", "food_package", "food_box"]),
 ]
 MODELS = [("padim", "PaDiM 256"), ("patchcore", "PatchCore 256"), ("rd", "Reverse Dist. 256"),
           ("patchcore-320-n300", "PatchCore 320 (300 img)"), ("patchcore-r18", "PatchCore 256 resnet18")]
@@ -53,7 +56,8 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
     mat = np.full((len(cats), len(keys)), np.nan)
     for i, c in enumerate(cats):
         for j, m in enumerate(keys):
-            r = df[(df.category == c) & (df.model == m)]
+            sel = df.model.map(is_main) if m == "patchcore" else df.model == m
+            r = df[(df.category == c) & sel]
             if len(r):
                 mat[i, j] = r[COL].iloc[0]
     cmap = matplotlib.colors.ListedColormap(SEQ)
@@ -85,7 +89,8 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
     ax.set_title("Share of good items recovered at 1% escape, simulated reject lane", fontsize=10, color=INK, loc="left")
     for s in ax.spines.values():
         s.set_visible(False)
-    fig.tight_layout()
+    fig.text(0.01, 0.01, "packaged goods: GoodsAD, PatchCore on 400 training images", fontsize=6.5, color=INK2)
+    fig.tight_layout(rect=(0, 0.03, 1, 1))
     fig.savefig(out / "recovery_heatmap.png", dpi=160)
     plt.close(fig)
 
@@ -114,6 +119,8 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     """Mean lane recovery vs latency per model on the GPU. A hollow marker at the same height shows
     the same model's latency on the CPU where it was timed (tag suffix -cpu, bottle only)."""
     names = dict(MODELS)
+    full = df.groupby("category").model.apply(lambda s: set(names) <= set(s))  # categories with every main model
+    df = df[df.category.isin(full[full].index)]
     gpu = df[df.model.isin(names)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
     cpu = df[df.model.str.endswith("-cpu")].groupby("model").agg(ms=("ms_per_image", "mean"))
     offsets = {"patchcore": (-6, 8), "patchcore-320-n300": (6, 4), "patchcore-r18": (6, -11)}
@@ -130,7 +137,7 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
             ax.annotate("cpu", (cms, r.rec), xytext=(6, 2), textcoords="offset points", fontsize=7, color=INK2)
     ax.set_xscale("log")
     ax.set_xlabel("inference ms per image, log scale. Filled: GPU. Hollow: same model on CPU", fontsize=8, color=INK2)
-    ax.set_ylabel("mean recovery at 1% escape, lane, 10 categories", fontsize=8, color=INK2)
+    ax.set_ylabel(f"mean recovery at 1% escape, lane, {df.category.nunique()} categories", fontsize=8, color=INK2)
     ax.set_ylim(0.3, 0.8)
     ax.set_title("Latency vs recovery per model", fontsize=10, color=INK, loc="left")
     fig.text(0.01, 0.01, ", ".join(f"{k}: {v}" for k, v in sorted(devices.items())), fontsize=6.5, color=INK2)

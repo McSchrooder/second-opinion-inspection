@@ -25,6 +25,12 @@ def make_datamodule(dataset: str, root: Path, category: str, **kw):
 DATASETS = ("visa", "mvtec", "goodsad")
 
 
+def is_main(model: str) -> bool:
+    """The reference PatchCore run of a category: all training images, or the 400-image subset on GoodsAD,
+    where the full bank would not fit in VRAM."""
+    return model in ("patchcore", "patchcore-n400")
+
+
 def split_tag(tag: str) -> tuple[str, str, str]:
     """'visa_pipe_fryum_patchcore-320' -> ('visa', 'pipe_fryum', 'patchcore-320'). Model tokens never contain '_'."""
     ds, rest = tag.split("_", 1)

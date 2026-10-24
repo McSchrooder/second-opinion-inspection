@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from common import build_lane, recovery_at, split_tag, t_recover
+from common import build_lane, is_main, recovery_at, split_tag, t_recover
 
 ESCAPES = (0.0, 0.01, 0.05)
 CONFIRM_GOOD_FPR = 0.02   # t_confirm: at most 2 % of calibration goods above it
@@ -201,7 +201,7 @@ def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float
 
 def frr_section(frr_df: pd.DataFrame, escape: float) -> list[str]:
     """PatchCore recovery on bins built by each stand-in at each primary reject rate. Does the bin builder matter?"""
-    d = frr_df[frr_df.model == "patchcore"]
+    d = frr_df[frr_df.model.map(is_main)]
     if d.empty:
         return []
     bins = ["zero-miss"] + [f"{f:.2f}" for f in FRRS]
@@ -210,7 +210,7 @@ def frr_section(frr_df: pd.DataFrame, escape: float) -> list[str]:
         f"## PatchCore recovery by stand-in camera and primary reject rate (held-out, {escape:.0%} escape)",
         "",
         "Columns: share of goods the stand-in rejects. `zero-miss`: cutoff at its weakest defect, resulting",
-        "reject rate in brackets. `template`: the unaligned rule camera.",
+        "reject rate in brackets. `template`: the unaligned rule camera. GoodsAD rows: PatchCore on 400 training images.",
         "",
         "The stand-in dilemma: a dumb primary rejects goods for reasons our model does not share, so the",
         "bin is easy and recovery looks good. A smart primary rejects the goods our model also doubts, so",
@@ -274,11 +274,11 @@ def make_figures(df: pd.DataFrame, frr_df: pd.DataFrame, scores: dict, standins:
             ("patchcore-320-n300", "#eda100"), ("patchcore-r18", "#e87ba4")]
     fig, ax = plt.subplots(figsize=(6, 5))
     for model, color in main:
-        g = df[df.model == model]
+        g = df[df.model.map(is_main)] if model == "patchcore" else df[df.model == model]
         if g.empty:
             continue
         ax.scatter(g.auroc, g[col], label=model, s=36, color=color, edgecolor="#ffffff", linewidth=0.8)
-    g = df[df.model == "patchcore"]
+    g = df[df.model.map(is_main)]
     for _, r in g.iterrows():
         ax.annotate(r.category, (r.auroc, r[col]), fontsize=6, color="#52514e", xytext=(4, 2), textcoords="offset points")
     ax.set_xlabel("image AUROC", fontsize=8)
@@ -324,7 +324,7 @@ def make_figures(df: pd.DataFrame, frr_df: pd.DataFrame, scores: dict, standins:
     plt.close(fig)
 
     # recovery vs primary reject rate, PatchCore, one line per stand-in
-    d = frr_df[(frr_df.model == "patchcore") & (frr_df.bin != "zero-miss")]
+    d = frr_df[frr_df.model.map(is_main) & (frr_df.bin != "zero-miss")]
     if d.empty:
         return
     colors = {"aligned": "#2a78d6", "pca": "#eb6834", "tinypadim": "#1baf7a", "template": "#8a8a8a"}

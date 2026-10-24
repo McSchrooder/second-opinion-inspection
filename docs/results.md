@@ -39,7 +39,7 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | capsules | patchcore-320-n150 | 60/100 | 0.78 | 0.03 | 0.08 | 0.18 | 0.97 | 0.09 | 0.97 | 0.07 | 0.98 | 0.08 | 21.70 |
 | visa | capsules | patchcore-320-n300 | 60/100 | 0.80 | 0.27 | 0.27 | 0.33 | 0.97 | 0.26 | 0.97 | 0.24 | 0.98 | 0.25 | 31.80 |
 | visa | capsules | patchcore-384-n150 | 60/100 | 0.84 | 0.02 | 0.12 | 0.25 | 0.97 | 0.12 | 0.97 | 0.09 | 0.98 | 0.12 | 39.80 |
-| visa | capsules | patchcore-n150 | 60/100 | 0.72 | 0.02 | 0.02 | 0.15 | 0.97 | 0.02 | 0.97 | 0.02 | 0.98 | 0.02 | 12.60 |
+| visa | capsules | patchcore-n150 | 60/100 | 0.73 | 0.03 | 0.03 | 0.07 | 0.97 | 0.03 | 0.97 | 0.03 | 0.98 | 0.03 | 11.90 |
 | visa | capsules | patchcore-r18 | 60/100 | 0.68 | 0.02 | 0.05 | 0.10 | 0.97 | 0.05 | 0.97 | 0.03 | 0.98 | 0.05 | 14.00 |
 | visa | capsules | rd | 60/100 | 0.79 | 0.10 | 0.10 | 0.13 | 0.97 | 0.10 | 0.97 | 0.09 | 0.98 | 0.10 | 131.50 |
 | visa | cashew | padim | 50/100 | 0.84 | 0.06 | 0.20 | 0.28 | 0.66 | 0.09 | 0.78 | 0.15 | 0.86 | 0.12 | 10.90 |
@@ -76,7 +76,7 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni2 | patchcore-320-n150 | 100/100 | 0.64 | 0.00 | 0.06 | 0.21 | 0.96 | 0.05 | 0.96 | 0.05 | 0.93 | 0.05 | 20.00 |
 | visa | macaroni2 | patchcore-320-n300 | 100/100 | 0.69 | 0.00 | 0.12 | 0.27 | 0.96 | 0.10 | 0.96 | 0.10 | 0.93 | 0.11 | 31.20 |
 | visa | macaroni2 | patchcore-384-n150 | 100/100 | 0.68 | 0.00 | 0.07 | 0.12 | 0.96 | 0.06 | 0.96 | 0.06 | 0.93 | 0.06 | 34.20 |
-| visa | macaroni2 | patchcore-n150 | 100/100 | 0.60 | 0.03 | 0.05 | 0.17 | 0.96 | 0.04 | 0.96 | 0.04 | 0.93 | 0.04 | 11.80 |
+| visa | macaroni2 | patchcore-n150 | 100/100 | 0.62 | 0.03 | 0.05 | 0.18 | 0.96 | 0.04 | 0.96 | 0.04 | 0.93 | 0.04 | 11.00 |
 | visa | macaroni2 | patchcore-r18 | 100/100 | 0.72 | 0.04 | 0.23 | 0.31 | 0.96 | 0.22 | 0.96 | 0.22 | 0.93 | 0.23 | 18.00 |
 | visa | macaroni2 | rd | 100/100 | 0.64 | 0.00 | 0.02 | 0.14 | 0.96 | 0.02 | 0.96 | 0.02 | 0.93 | 0.02 | 125.40 |
 | visa | pipe_fryum | padim | 50/100 | 0.89 | 0.34 | 0.38 | 0.54 | 1.00 | 0.38 | 1.00 | 0.38 | 0.74 | 0.19 | 9.80 |
@@ -159,9 +159,9 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | capsules | patchcore-384-n150 | aligned | 58 | 0.05 | 0.01 | 0.61 | 0.95 | 0.04 |
 | visa | capsules | patchcore-384-n150 | pca | 58 | 0.03 | 0.01 | 0.62 | 0.93 | 0.04 |
 | visa | capsules | patchcore-384-n150 | tinypadim | 59 | 0.05 | 0.01 | 0.64 | 0.96 | 0.04 |
-| visa | capsules | patchcore-n150 | aligned | 58 | 0.02 | 0.01 | 0.74 | 0.96 | 0.04 |
-| visa | capsules | patchcore-n150 | pca | 58 | 0.02 | 0.01 | 0.73 | 0.96 | 0.04 |
-| visa | capsules | patchcore-n150 | tinypadim | 59 | 0.02 | 0.01 | 0.73 | 0.93 | 0.04 |
+| visa | capsules | patchcore-n150 | aligned | 58 | 0.03 | 0.01 | 0.73 | 0.94 | 0.04 |
+| visa | capsules | patchcore-n150 | pca | 58 | 0.03 | 0.01 | 0.73 | 0.92 | 0.04 |
+| visa | capsules | patchcore-n150 | tinypadim | 59 | 0.03 | 0.01 | 0.73 | 0.95 | 0.04 |
 | visa | capsules | patchcore-r18 | aligned | 58 | 0.03 | 0.01 | 0.75 | 0.96 | 0.04 |
 | visa | capsules | patchcore-r18 | pca | 58 | 0.00 | 0.01 | 0.77 | 0.95 | 0.04 |
 | visa | capsules | patchcore-r18 | tinypadim | 59 | 0.03 | 0.01 | 0.75 | 0.96 | 0.04 |
@@ -270,9 +270,9 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni2 | patchcore-384-n150 | aligned | 96 | 0.00 | 0.01 | 0.87 | 0.92 | 0.04 |
 | visa | macaroni2 | patchcore-384-n150 | pca | 96 | 0.01 | 0.01 | 0.87 | 0.89 | 0.04 |
 | visa | macaroni2 | patchcore-384-n150 | tinypadim | 93 | 0.00 | 0.01 | 0.87 | 0.94 | 0.04 |
-| visa | macaroni2 | patchcore-n150 | aligned | 96 | 0.02 | 0.01 | 0.93 | 0.77 | 0.04 |
-| visa | macaroni2 | patchcore-n150 | pca | 96 | 0.03 | 0.01 | 0.92 | 0.80 | 0.04 |
-| visa | macaroni2 | patchcore-n150 | tinypadim | 93 | 0.02 | 0.01 | 0.93 | 0.73 | 0.04 |
+| visa | macaroni2 | patchcore-n150 | aligned | 96 | 0.02 | 0.02 | 0.94 | 0.87 | 0.04 |
+| visa | macaroni2 | patchcore-n150 | pca | 96 | 0.03 | 0.02 | 0.93 | 0.87 | 0.04 |
+| visa | macaroni2 | patchcore-n150 | tinypadim | 93 | 0.02 | 0.02 | 0.94 | 0.80 | 0.04 |
 | visa | macaroni2 | patchcore-r18 | aligned | 96 | 0.03 | 0.02 | 0.87 | 0.89 | 0.04 |
 | visa | macaroni2 | patchcore-r18 | pca | 96 | 0.03 | 0.02 | 0.87 | 0.89 | 0.04 |
 | visa | macaroni2 | patchcore-r18 | tinypadim | 93 | 0.08 | 0.02 | 0.84 | 0.89 | 0.04 |
@@ -302,7 +302,7 @@ Figures: `docs/figures/auroc_vs_recovery.png`, `docs/figures/recovery_curves.png
 ## PatchCore recovery by stand-in camera and primary reject rate (held-out, 1% escape)
 
 Columns: share of goods the stand-in rejects. `zero-miss`: cutoff at its weakest defect, resulting
-reject rate in brackets. `template`: the unaligned rule camera.
+reject rate in brackets. `template`: the unaligned rule camera. GoodsAD rows: PatchCore on 400 training images.
 
 The stand-in dilemma: a dumb primary rejects goods for reasons our model does not share, so the
 bin is easy and recovery looks good. A smart primary rejects the goods our model also doubts, so
@@ -401,12 +401,12 @@ n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 | macaroni1 | patchcore-384-n150 | 89 | 0.33 | 0.01 | 0.19 | 0.00 | 0.13 | 0.70 |
 | macaroni2 | patchcore-384-n150 | 96 | 0.00 | 0.01 | 0.02 | 0.02 | 0.03 | 0.58 |
 | bottle | patchcore-cpu | 19 | 1.00 | 0.02 | 0.95 | 0.00 | 0.46 | 1.00 |
-| candle | patchcore-n150 | 93 | 0.47 | 0.02 | 0.17 | 0.02 | 0.31 | 0.86 |
-| capsules | patchcore-n150 | 58 | 0.02 | 0.01 | 0.03 | 0.01 | 0.02 | 0.62 |
-| cashew | patchcore-n150 | 33 | 0.43 | 0.01 | 0.60 | 0.01 | 0.04 | 0.90 |
-| fryum | patchcore-n150 | 44 | 0.27 | 0.02 | 0.67 | 0.02 | 0.18 | 0.86 |
-| macaroni1 | patchcore-n150 | 89 | 0.19 | 0.01 | 0.03 | 0.01 | 0.08 | 0.63 |
-| macaroni2 | patchcore-n150 | 96 | 0.02 | 0.01 | 0.07 | 0.06 | 0.01 | 0.49 |
+| candle | patchcore-n150 | 93 | 0.64 | 0.02 | 0.25 | 0.03 | 0.31 | 0.86 |
+| capsules | patchcore-n150 | 58 | 0.03 | 0.01 | 0.07 | 0.01 | 0.02 | 0.64 |
+| cashew | patchcore-n150 | 33 | 0.54 | 0.01 | 0.64 | 0.02 | 0.04 | 0.90 |
+| fryum | patchcore-n150 | 44 | 0.36 | 0.02 | 0.51 | 0.01 | 0.18 | 0.86 |
+| macaroni1 | patchcore-n150 | 89 | 0.21 | 0.01 | 0.07 | 0.02 | 0.08 | 0.65 |
+| macaroni2 | patchcore-n150 | 96 | 0.02 | 0.02 | 0.00 | 0.00 | 0.02 | 0.54 |
 | bottle | patchcore-r18 | 19 | 1.00 | 0.02 | 1.00 | 0.02 | 0.42 | 1.00 |
 | hazelnut | patchcore-r18 | 36 | 0.94 | 0.01 | 0.86 | 0.01 | 0.38 | 0.97 |
 | candle | patchcore-r18 | 93 | 0.59 | 0.01 | 0.37 | 0.02 | 0.32 | 0.86 |

@@ -19,6 +19,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | model | AUROC | lane@1% | held-out recovery | held-out escape | ms/img |
 |---|---|---|---|---|---|
 | rad | 0.96 | 0.77 | 0.73 | 0.01 | 61.88 |
+| superadd-vitb-n100 | 0.96 | 0.71 | 0.61 | 0.01 | 81.04 |
 | mhpatchcore | 0.95 | 0.60 | 0.56 | 0.02 | 12.63 |
 | patchcore | 0.91 | 0.60 | 0.54 | 0.02 | 27.31 |
 | patchcore-320 | 0.92 | 0.61 | 0.52 | 0.01 | 32.70 |
@@ -35,6 +36,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | model | AUROC | lane@1% | held-out recovery | held-out escape | ms/img |
 |---|---|---|---|---|---|
 | rad | 0.69 | 0.17 | 0.16 | 0.01 | 49.66 |
+| superadd-vitb-n100 | 0.68 | 0.11 | 0.13 | 0.01 | 76.80 |
 | patchcore | 0.77 | 0.10 | 0.11 | 0.01 | 43.78 |
 | anomalydino | 0.77 | 0.08 | 0.08 | 0.01 | 53.96 |
 | dfm | 0.66 | 0.05 | 0.05 | 0.01 | 34.90 |
@@ -55,6 +57,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | drink_bottle | padim | 356/425 | 0.53 | 0.00 | 0.01 | 0.09 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 46.20 |
 | goodsad | drink_bottle | patchcore-n400 | 356/425 | 0.69 | 0.04 | 0.13 | 0.25 | 1.00 | 0.13 | 1.00 | 0.13 | 0.99 | 0.13 | 41.00 |
 | goodsad | drink_bottle | rad-n300 | 356/425 | 0.62 | 0.02 | 0.04 | 0.13 | 1.00 | 0.04 | 1.00 | 0.04 | 0.99 | 0.04 | 46.70 |
+| goodsad | drink_bottle | superadd-vitb-n100 | 356/425 | 0.66 | 0.01 | 0.06 | 0.16 | 1.00 | 0.06 | 1.00 | 0.06 | 0.99 | 0.05 | 74.30 |
 | goodsad | drink_bottle | winclip-n400 | 356/425 | 0.50 | 0.01 | 0.02 | 0.06 | 1.00 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 326.50 |
 | goodsad | drink_can | anomalydino-n400 | 147/146 | 0.85 | 0.01 | 0.07 | 0.22 | 0.97 | 0.06 | 1.00 | 0.07 | 0.99 | 0.07 | 56.30 |
 | goodsad | drink_can | dfkde-n400 | 147/146 | 0.69 | 0.01 | 0.02 | 0.05 | 0.97 | 0.01 | 1.00 | 0.02 | 0.99 | 0.02 | 40.30 |
@@ -63,6 +66,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | drink_can | padim | 147/146 | 0.54 | 0.01 | 0.01 | 0.07 | 0.97 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 45.10 |
 | goodsad | drink_can | patchcore-n400 | 147/146 | 0.93 | 0.01 | 0.03 | 0.56 | 0.97 | 0.03 | 1.00 | 0.03 | 0.99 | 0.03 | 47.40 |
 | goodsad | drink_can | rad-n300 | 147/146 | 0.71 | 0.31 | 0.31 | 0.39 | 0.97 | 0.29 | 1.00 | 0.31 | 0.99 | 0.30 | 51.20 |
+| goodsad | drink_can | superadd-vitb-n100 | 147/146 | 0.72 | 0.19 | 0.22 | 0.45 | 0.97 | 0.22 | 1.00 | 0.22 | 0.99 | 0.22 | 81.20 |
 | goodsad | drink_can | winclip-n400 | 147/146 | 0.51 | 0.02 | 0.02 | 0.06 | 0.97 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 344.40 |
 | goodsad | food_bottle | anomalydino-n400 | 243/361 | 0.79 | 0.04 | 0.08 | 0.24 | 1.00 | 0.08 | 1.00 | 0.08 | 1.00 | 0.08 | 53.30 |
 | goodsad | food_bottle | dfkde-n400 | 243/361 | 0.67 | 0.00 | 0.04 | 0.14 | 1.00 | 0.04 | 1.00 | 0.04 | 1.00 | 0.04 | 40.60 |
@@ -71,6 +75,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | food_bottle | padim | 243/361 | 0.71 | 0.05 | 0.12 | 0.19 | 1.00 | 0.12 | 1.00 | 0.12 | 1.00 | 0.12 | 43.90 |
 | goodsad | food_bottle | patchcore-n400 | 243/361 | 0.77 | 0.04 | 0.19 | 0.29 | 1.00 | 0.19 | 1.00 | 0.19 | 1.00 | 0.19 | 43.00 |
 | goodsad | food_bottle | rad-n300 | 243/361 | 0.73 | 0.10 | 0.12 | 0.28 | 1.00 | 0.12 | 1.00 | 0.12 | 1.00 | 0.12 | 47.80 |
+| goodsad | food_bottle | superadd-vitb-n100 | 243/361 | 0.70 | 0.02 | 0.09 | 0.15 | 1.00 | 0.09 | 1.00 | 0.09 | 1.00 | 0.09 | 74.70 |
 | goodsad | food_bottle | winclip-n400 | 243/361 | 0.52 | 0.00 | 0.02 | 0.05 | 1.00 | 0.02 | 1.00 | 0.02 | 1.00 | 0.02 | 330.30 |
 | goodsad | food_box | anomalydino-n400 | 146/251 | 0.81 | 0.05 | 0.08 | 0.34 | 1.00 | 0.08 | 1.00 | 0.08 | 0.98 | 0.06 | 55.70 |
 | goodsad | food_box | dfkde-n400 | 146/251 | 0.63 | 0.01 | 0.03 | 0.10 | 1.00 | 0.03 | 1.00 | 0.03 | 0.98 | 0.03 | 37.80 |
@@ -79,6 +84,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | food_box | padim | 146/251 | 0.61 | 0.03 | 0.04 | 0.08 | 1.00 | 0.04 | 1.00 | 0.04 | 0.98 | 0.03 | 46.30 |
 | goodsad | food_box | patchcore-n400 | 146/251 | 0.76 | 0.03 | 0.09 | 0.23 | 1.00 | 0.09 | 1.00 | 0.09 | 0.98 | 0.08 | 46.10 |
 | goodsad | food_box | rad-n300 | 146/251 | 0.69 | 0.12 | 0.13 | 0.33 | 1.00 | 0.13 | 1.00 | 0.13 | 0.98 | 0.11 | 50.40 |
+| goodsad | food_box | superadd-vitb-n100 | 146/251 | 0.67 | 0.11 | 0.14 | 0.25 | 1.00 | 0.14 | 1.00 | 0.14 | 0.98 | 0.13 | 77.60 |
 | goodsad | food_box | winclip-n400 | 146/251 | 0.50 | 0.00 | 0.00 | 0.05 | 1.00 | 0.00 | 1.00 | 0.00 | 0.98 | 0.00 | 338.80 |
 | goodsad | food_package | anomalydino-n400 | 253/230 | 0.71 | 0.05 | 0.10 | 0.20 | 1.00 | 0.10 | 0.99 | 0.10 | 1.00 | 0.10 | 52.80 |
 | goodsad | food_package | dfkde-n400 | 253/230 | 0.59 | 0.00 | 0.02 | 0.08 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 36.00 |
@@ -87,6 +93,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | food_package | padim | 253/230 | 0.58 | 0.02 | 0.02 | 0.08 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 44.10 |
 | goodsad | food_package | patchcore-n400 | 253/230 | 0.71 | 0.01 | 0.06 | 0.19 | 1.00 | 0.05 | 0.99 | 0.06 | 1.00 | 0.06 | 41.40 |
 | goodsad | food_package | rad-n300 | 253/230 | 0.71 | 0.11 | 0.26 | 0.38 | 1.00 | 0.25 | 0.99 | 0.26 | 1.00 | 0.26 | 52.20 |
+| goodsad | food_package | superadd-vitb-n100 | 253/230 | 0.66 | 0.03 | 0.06 | 0.30 | 1.00 | 0.06 | 0.99 | 0.06 | 1.00 | 0.06 | 76.20 |
 | goodsad | food_package | winclip-n400 | 253/230 | 0.49 | 0.00 | 0.00 | 0.02 | 1.00 | 0.00 | 0.99 | 0.00 | 1.00 | 0.00 | 334.00 |
 | mvtec | bottle | anomalydino | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 16.90 |
 | mvtec | bottle | dfkde | 20/63 | 0.96 | 0.35 | 0.35 | 0.80 | 0.95 | 0.37 | 0.80 | 0.31 | 0.05 | 0.00 | 9.60 |
@@ -143,6 +150,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | capsules | patchcore-r18 | 60/100 | 0.68 | 0.02 | 0.05 | 0.10 | 0.97 | 0.05 | 0.97 | 0.03 | 0.98 | 0.05 | 14.00 |
 | visa | capsules | rad-n300 | 60/100 | 0.97 | 0.67 | 0.67 | 0.88 | 0.97 | 0.67 | 0.97 | 0.67 | 0.98 | 0.66 | 50.60 |
 | visa | capsules | rd | 60/100 | 0.79 | 0.10 | 0.10 | 0.13 | 0.97 | 0.10 | 0.97 | 0.09 | 0.98 | 0.10 | 131.50 |
+| visa | capsules | superadd-vitb-n100 | 60/100 | 0.98 | 0.50 | 0.82 | 0.93 | 0.97 | 0.81 | 0.97 | 0.81 | 0.98 | 0.81 | 78.10 |
 | visa | capsules | winclip | 60/100 | 0.79 | 0.02 | 0.05 | 0.18 | 0.97 | 0.05 | 0.97 | 0.05 | 0.98 | 0.05 | 424.40 |
 | visa | cashew | anomalydino | 50/100 | 0.95 | 0.46 | 0.52 | 0.74 | 0.66 | 0.52 | 0.78 | 0.59 | 0.86 | 0.44 | 24.00 |
 | visa | cashew | dfkde | 50/100 | 0.86 | 0.08 | 0.08 | 0.38 | 0.66 | 0.12 | 0.78 | 0.08 | 0.86 | 0.07 | 8.70 |
@@ -157,6 +165,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | cashew | patchcore-r18 | 50/100 | 0.95 | 0.40 | 0.64 | 0.70 | 0.66 | 0.58 | 0.78 | 0.59 | 0.86 | 0.63 | 12.90 |
 | visa | cashew | rad-n300 | 50/100 | 0.98 | 0.66 | 0.68 | 0.96 | 0.66 | 0.64 | 0.78 | 0.69 | 0.86 | 0.65 | 53.30 |
 | visa | cashew | rd | 50/100 | 0.87 | 0.38 | 0.38 | 0.52 | 0.66 | 0.33 | 0.78 | 0.41 | 0.86 | 0.37 | 126.80 |
+| visa | cashew | superadd-vitb-n100 | 50/100 | 0.98 | 0.64 | 0.78 | 0.94 | 0.66 | 0.76 | 0.78 | 0.74 | 0.86 | 0.77 | 82.70 |
 | visa | cashew | winclip | 50/100 | 0.91 | 0.02 | 0.04 | 0.52 | 0.66 | 0.06 | 0.78 | 0.05 | 0.86 | 0.05 | 346.70 |
 | visa | chewinggum | anomalydino | 50/100 | 0.99 | 0.54 | 0.58 | 0.98 | 1.00 | 0.58 | 0.86 | 0.60 | 1.00 | 0.58 | 18.00 |
 | visa | chewinggum | dfkde | 50/100 | 0.72 | 0.10 | 0.20 | 0.20 | 1.00 | 0.20 | 0.86 | 0.19 | 1.00 | 0.20 | 8.70 |
@@ -168,6 +177,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | chewinggum | patchcore-r18 | 50/100 | 0.99 | 0.62 | 0.76 | 1.00 | 1.00 | 0.76 | 0.86 | 0.74 | 1.00 | 0.76 | 12.90 |
 | visa | chewinggum | rad-n300 | 50/100 | 0.99 | 0.50 | 0.58 | 0.98 | 1.00 | 0.58 | 0.86 | 0.53 | 1.00 | 0.58 | 53.30 |
 | visa | chewinggum | rd | 50/100 | 0.99 | 0.44 | 0.72 | 0.98 | 1.00 | 0.72 | 0.86 | 0.70 | 1.00 | 0.72 | 125.70 |
+| visa | chewinggum | superadd-vitb-n100 | 50/100 | 0.98 | 0.44 | 0.58 | 0.90 | 1.00 | 0.58 | 0.86 | 0.56 | 1.00 | 0.58 | 82.70 |
 | visa | chewinggum | winclip | 50/100 | 0.96 | 0.12 | 0.16 | 0.62 | 1.00 | 0.16 | 0.86 | 0.19 | 1.00 | 0.16 | 337.30 |
 | visa | fryum | anomalydino | 50/100 | 0.94 | 0.18 | 0.24 | 0.68 | 0.88 | 0.25 | 0.98 | 0.24 | 0.68 | 0.15 | 16.70 |
 | visa | fryum | dfkde | 50/100 | 0.83 | 0.04 | 0.24 | 0.36 | 0.88 | 0.20 | 0.98 | 0.24 | 0.68 | 0.24 | 8.70 |
@@ -182,6 +192,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | fryum | patchcore-r18 | 50/100 | 0.91 | 0.12 | 0.32 | 0.44 | 0.88 | 0.32 | 0.98 | 0.33 | 0.68 | 0.32 | 13.20 |
 | visa | fryum | rad-n300 | 50/100 | 1.00 | 0.74 | 0.98 | 1.00 | 0.88 | 0.98 | 0.98 | 0.98 | 0.68 | 0.97 | 51.30 |
 | visa | fryum | rd | 50/100 | 0.88 | 0.20 | 0.24 | 0.52 | 0.88 | 0.27 | 0.98 | 0.24 | 0.68 | 0.21 | 124.50 |
+| visa | fryum | superadd-vitb-n100 | 50/100 | 0.98 | 0.56 | 0.84 | 0.94 | 0.88 | 0.82 | 0.98 | 0.84 | 0.68 | 0.79 | 79.30 |
 | visa | fryum | winclip | 50/100 | 0.73 | 0.00 | 0.02 | 0.10 | 0.88 | 0.02 | 0.98 | 0.02 | 0.68 | 0.03 | 331.30 |
 | visa | macaroni1 | anomalydino-n450 | 100/100 | 0.83 | 0.03 | 0.17 | 0.33 | 0.89 | 0.16 | 0.99 | 0.17 | 0.90 | 0.14 | 15.00 |
 | visa | macaroni1 | dfkde | 100/100 | 0.63 | 0.02 | 0.03 | 0.13 | 0.89 | 0.03 | 0.99 | 0.03 | 0.90 | 0.03 | 7.50 |
@@ -196,6 +207,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | macaroni1 | patchcore-r18 | 100/100 | 0.89 | 0.27 | 0.53 | 0.61 | 0.89 | 0.54 | 0.99 | 0.54 | 0.90 | 0.51 | 17.40 |
 | visa | macaroni1 | rad-n300 | 100/100 | 0.94 | 0.57 | 0.58 | 0.78 | 0.89 | 0.56 | 0.99 | 0.58 | 0.90 | 0.58 | 51.00 |
 | visa | macaroni1 | rd | 100/100 | 0.89 | 0.31 | 0.48 | 0.64 | 0.89 | 0.48 | 0.99 | 0.48 | 0.90 | 0.47 | 123.10 |
+| visa | macaroni1 | superadd-vitb-n100 | 100/100 | 0.90 | 0.22 | 0.44 | 0.65 | 0.89 | 0.45 | 0.99 | 0.43 | 0.90 | 0.43 | 79.00 |
 | visa | macaroni1 | winclip | 100/100 | 0.79 | 0.10 | 0.15 | 0.34 | 0.89 | 0.16 | 0.99 | 0.15 | 0.90 | 0.14 | 335.50 |
 | visa | macaroni2 | anomalydino-n450 | 100/100 | 0.74 | 0.07 | 0.11 | 0.24 | 0.96 | 0.10 | 0.96 | 0.11 | 0.93 | 0.11 | 15.50 |
 | visa | macaroni2 | dfkde | 100/100 | 0.47 | 0.01 | 0.01 | 0.03 | 0.96 | 0.01 | 0.96 | 0.00 | 0.93 | 0.01 | 7.50 |
@@ -210,6 +222,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | macaroni2 | patchcore-r18 | 100/100 | 0.72 | 0.04 | 0.23 | 0.31 | 0.96 | 0.22 | 0.96 | 0.22 | 0.93 | 0.23 | 18.00 |
 | visa | macaroni2 | rad-n300 | 100/100 | 0.79 | 0.44 | 0.48 | 0.58 | 0.96 | 0.46 | 0.96 | 0.48 | 0.93 | 0.45 | 47.00 |
 | visa | macaroni2 | rd | 100/100 | 0.64 | 0.00 | 0.02 | 0.14 | 0.96 | 0.02 | 0.96 | 0.02 | 0.93 | 0.02 | 125.40 |
+| visa | macaroni2 | superadd-vitb-n100 | 100/100 | 0.82 | 0.16 | 0.21 | 0.42 | 0.96 | 0.22 | 0.96 | 0.22 | 0.93 | 0.20 | 79.00 |
 | visa | macaroni2 | winclip | 100/100 | 0.67 | 0.07 | 0.08 | 0.16 | 0.96 | 0.08 | 0.96 | 0.08 | 0.93 | 0.09 | 335.00 |
 | visa | pipe_fryum | anomalydino | 50/100 | 0.99 | 0.38 | 0.98 | 1.00 | 1.00 | 0.98 | 1.00 | 0.98 | 0.74 | 1.00 | 17.30 |
 | visa | pipe_fryum | dfkde | 50/100 | 0.73 | 0.04 | 0.08 | 0.10 | 1.00 | 0.08 | 1.00 | 0.08 | 0.74 | 0.08 | 8.70 |
@@ -221,6 +234,7 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | pipe_fryum | patchcore-r18 | 50/100 | 0.98 | 0.34 | 0.62 | 0.96 | 1.00 | 0.62 | 1.00 | 0.62 | 0.74 | 0.59 | 12.60 |
 | visa | pipe_fryum | rad-n300 | 50/100 | 1.00 | 0.90 | 0.94 | 1.00 | 1.00 | 0.94 | 1.00 | 0.94 | 0.74 | 0.92 | 51.30 |
 | visa | pipe_fryum | rd | 50/100 | 0.99 | 0.86 | 0.86 | 0.96 | 1.00 | 0.86 | 1.00 | 0.86 | 0.74 | 0.84 | 133.30 |
+| visa | pipe_fryum | superadd-vitb-n100 | 50/100 | 0.99 | 0.84 | 0.86 | 0.94 | 1.00 | 0.86 | 1.00 | 0.86 | 0.74 | 0.81 | 78.70 |
 | visa | pipe_fryum | winclip | 50/100 | 0.68 | 0.02 | 0.04 | 0.14 | 1.00 | 0.04 | 1.00 | 0.04 | 0.74 | 0.05 | 336.70 |
 
 ## Calibrated band on the lane (held-out folds, escape target 1%)
@@ -248,6 +262,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | drink_bottle | rad-n300 | aligned | 356 | 0.04 | 0.01 | 0.95 | 0.47 | 0.01 |
 | goodsad | drink_bottle | rad-n300 | pca | 356 | 0.04 | 0.01 | 0.95 | 0.47 | 0.01 |
 | goodsad | drink_bottle | rad-n300 | tinypadim | 353 | 0.04 | 0.01 | 0.95 | 0.47 | 0.01 |
+| goodsad | drink_bottle | superadd-vitb-n100 | aligned | 356 | 0.06 | 0.01 | 0.94 | 0.49 | 0.01 |
+| goodsad | drink_bottle | superadd-vitb-n100 | pca | 356 | 0.06 | 0.01 | 0.94 | 0.49 | 0.01 |
+| goodsad | drink_bottle | superadd-vitb-n100 | tinypadim | 353 | 0.06 | 0.01 | 0.94 | 0.60 | 0.01 |
 | goodsad | drink_bottle | winclip-n400 | aligned | 356 | 0.03 | 0.01 | 0.96 | 0.46 | 0.01 |
 | goodsad | drink_bottle | winclip-n400 | pca | 356 | 0.03 | 0.01 | 0.96 | 0.46 | 0.01 |
 | goodsad | drink_bottle | winclip-n400 | tinypadim | 353 | 0.03 | 0.01 | 0.96 | 0.40 | 0.01 |
@@ -272,6 +289,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | drink_can | rad-n300 | aligned | 143 | 0.29 | 0.01 | 0.84 | 0.17 | 0.03 |
 | goodsad | drink_can | rad-n300 | pca | 147 | 0.31 | 0.01 | 0.82 | 0.11 | 0.03 |
 | goodsad | drink_can | rad-n300 | tinypadim | 145 | 0.30 | 0.01 | 0.82 | 0.11 | 0.03 |
+| goodsad | drink_can | superadd-vitb-n100 | aligned | 143 | 0.25 | 0.01 | 0.85 | 0.50 | 0.03 |
+| goodsad | drink_can | superadd-vitb-n100 | pca | 147 | 0.25 | 0.01 | 0.84 | 0.42 | 0.03 |
+| goodsad | drink_can | superadd-vitb-n100 | tinypadim | 145 | 0.25 | 0.01 | 0.85 | 0.50 | 0.03 |
 | goodsad | drink_can | winclip-n400 | aligned | 143 | 0.02 | 0.01 | 0.96 | 0.62 | 0.03 |
 | goodsad | drink_can | winclip-n400 | pca | 147 | 0.02 | 0.01 | 0.96 | 0.25 | 0.03 |
 | goodsad | drink_can | winclip-n400 | tinypadim | 145 | 0.02 | 0.01 | 0.96 | 0.50 | 0.03 |
@@ -296,6 +316,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | food_bottle | rad-n300 | aligned | 243 | 0.13 | 0.01 | 0.86 | 0.92 | 0.01 |
 | goodsad | food_bottle | rad-n300 | pca | 243 | 0.13 | 0.01 | 0.86 | 0.92 | 0.01 |
 | goodsad | food_bottle | rad-n300 | tinypadim | 242 | 0.12 | 0.01 | 0.87 | 0.95 | 0.01 |
+| goodsad | food_bottle | superadd-vitb-n100 | aligned | 243 | 0.09 | 0.01 | 0.94 | 0.58 | 0.01 |
+| goodsad | food_bottle | superadd-vitb-n100 | pca | 243 | 0.09 | 0.01 | 0.94 | 0.58 | 0.01 |
+| goodsad | food_bottle | superadd-vitb-n100 | tinypadim | 242 | 0.09 | 0.01 | 0.94 | 0.46 | 0.01 |
 | goodsad | food_bottle | winclip-n400 | aligned | 243 | 0.02 | 0.01 | 0.96 | 0.82 | 0.01 |
 | goodsad | food_bottle | winclip-n400 | pca | 243 | 0.02 | 0.01 | 0.96 | 0.82 | 0.01 |
 | goodsad | food_bottle | winclip-n400 | tinypadim | 242 | 0.02 | 0.01 | 0.95 | 0.68 | 0.01 |
@@ -320,6 +343,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | food_box | rad-n300 | aligned | 146 | 0.14 | 0.02 | 0.91 | 0.73 | 0.01 |
 | goodsad | food_box | rad-n300 | pca | 146 | 0.14 | 0.02 | 0.91 | 0.73 | 0.01 |
 | goodsad | food_box | rad-n300 | tinypadim | 143 | 0.12 | 0.02 | 0.92 | 0.71 | 0.01 |
+| goodsad | food_box | superadd-vitb-n100 | aligned | 146 | 0.17 | 0.02 | 0.90 | 0.78 | 0.01 |
+| goodsad | food_box | superadd-vitb-n100 | pca | 146 | 0.17 | 0.02 | 0.90 | 0.78 | 0.01 |
+| goodsad | food_box | superadd-vitb-n100 | tinypadim | 143 | 0.18 | 0.02 | 0.90 | 0.50 | 0.01 |
 | goodsad | food_box | winclip-n400 | aligned | 146 | 0.01 | 0.02 | 0.96 | 0.77 | 0.01 |
 | goodsad | food_box | winclip-n400 | pca | 146 | 0.01 | 0.02 | 0.96 | 0.77 | 0.01 |
 | goodsad | food_box | winclip-n400 | tinypadim | 143 | 0.00 | 0.02 | 0.96 | 0.79 | 0.01 |
@@ -344,6 +370,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | goodsad | food_package | rad-n300 | aligned | 252 | 0.22 | 0.01 | 0.84 | 0.70 | 0.02 |
 | goodsad | food_package | rad-n300 | pca | 250 | 0.22 | 0.01 | 0.84 | 0.80 | 0.02 |
 | goodsad | food_package | rad-n300 | tinypadim | 253 | 0.22 | 0.01 | 0.85 | 0.75 | 0.02 |
+| goodsad | food_package | superadd-vitb-n100 | aligned | 252 | 0.06 | 0.01 | 0.93 | 0.50 | 0.02 |
+| goodsad | food_package | superadd-vitb-n100 | pca | 250 | 0.05 | 0.01 | 0.93 | 0.50 | 0.02 |
+| goodsad | food_package | superadd-vitb-n100 | tinypadim | 253 | 0.05 | 0.01 | 0.93 | 0.50 | 0.02 |
 | goodsad | food_package | winclip-n400 | aligned | 252 | 0.00 | 0.01 | 0.97 | 0.56 | 0.02 |
 | goodsad | food_package | winclip-n400 | pca | 250 | 0.00 | 0.01 | 0.97 | 0.61 | 0.02 |
 | goodsad | food_package | winclip-n400 | tinypadim | 253 | 0.00 | 0.01 | 0.97 | 0.59 | 0.02 |
@@ -497,6 +526,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | capsules | rd | aligned | 58 | 0.10 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | capsules | rd | pca | 58 | 0.08 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | capsules | rd | tinypadim | 59 | 0.10 | 0.01 | 0.67 | 0.96 | 0.04 |
+| visa | capsules | superadd-vitb-n100 | aligned | 58 | 0.52 | 0.01 | 0.29 | 0.97 | 0.04 |
+| visa | capsules | superadd-vitb-n100 | pca | 58 | 0.54 | 0.01 | 0.29 | 0.98 | 0.04 |
+| visa | capsules | superadd-vitb-n100 | tinypadim | 59 | 0.56 | 0.01 | 0.24 | 0.96 | 0.04 |
 | visa | capsules | winclip | aligned | 58 | 0.02 | 0.02 | 0.76 | 0.96 | 0.04 |
 | visa | capsules | winclip | pca | 58 | 0.02 | 0.02 | 0.76 | 0.94 | 0.04 |
 | visa | capsules | winclip | tinypadim | 59 | 0.02 | 0.02 | 0.77 | 0.95 | 0.04 |
@@ -539,6 +571,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | cashew | rd | aligned | 33 | 0.34 | 0.01 | 0.50 | 0.97 | 0.04 |
 | visa | cashew | rd | pca | 39 | 0.41 | 0.01 | 0.50 | 0.97 | 0.04 |
 | visa | cashew | rd | tinypadim | 43 | 0.36 | 0.01 | 0.49 | 0.96 | 0.04 |
+| visa | cashew | superadd-vitb-n100 | aligned | 33 | 0.67 | 0.01 | 0.17 | 0.99 | 0.04 |
+| visa | cashew | superadd-vitb-n100 | pca | 39 | 0.61 | 0.01 | 0.17 | 0.98 | 0.04 |
+| visa | cashew | superadd-vitb-n100 | tinypadim | 43 | 0.65 | 0.01 | 0.20 | 0.98 | 0.04 |
 | visa | cashew | winclip | aligned | 33 | 0.06 | 0.02 | 0.46 | 0.99 | 0.04 |
 | visa | cashew | winclip | pca | 39 | 0.07 | 0.02 | 0.46 | 0.97 | 0.04 |
 | visa | cashew | winclip | tinypadim | 43 | 0.09 | 0.02 | 0.49 | 0.99 | 0.04 |
@@ -572,6 +607,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | chewinggum | rd | aligned | 50 | 0.48 | 0.01 | 0.19 | 0.99 | 0.04 |
 | visa | chewinggum | rd | pca | 43 | 0.44 | 0.01 | 0.18 | 0.98 | 0.04 |
 | visa | chewinggum | rd | tinypadim | 50 | 0.48 | 0.01 | 0.19 | 0.99 | 0.04 |
+| visa | chewinggum | superadd-vitb-n100 | aligned | 50 | 0.46 | 0.01 | 0.23 | 0.97 | 0.04 |
+| visa | chewinggum | superadd-vitb-n100 | pca | 43 | 0.43 | 0.01 | 0.22 | 0.99 | 0.04 |
+| visa | chewinggum | superadd-vitb-n100 | tinypadim | 50 | 0.46 | 0.01 | 0.23 | 0.97 | 0.04 |
 | visa | chewinggum | winclip | aligned | 50 | 0.12 | 0.01 | 0.35 | 0.97 | 0.04 |
 | visa | chewinggum | winclip | pca | 43 | 0.16 | 0.01 | 0.33 | 0.98 | 0.04 |
 | visa | chewinggum | winclip | tinypadim | 50 | 0.12 | 0.01 | 0.35 | 0.97 | 0.04 |
@@ -614,6 +652,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | fryum | rd | aligned | 44 | 0.23 | 0.01 | 0.51 | 0.97 | 0.04 |
 | visa | fryum | rd | pca | 49 | 0.22 | 0.01 | 0.52 | 0.98 | 0.04 |
 | visa | fryum | rd | tinypadim | 34 | 0.20 | 0.01 | 0.49 | 0.99 | 0.04 |
+| visa | fryum | superadd-vitb-n100 | aligned | 44 | 0.62 | 0.01 | 0.29 | 0.97 | 0.04 |
+| visa | fryum | superadd-vitb-n100 | pca | 49 | 0.66 | 0.01 | 0.27 | 0.98 | 0.04 |
+| visa | fryum | superadd-vitb-n100 | tinypadim | 34 | 0.54 | 0.01 | 0.31 | 0.98 | 0.04 |
 | visa | fryum | winclip | aligned | 44 | 0.00 | 0.01 | 0.74 | 0.95 | 0.04 |
 | visa | fryum | winclip | pca | 49 | 0.00 | 0.01 | 0.76 | 0.95 | 0.04 |
 | visa | fryum | winclip | tinypadim | 34 | 0.00 | 0.01 | 0.73 | 0.95 | 0.04 |
@@ -656,6 +697,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | macaroni1 | rd | aligned | 89 | 0.32 | 0.01 | 0.60 | 0.96 | 0.04 |
 | visa | macaroni1 | rd | pca | 99 | 0.35 | 0.01 | 0.59 | 0.95 | 0.04 |
 | visa | macaroni1 | rd | tinypadim | 90 | 0.30 | 0.01 | 0.61 | 0.92 | 0.04 |
+| visa | macaroni1 | superadd-vitb-n100 | aligned | 89 | 0.27 | 0.01 | 0.70 | 0.93 | 0.04 |
+| visa | macaroni1 | superadd-vitb-n100 | pca | 99 | 0.24 | 0.01 | 0.70 | 0.94 | 0.04 |
+| visa | macaroni1 | superadd-vitb-n100 | tinypadim | 90 | 0.24 | 0.01 | 0.72 | 0.95 | 0.04 |
 | visa | macaroni1 | winclip | aligned | 89 | 0.10 | 0.01 | 0.81 | 0.92 | 0.04 |
 | visa | macaroni1 | winclip | pca | 99 | 0.10 | 0.01 | 0.82 | 0.89 | 0.04 |
 | visa | macaroni1 | winclip | tinypadim | 90 | 0.10 | 0.01 | 0.82 | 0.92 | 0.04 |
@@ -698,6 +742,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | macaroni2 | rd | aligned | 96 | 0.01 | 0.01 | 0.92 | 0.82 | 0.04 |
 | visa | macaroni2 | rd | pca | 96 | 0.01 | 0.01 | 0.92 | 0.82 | 0.04 |
 | visa | macaroni2 | rd | tinypadim | 93 | 0.01 | 0.01 | 0.92 | 0.69 | 0.04 |
+| visa | macaroni2 | superadd-vitb-n100 | aligned | 96 | 0.18 | 0.01 | 0.82 | 0.91 | 0.04 |
+| visa | macaroni2 | superadd-vitb-n100 | pca | 96 | 0.18 | 0.01 | 0.83 | 0.92 | 0.04 |
+| visa | macaroni2 | superadd-vitb-n100 | tinypadim | 93 | 0.17 | 0.01 | 0.81 | 0.85 | 0.04 |
 | visa | macaroni2 | winclip | aligned | 96 | 0.07 | 0.01 | 0.88 | 0.88 | 0.04 |
 | visa | macaroni2 | winclip | pca | 96 | 0.07 | 0.01 | 0.87 | 0.86 | 0.04 |
 | visa | macaroni2 | winclip | tinypadim | 93 | 0.09 | 0.01 | 0.89 | 0.86 | 0.04 |
@@ -731,6 +778,9 @@ Only models that ran on every category of the group. Held-out = the calibrated b
 | visa | pipe_fryum | rd | aligned | 50 | 0.86 | 0.01 | 0.05 | 0.96 | 0.04 |
 | visa | pipe_fryum | rd | pca | 50 | 0.86 | 0.01 | 0.05 | 0.96 | 0.04 |
 | visa | pipe_fryum | rd | tinypadim | 37 | 0.84 | 0.01 | 0.07 | 0.99 | 0.04 |
+| visa | pipe_fryum | superadd-vitb-n100 | aligned | 50 | 0.84 | 0.01 | 0.10 | 0.98 | 0.04 |
+| visa | pipe_fryum | superadd-vitb-n100 | pca | 50 | 0.84 | 0.01 | 0.10 | 0.98 | 0.04 |
+| visa | pipe_fryum | superadd-vitb-n100 | tinypadim | 37 | 0.79 | 0.01 | 0.12 | 0.99 | 0.04 |
 | visa | pipe_fryum | winclip | aligned | 50 | 0.04 | 0.02 | 0.82 | 0.93 | 0.04 |
 | visa | pipe_fryum | winclip | pca | 50 | 0.04 | 0.02 | 0.82 | 0.93 | 0.04 |
 | visa | pipe_fryum | winclip | tinypadim | 37 | 0.03 | 0.02 | 0.81 | 0.97 | 0.04 |
@@ -958,7 +1008,21 @@ n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 | macaroni1 | rd | 89 | 0.32 | 0.01 | 0.11 | 0.00 | 0.14 | 0.72 |
 | macaroni2 | rd | 96 | 0.01 | 0.01 | 0.07 | 0.04 | 0.02 | 0.54 |
 | pipe_fryum | rd | 50 | 0.86 | 0.01 | 0.54 | 0.01 | 0.28 | 0.93 |
+| drink_bottle | superadd-vitb-n100 | 356 | 0.06 | 0.01 | 0.04 | 0.00 | 0.03 | 0.58 |
+| drink_can | superadd-vitb-n100 | 143 | 0.25 | 0.01 | 0.12 | 0.01 | 0.05 | 0.64 |
+| food_bottle | superadd-vitb-n100 | 243 | 0.09 | 0.01 | 0.05 | 0.00 | 0.04 | 0.66 |
+| food_box | superadd-vitb-n100 | 146 | 0.17 | 0.02 | 0.09 | 0.02 | 0.04 | 0.61 |
+| food_package | superadd-vitb-n100 | 252 | 0.06 | 0.01 | 0.05 | 0.00 | 0.02 | 0.56 |
 | bottle | superadd-vitb-n100 | 19 | 1.00 | 0.02 | 1.00 | 0.02 | 0.44 | 1.00 |
+| hazelnut | superadd-vitb-n100 | 36 | 1.00 | 0.01 | 0.97 | 0.00 | 0.32 | 0.98 |
+| candle | superadd-vitb-n100 | 93 | 0.51 | 0.01 | 0.49 | 0.01 | 0.30 | 0.87 |
+| capsules | superadd-vitb-n100 | 58 | 0.52 | 0.01 | 0.37 | 0.01 | 0.21 | 0.89 |
+| cashew | superadd-vitb-n100 | 33 | 0.67 | 0.01 | 0.35 | 0.01 | 0.17 | 0.93 |
+| chewinggum | superadd-vitb-n100 | 50 | 0.46 | 0.01 | 0.52 | 0.01 | 0.37 | 0.90 |
+| fryum | superadd-vitb-n100 | 44 | 0.62 | 0.01 | 0.62 | 0.02 | 0.26 | 0.91 |
+| macaroni1 | superadd-vitb-n100 | 89 | 0.27 | 0.01 | 0.08 | 0.00 | 0.17 | 0.76 |
+| macaroni2 | superadd-vitb-n100 | 96 | 0.18 | 0.01 | 0.08 | 0.00 | 0.08 | 0.71 |
+| pipe_fryum | superadd-vitb-n100 | 50 | 0.84 | 0.01 | 0.52 | 0.00 | 0.30 | 0.93 |
 | bottle | winclip | 19 | 0.95 | 0.03 | 0.50 | 0.06 | 0.30 | 0.91 |
 | hazelnut | winclip | 36 | 0.30 | 0.01 | 0.39 | 0.03 | 0.30 | 0.76 |
 | candle | winclip | 93 | 0.40 | 0.01 | 0.36 | 0.00 | 0.38 | 0.84 |

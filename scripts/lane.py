@@ -87,6 +87,50 @@ def frr_rows(tag: str, df: pd.DataFrame, standins: dict, escape: float) -> list[
     return rows
 
 
+TYPE_MODELS = ("patchcore", "patchcore-n400", "rad", "rad-n300")   # the reference run and the best candidate
+
+
+def defect_type_rows(scores: dict, standins: dict) -> list[dict]:
+    """Per defect type on the aligned lane: how well it separates from goods, how many of it slip through at the
+    1% and 5% thresholds (set on all lane defects, like the quick-numbers table), and the share of goods that
+    score above its weakest example, i.e. what catching every one of this type at zero escape would cost."""
+    rows = []
+    for tag, df in scores.items():
+        ds, cat, model = split_tag(tag)
+        if model not in TYPE_MODELS:
+            continue
+        key = f"{ds}_{cat}_aligned"
+        lane = df.loc[df.index.intersection(build_lane(standins[key])[0])] if key in standins else df
+        y, s = lane.label.values.astype(int), lane.score.values
+        good, bad = s[y == 0], s[y == 1]
+        if len(good) == 0 or len(bad) == 0:
+            continue
+        thr = {e: t_recover(bad, e) for e in (0.01, 0.05)}
+        types = pd.Series([Path(i).parent.name for i in lane.index], index=lane.index)
+        for t, g in lane[lane.label == 1].groupby(types[lane.label == 1]):
+            sc = g.score.values
+            rows.append({"dataset": ds, "category": cat, "model": model, "defect_type": t, "n": len(sc),
+                         "auroc_vs_good": roc_auc_score(np.r_[np.zeros(len(good)), np.ones(len(sc))], np.r_[good, sc]),
+                         "escapes@0.01": int((sc < thr[0.01]).sum()), "escapes@0.05": int((sc < thr[0.05]).sum()),
+                         "goods_above_weakest": float((good >= sc.min()).mean())})
+    return rows
+
+
+def defect_type_section(dt: pd.DataFrame) -> list[str]:
+    if dt.empty:
+        return []
+    lines = ["", "## Escapes by defect type (aligned lane, PatchCore and Rad)", "",
+             "n: defects of this type in the lane. AUROC: this type against the lane goods. escapes@e: how many of",
+             "this type sit below the threshold that lets e of all defects through. goods above weakest: share of",
+             "goods that score higher than the easiest-looking defect of this type, the review load for catching all of it.",
+             "", "| dataset | category | model | defect type | n | AUROC | escapes@1% | escapes@5% | goods above weakest |",
+             "|---|---|---|---|---|---|---|---|---|"]
+    for _, r in dt.iterrows():
+        lines.append(f"| {r.dataset} | {r.category} | {r.model} | {r.defect_type} | {r.n} | {fmt(r.auroc_vs_good)} | "
+                     f"{r['escapes@0.01']} | {r['escapes@0.05']} | {fmt(r.goods_above_weakest)} |")
+    return lines
+
+
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--results", default="results")
@@ -136,7 +180,11 @@ def main() -> None:
     out.to_csv(res / "lane_summary.csv", index=False)
     frr_df = pd.DataFrame(frr_list).sort_values(["dataset", "category", "model", "standin", "frr"])
     frr_df.to_csv(res / "lane_frr.csv", index=False)
-    write_docs(out, frr_df, Path(a.docs), a.escape, res / "classify_summary.csv")
+    dt = pd.DataFrame(defect_type_rows(scores, standins))
+    if not dt.empty:
+        dt = dt.sort_values(["dataset", "category", "model", "defect_type"])
+    dt.to_csv(res / "defect_types.csv", index=False)
+    write_docs(out, frr_df, Path(a.docs), a.escape, res / "classify_summary.csv", dt)
     make_figures(out, frr_df, scores, standins, res / "figures")
     print(out.to_string(index=False, float_format=lambda v: f"{v:.3f}"))
 
@@ -145,7 +193,8 @@ def fmt(v) -> str:
     return "" if v is None or (isinstance(v, float) and np.isnan(v)) else (f"{v:.2f}" if isinstance(v, float) else str(v))
 
 
-def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float, classify_csv: Path) -> None:
+def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float, classify_csv: Path,
+               defect_df: pd.DataFrame) -> None:
     lines = [
         "# Results",
         "",
@@ -195,6 +244,13 @@ def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float
         "Figures: `docs/figures/auroc_vs_recovery.png`, `docs/figures/recovery_curves.png`, `docs/figures/recovery_vs_frr.png`.",
     ]
     lines += frr_section(frr_df, escape)
+    lines += defect_type_section(defect_df)
+    overlays = sorted((path.parent / "figures" / "overlays").glob("*.png"))
+    if overlays:
+        lines += ["", "## Review band overlays", "",
+                  "Items between the two thresholds, the ones a technician would see: image, heatmap, closest good",
+                  "training image, and every lane item's score against the thresholds. From `scripts/overlays.py`.", ""]
+        lines += [f"- `docs/figures/overlays/{f.name}`" for f in overlays]
     lines += classifier_section(classify_csv, escape)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines) + "\n")

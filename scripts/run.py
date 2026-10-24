@@ -138,7 +138,9 @@ def main() -> None:
     p.add_argument("model", choices=MODELS)
     p.add_argument("--root", default="data")
     p.add_argument("--out", default="results")
-    p.add_argument("--epochs", type=int, default=None, help="cap training epochs (rd)")
+    p.add_argument("--epochs", type=int, default=None, help="cap training epochs (trained models)")
+    p.add_argument("--max-minutes", type=float, default=None, help="stop training after this long, then predict")
+    p.add_argument("--save-maps", action="store_true", help="keep each test image's anomaly map at 64 px (results/maps)")
     p.add_argument("--size", type=int, default=256, help="input resolution")
     p.add_argument("--batch", type=int, default=16)
     p.add_argument("--backbone", default=None)
@@ -157,14 +159,19 @@ def main() -> None:
     n_train = subsample_train(dm, a.train_n)
     model = build_model(a)
     scratch = tempfile.mkdtemp(prefix="anomalib_")  # anomalib writes a checkpoint per run, we never load it
-    engine = Engine(accelerator=a.accelerator, devices=1, logger=False, default_root_dir=scratch,
-                    **({"max_epochs": a.epochs} if a.epochs else {}))
+    limits = {}
+    if a.epochs:
+        limits["max_epochs"] = a.epochs
+    if a.max_minutes:  # Lightning stops the fit loop at the budget and the model still predicts
+        limits["max_time"] = {"minutes": a.max_minutes}
+    engine = Engine(accelerator=a.accelerator, devices=1, logger=False, default_root_dir=scratch, **limits)
 
     res = {"dataset": a.dataset, "category": a.category, "model": variant_tag(a), "size": a.size,
            "backbone": a.backbone or DEFAULT_BACKBONE.get(a.model, "default"), "coreset": a.coreset,
            "epochs": a.epochs, "n_train": n_train, "device": device_name(a.accelerator)}
     with timed(res, "fit_s"):
         engine.fit(model=model, datamodule=dm)       # learns "normal" from goods only
+    res["epochs_done"] = int(engine.trainer.current_epoch)
     with timed(res, "predict_s"):
         preds = engine.predict(model=model, datamodule=dm)  # raw score + heatmap per test image
 
@@ -174,6 +181,12 @@ def main() -> None:
     stats = np.concatenate([anomaly_map_stats(b.anomaly_map) if b.anomaly_map is not None
                             else np.full((len(b.pred_score), len(MAP_STATS)), np.nan) for b in preds])  # dfkde has no map
     shutil.rmtree(scratch, ignore_errors=True)
+    if a.save_maps:
+        maps = torch.cat([torch.nn.functional.adaptive_avg_pool2d(b.anomaly_map.detach().float().cpu().reshape(
+            len(b.pred_score), 1, *b.anomaly_map.shape[-2:]), 64)[:, 0] for b in preds if b.anomaly_map is not None])
+        map_file = Path(a.out) / "maps" / f"{a.dataset}_{a.category}_{variant_tag(a)}.npz"
+        map_file.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(map_file, maps=maps.numpy().astype(np.float16), paths=np.array(paths))
 
     tag = f"{a.dataset}_{a.category}_{res['model']}"
     score_file = Path(a.out) / "scores" / f"{tag}.csv"

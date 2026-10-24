@@ -24,3 +24,7 @@ Thumbs.db
 # local tooling
 .claude/
 .env
+
+# anomalib side downloads (imagenette, pretrained weights)
+datasets/
+pre_trained/

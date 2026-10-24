@@ -39,10 +39,10 @@ separates the cost of fewer training images from the effect of resolution.
   For a line this means: collect several hundred goods before trusting the thresholds.
 - **Backbone is a per-category choice**: resnet18 doubles macaroni1 (0.24 -> 0.53) and macaroni2
   (0.11 -> 0.23) at half the latency (14 vs 27 ms/img), but loses on pipe_fryum (0.94 -> 0.62),
-  chewinggum and hazelnut. There is no single best feature extractor; the per-line pilot picks it.
+  chewinggum and hazelnut. There is no single best feature extractor. The per-line pilot picks it.
 - **Memory**: anomalib keeps every training patch on the GPU and grows the bank with torch.cat, so peak
   VRAM is about twice the bank (train imgs x patches x 1536 x 4 B). 384 px with 300 images already
-  exceeds 9.5 GiB; keep resolution x images in budget or subsample patches, not images.
-- Tiers hold: rigid objects (bottle, hazelnut) are solved at any setting; textured single items land
-  0.4-0.9 and move with resolution and data; multi-instance trays need a different approach
+  exceeds 9.5 GiB. Keep resolution x images in budget or subsample patches, not images.
+- Tiers hold: rigid objects (bottle, hazelnut) are solved at any setting. Textured single items land
+  0.4-0.9 and move with resolution and data. Multi-instance trays need a different approach
   (per-instance crops or detection first), not a bigger PatchCore.

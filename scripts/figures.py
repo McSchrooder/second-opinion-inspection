@@ -7,6 +7,7 @@ usage: python scripts/figures.py [--results results] [--out docs/figures]
   speed_vs_recovery.png  mean lane recovery vs inference latency per model
 """
 import argparse
+import json
 from pathlib import Path
 
 import matplotlib
@@ -101,7 +102,7 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
     ax.set_xticklabels(WEAK, fontsize=8, color=INK2)
     ax.set_ylim(0, 1)
     ax.set_ylabel("recovery at 1% escape (lane)", fontsize=8, color=INK2)
-    ax.set_title("PatchCore: resolution helps some items, fewer training images hurts others", fontsize=10, color=INK, loc="left")
+    ax.set_title("PatchCore recovery by input resolution and training-set size, lane, 1% escape", fontsize=10, color=INK, loc="left")
     style(ax)
     ax.legend(fontsize=7, frameon=False, ncol=3, loc="upper right")
     fig.tight_layout()
@@ -109,23 +110,26 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
     plt.close(fig)
 
 
-def speed(df: pd.DataFrame, out: Path) -> None:
-    # only models that ran on all 10 categories, so the means are comparable
+def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
+    """Mean lane recovery vs latency. GPU runs filled, CPU runs (tag suffix -cpu) hollow."""
     names = dict(MODELS)
-    g = df[df.model.isin(names)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean")).reset_index()
-    offsets = {"patchcore": (6, -10), "patchcore-320-n300": (6, 4), "patchcore-r18": (6, -11)}
-    fig, ax = plt.subplots(figsize=(6.4, 4.2))
-    for i, r in g.iterrows():
-        ax.scatter(r.ms, r.rec, s=48, color=SERIES[0] if r.model != "rd" else SERIES[1], edgecolor="#ffffff", linewidth=1.5, zorder=3)
-        ax.annotate(names[r.model], (r.ms, r.rec), xytext=offsets.get(r.model, (6, 2)), textcoords="offset points", fontsize=7, color=INK2)
-    ax.set_xlabel("inference ms per image (RX 7900 GRE, WSL)", fontsize=8, color=INK2)
-    ax.set_ylabel("mean recovery at 1% escape (lane, 10 categories)", fontsize=8, color=INK2)
-    ax.set_xlim(0, max(g.ms) * 1.25)
+    keys = list(names) + [f"{m}-cpu" for m in names]
+    g = df[df.model.isin(keys)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean")).reset_index()
+    fig, ax = plt.subplots(figsize=(6.8, 4.4))
+    for _, r in g.iterrows():
+        cpu = r.model.endswith("-cpu")
+        base = r.model[:-4] if cpu else r.model
+        ax.scatter(r.ms, r.rec, s=48, facecolor="#ffffff" if cpu else SERIES[0], edgecolor=SERIES[0], linewidth=1.5, zorder=3)
+        ax.annotate(names[base] + (" (cpu)" if cpu else ""), (r.ms, r.rec), xytext=(6, 2), textcoords="offset points", fontsize=7, color=INK2)
+    ax.set_xscale("log")
+    ax.set_xlabel("inference ms per image, log scale", fontsize=8, color=INK2)
+    ax.set_ylabel("mean recovery at 1% escape, lane", fontsize=8, color=INK2)
     ax.set_ylim(0.3, 0.8)
-    ax.set_title("Speed vs recovery per model", fontsize=10, color=INK, loc="left")
+    ax.set_title("Latency vs recovery per model", fontsize=10, color=INK, loc="left")
+    fig.text(0.01, 0.01, ", ".join(f"{k}: {v}" for k, v in sorted(devices.items())), fontsize=6.5, color=INK2)
     style(ax)
     ax.xaxis.grid(True, color=GRID, linewidth=0.6)
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
     fig.savefig(out / "speed_vs_recovery.png", dpi=160)
     plt.close(fig)
 
@@ -136,11 +140,16 @@ def main() -> None:
     p.add_argument("--out", default="docs/figures")
     a = p.parse_args()
     df = pd.read_csv(Path(a.results) / "lane_summary.csv")
+    devices = {}
+    for f in Path(a.results).glob("*.json"):
+        j = json.load(open(f))
+        if "device" in j:
+            devices["cpu" if j["model"].endswith("-cpu") else "gpu"] = j["device"]
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     heatmap(df, out)
     resolution(df, out)
-    speed(df, out)
+    speed(df, devices, out)
     print(f"wrote 3 figures to {out}")
 
 

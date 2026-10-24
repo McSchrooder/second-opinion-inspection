@@ -10,6 +10,9 @@ No threshold is set here. lane.py does that from the CSVs. The model is not save
 """
 import argparse
 import json
+import platform
+import shutil
+import tempfile
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -43,7 +46,19 @@ def variant_tag(a) -> str:
         parts.append(f"n{a.train_n}")
     if a.coreset is not None and a.coreset != 0.1:
         parts.append(f"c{a.coreset:g}".replace(".", "p"))
+    if a.accelerator == "cpu":
+        parts.append("cpu")
     return "-".join(parts)
+
+
+def device_name(accelerator: str) -> str:
+    if accelerator != "cpu" and torch.cuda.is_available():
+        return torch.cuda.get_device_name(0)
+    try:
+        line = next(ln for ln in open("/proc/cpuinfo") if ln.startswith("model name"))
+        return line.split(":", 1)[1].strip()
+    except (OSError, StopIteration):
+        return platform.processor() or "cpu"
 
 
 def build_model(a):
@@ -119,21 +134,24 @@ def main() -> None:
     p.add_argument("--coreset", type=float, default=None, help="patchcore coreset ratio")
     p.add_argument("--train-n", type=int, default=None, help="random subset of training goods")
     p.add_argument("--mem-frac", type=float, default=0.6, help="VRAM share this process may use, fails fast past it")
+    p.add_argument("--accelerator", choices=["auto", "cpu"], default="auto", help="cpu = time the model on the CPU")
     a = p.parse_args()
 
-    if torch.cuda.is_available() and 0 < a.mem_frac < 1:
+    use_gpu = a.accelerator != "cpu" and torch.cuda.is_available()
+    if use_gpu and 0 < a.mem_frac < 1:
         torch.cuda.set_per_process_memory_fraction(a.mem_frac)
 
     dm = DATASETS[a.dataset](root=Path(a.root) / a.dataset, category=a.category,
                              train_batch_size=a.batch, eval_batch_size=a.batch, num_workers=4)
     n_train = subsample_train(dm, a.train_n)
     model = build_model(a)
-    engine = Engine(accelerator="auto", devices=1, logger=False, default_root_dir=a.out,
+    scratch = tempfile.mkdtemp(prefix="anomalib_")  # anomalib writes a checkpoint per run, we never load it
+    engine = Engine(accelerator=a.accelerator, devices=1, logger=False, default_root_dir=scratch,
                     **({"max_epochs": a.epochs} if a.epochs else {}))
 
     res = {"dataset": a.dataset, "category": a.category, "model": variant_tag(a), "size": a.size,
            "backbone": a.backbone or DEFAULT_BACKBONE[a.model], "coreset": a.coreset,
-           "epochs": a.epochs, "n_train": n_train}
+           "epochs": a.epochs, "n_train": n_train, "device": device_name(a.accelerator)}
     with timed(res, "fit_s"):
         engine.fit(model=model, datamodule=dm)       # learns "normal" from goods only
     with timed(res, "predict_s"):
@@ -143,6 +161,7 @@ def main() -> None:
     labels = torch.cat([b.gt_label.flatten().cpu() for b in preds]).numpy().astype(int)
     paths = [str(Path(pth).relative_to(Path(a.root) / a.dataset)) for b in preds for pth in b.image_path]
     stats = np.concatenate([anomaly_map_stats(b.anomaly_map) for b in preds])
+    shutil.rmtree(scratch, ignore_errors=True)
 
     tag = f"{a.dataset}_{a.category}_{res['model']}"
     score_file = Path(a.out) / "scores" / f"{tag}.csv"
@@ -157,7 +176,7 @@ def main() -> None:
         "auroc": round(float(roc_auc_score(labels, scores)), 4),
         "ms_per_image": round(1000 * res["predict_s"] / len(scores), 1),
     })
-    if torch.cuda.is_available():
+    if use_gpu:
         res["peak_vram_gib"] = round(torch.cuda.max_memory_allocated() / 2**30, 2)
     for e in ESCAPES:  # optimistic: threshold on these same defects; lane.py has the held-out version
         res[f"recovery@{e:g}"] = round(recovery_at(scores, labels, e), 4)

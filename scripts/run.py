@@ -21,13 +21,11 @@ import numpy as np
 import torch
 from sklearn.metrics import roc_auc_score
 
-from anomalib.data import MVTecAD, Visa
 from anomalib.engine import Engine
 from anomalib.models import Padim, Patchcore, ReverseDistillation
 from anomalib.post_processing import PostProcessor
-from common import recovery_at, t_recover
+from common import DATASETS, make_datamodule, recovery_at, t_recover
 
-DATASETS = {"visa": Visa, "mvtec": MVTecAD, "goodsad": MVTecAD}  # GoodsAD ships in MVTec AD layout
 MODELS = {"padim": Padim, "patchcore": Patchcore, "rd": ReverseDistillation}
 DEFAULT_BACKBONE = {"padim": "resnet18", "patchcore": "wide_resnet50_2"}
 BACKBONE_SHORT = {"resnet18": "r18", "resnet50": "r50", "wide_resnet50_2": "wr50"}
@@ -141,8 +139,8 @@ def main() -> None:
     if use_gpu and 0 < a.mem_frac < 1:
         torch.cuda.set_per_process_memory_fraction(a.mem_frac)
 
-    dm = DATASETS[a.dataset](root=Path(a.root) / a.dataset, category=a.category,
-                             train_batch_size=a.batch, eval_batch_size=a.batch, num_workers=4)
+    dm = make_datamodule(a.dataset, Path(a.root) / a.dataset, a.category,
+                         train_batch_size=a.batch, eval_batch_size=a.batch, num_workers=4)
     n_train = subsample_train(dm, a.train_n)
     model = build_model(a)
     scratch = tempfile.mkdtemp(prefix="anomalib_")  # anomalib writes a checkpoint per run, we never load it

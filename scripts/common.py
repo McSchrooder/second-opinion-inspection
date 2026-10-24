@@ -1,6 +1,28 @@
-"""Shared helpers: result-file naming, the reject lane, recovery at fixed escape."""
+"""Shared helpers: datamodules, result-file naming, the reject lane, recovery at fixed escape."""
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+
+def make_datamodule(dataset: str, root: Path, category: str, **kw):
+    """VisA and MVTec AD through anomalib's own loaders. GoodsAD through the generic Folder loader:
+    its layout is MVTec-like but the mask files do not pair up for anomalib's MVTec reader."""
+    from anomalib.data import Folder, MVTecAD, Visa
+
+    if dataset == "visa":
+        return Visa(root=root, category=category, **kw)
+    if dataset == "mvtec":
+        return MVTecAD(root=root, category=category, **kw)
+    if dataset == "goodsad":
+        cat = Path(root) / category
+        bad = sorted(str(d.relative_to(cat)) for d in (cat / "test").iterdir() if d.is_dir() and d.name != "good")
+        return Folder(name=category, root=cat, normal_dir="train/good", normal_test_dir="test/good",
+                      abnormal_dir=bad, val_split_mode="same_as_test", seed=0, **kw)
+    raise ValueError(dataset)
+
+
+DATASETS = ("visa", "mvtec", "goodsad")
 
 
 def split_tag(tag: str) -> tuple[str, str, str]:

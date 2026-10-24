@@ -85,6 +85,8 @@ def build_model(a):
         kw["backbone"] = a.backbone
     if a.coreset is not None and a.model == "patchcore":
         kw["coreset_sampling_ratio"] = a.coreset
+    if a.model == "winclip":
+        kw["class_name"] = a.category.replace("_", " ")  # zero-shot: the text prompt names the product
     if a.model not in OWN_SIZE:
         kw["pre_processor"] = cls.configure_pre_processor(image_size=(a.size, a.size))
     return cls(

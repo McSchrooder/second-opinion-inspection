@@ -70,4 +70,21 @@ for c in $VISA;  do run visa  "$c" patchcore "-r18" --backbone resnet18; done
 for c in $GOODSAD; do standin goodsad "$c"; done
 for c in $GOODSAD; do run goodsad "$c" padim ""; run goodsad "$c" patchcore "-n400" --train-n 400; done
 
+# anomalib candidates, bank models first: one pass over the goods, no gradient steps
+# DINO banks: AnomalyDINO peaks at 9 GB with 450 images and fails at 900, Rad at 8.5 GB with 391, so both get subsets
+CAND_BANK="dfm dfkde mhpatchcore anomalydino winclip rad superadd"
+BIG="candle macaroni1 macaroni2 capsules"   # 900 training images
+for m in $CAND_BANK; do
+  for c in $MVTEC; do run mvtec "$c" "$m" ""; done
+  for c in $VISA; do
+    if [ "$m" = rad ]; then run visa "$c" "$m" "-n300" --train-n 300
+    elif [ "$m" = anomalydino ] && [[ " $BIG " == *" $c "* ]]; then run visa "$c" "$m" "-n450" --train-n 450
+    else run visa "$c" "$m" ""; fi
+  done
+  for c in $GOODSAD; do
+    if [ "$m" = rad ]; then run goodsad "$c" "$m" "-n300" --train-n 300
+    else run goodsad "$c" "$m" "-n400" --train-n 400; fi
+  done
+done
+
 log "grid finished"

@@ -863,6 +863,73 @@ the bin is hard and small. Neither is the real line. We report both ends.
 
 n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 
+## Escapes by defect type (aligned lane, PatchCore and Rad)
+
+n: defects of this type in the lane. AUROC: this type against the lane goods. escapes@e: how many of
+this type sit below the threshold that lets e of all defects through. goods above weakest: share of
+goods that score higher than the easiest-looking defect of this type, the review load for catching all of it.
+
+| dataset | category | model | defect type | n | AUROC | escapes@1% | escapes@5% | goods above weakest |
+|---|---|---|---|---|---|---|---|---|
+| goodsad | drink_bottle | patchcore-n400 | cap_half_open | 73 | 0.62 | 0 | 3 | 0.87 |
+| goodsad | drink_bottle | patchcore-n400 | cap_open | 79 | 0.71 | 0 | 1 | 0.78 |
+| goodsad | drink_bottle | patchcore-n400 | surface_damage | 273 | 0.71 | 4 | 17 | 0.96 |
+| goodsad | drink_bottle | rad-n300 | cap_half_open | 73 | 0.48 | 2 | 10 | 0.98 |
+| goodsad | drink_bottle | rad-n300 | cap_open | 79 | 0.51 | 2 | 7 | 0.98 |
+| goodsad | drink_bottle | rad-n300 | surface_damage | 273 | 0.69 | 0 | 4 | 0.95 |
+| goodsad | drink_can | patchcore-n400 | deformation | 61 | 1.00 | 0 | 0 | 0.04 |
+| goodsad | drink_can | patchcore-n400 | straw_missing | 24 | 0.99 | 0 | 0 | 0.08 |
+| goodsad | drink_can | patchcore-n400 | surface_damage | 61 | 0.83 | 1 | 7 | 0.99 |
+| goodsad | drink_can | rad-n300 | deformation | 61 | 0.76 | 1 | 1 | 0.71 |
+| goodsad | drink_can | rad-n300 | straw_missing | 24 | 0.74 | 0 | 0 | 0.56 |
+| goodsad | drink_can | rad-n300 | surface_damage | 61 | 0.64 | 0 | 6 | 0.71 |
+| goodsad | food_bottle | patchcore-n400 | deformation | 86 | 0.90 | 0 | 0 | 0.53 |
+| goodsad | food_bottle | patchcore-n400 | opened | 119 | 0.89 | 0 | 1 | 0.77 |
+| goodsad | food_bottle | patchcore-n400 | surface_damage | 156 | 0.61 | 3 | 17 | 0.96 |
+| goodsad | food_bottle | rad-n300 | deformation | 86 | 0.81 | 0 | 0 | 0.70 |
+| goodsad | food_bottle | rad-n300 | opened | 119 | 0.73 | 0 | 8 | 0.87 |
+| goodsad | food_bottle | rad-n300 | surface_damage | 156 | 0.69 | 3 | 10 | 0.90 |
+| goodsad | food_box | patchcore-n400 | deformation | 76 | 0.80 | 0 | 1 | 0.78 |
+| goodsad | food_box | patchcore-n400 | opened | 101 | 0.88 | 0 | 0 | 0.58 |
+| goodsad | food_box | patchcore-n400 | surface_damage | 74 | 0.55 | 2 | 11 | 0.97 |
+| goodsad | food_box | rad-n300 | deformation | 76 | 0.71 | 1 | 3 | 0.87 |
+| goodsad | food_box | rad-n300 | opened | 101 | 0.75 | 0 | 0 | 0.57 |
+| goodsad | food_box | rad-n300 | surface_damage | 74 | 0.61 | 1 | 9 | 0.88 |
+| goodsad | food_package | patchcore-n400 | broken | 86 | 0.81 | 0 | 1 | 0.83 |
+| goodsad | food_package | patchcore-n400 | surface_anomaly | 144 | 0.65 | 2 | 10 | 0.99 |
+| goodsad | food_package | rad-n300 | broken | 86 | 0.76 | 1 | 5 | 0.89 |
+| goodsad | food_package | rad-n300 | surface_anomaly | 144 | 0.68 | 1 | 6 | 0.79 |
+| mvtec | bottle | patchcore | broken_large | 20 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | bottle | patchcore | broken_small | 22 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | bottle | patchcore | contamination | 21 | 1.00 | 0 | 3 | 0.00 |
+| mvtec | bottle | rad | broken_large | 20 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | bottle | rad | broken_small | 22 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | bottle | rad | contamination | 21 | 1.00 | 0 | 3 | 0.00 |
+| mvtec | hazelnut | patchcore | crack | 18 | 1.00 | 0 | 1 | 0.00 |
+| mvtec | hazelnut | patchcore | cut | 17 | 1.00 | 0 | 2 | 0.00 |
+| mvtec | hazelnut | patchcore | hole | 18 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | hazelnut | patchcore | print | 17 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | hazelnut | rad | crack | 18 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | hazelnut | rad | cut | 17 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | hazelnut | rad | hole | 18 | 1.00 | 0 | 0 | 0.00 |
+| mvtec | hazelnut | rad | print | 17 | 1.00 | 0 | 3 | 0.00 |
+| visa | candle | patchcore | bad | 100 | 0.97 | 1 | 5 | 0.67 |
+| visa | candle | rad-n300 | bad | 100 | 0.98 | 1 | 5 | 0.20 |
+| visa | capsules | patchcore | bad | 100 | 0.71 | 1 | 5 | 0.98 |
+| visa | capsules | rad-n300 | bad | 100 | 0.97 | 1 | 5 | 0.33 |
+| visa | cashew | patchcore | bad | 100 | 0.97 | 1 | 5 | 0.36 |
+| visa | cashew | rad-n300 | bad | 100 | 0.98 | 1 | 5 | 0.36 |
+| visa | chewinggum | patchcore | bad | 100 | 1.00 | 1 | 5 | 0.20 |
+| visa | chewinggum | rad-n300 | bad | 100 | 0.99 | 1 | 5 | 0.50 |
+| visa | fryum | patchcore | bad | 100 | 0.96 | 1 | 5 | 0.52 |
+| visa | fryum | rad-n300 | bad | 100 | 1.00 | 1 | 5 | 0.27 |
+| visa | macaroni1 | patchcore | bad | 100 | 0.80 | 1 | 5 | 0.84 |
+| visa | macaroni1 | rad-n300 | bad | 100 | 0.93 | 1 | 5 | 0.45 |
+| visa | macaroni2 | patchcore | bad | 100 | 0.65 | 1 | 5 | 0.98 |
+| visa | macaroni2 | rad-n300 | bad | 100 | 0.78 | 1 | 5 | 0.57 |
+| visa | pipe_fryum | patchcore | bad | 100 | 0.99 | 1 | 5 | 0.32 |
+| visa | pipe_fryum | rad-n300 | bad | 100 | 1.00 | 1 | 5 | 0.10 |
+
 ## Second stage: trees on anomaly-map features vs raw score (lane, 1% escape, held-out folds)
 
 | category | model | lane goods | raw recovery | raw escape | trees recovery | trees escape | silhouette | nn purity |

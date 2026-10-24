@@ -31,7 +31,7 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | candle | patchcore-320-n150 | 100/100 | 0.96 | 0.38 | 0.75 | 0.85 | 0.93 | 0.74 | 0.95 | 0.74 | 0.85 | 0.73 | 20.20 |
 | visa | candle | patchcore-320-n300 | 100/100 | 0.97 | 0.60 | 0.68 | 0.86 | 0.93 | 0.67 | 0.95 | 0.66 | 0.85 | 0.64 | 31.10 |
 | visa | candle | patchcore-384-n150 | 100/100 | 0.95 | 0.52 | 0.67 | 0.82 | 0.93 | 0.68 | 0.95 | 0.66 | 0.85 | 0.62 | 38.20 |
-| visa | candle | patchcore-n150 | 100/100 | 0.95 | 0.44 | 0.69 | 0.85 | 0.93 | 0.68 | 0.95 | 0.67 | 0.85 | 0.66 | 13.80 |
+| visa | candle | patchcore-n150 | 100/100 | 0.95 | 0.61 | 0.75 | 0.84 | 0.93 | 0.74 | 0.95 | 0.75 | 0.85 | 0.72 | 11.50 |
 | visa | candle | patchcore-r18 | 100/100 | 0.97 | 0.58 | 0.67 | 0.81 | 0.93 | 0.67 | 0.95 | 0.68 | 0.85 | 0.62 | 17.60 |
 | visa | candle | rd | 100/100 | 0.95 | 0.42 | 0.67 | 0.78 | 0.93 | 0.66 | 0.95 | 0.65 | 0.85 | 0.64 | 123.00 |
 | visa | capsules | padim | 60/100 | 0.58 | 0.00 | 0.02 | 0.12 | 0.97 | 0.02 | 0.97 | 0.02 | 0.98 | 0.02 | 10.10 |
@@ -47,7 +47,7 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | cashew | patchcore-320-n150 | 50/100 | 0.97 | 0.44 | 0.78 | 0.84 | 0.66 | 0.79 | 0.78 | 0.77 | 0.86 | 0.77 | 21.30 |
 | visa | cashew | patchcore-320-n300 | 50/100 | 0.98 | 0.52 | 0.82 | 0.88 | 0.66 | 0.76 | 0.78 | 0.77 | 0.86 | 0.79 | 33.00 |
 | visa | cashew | patchcore-384-n150 | 50/100 | 0.96 | 0.24 | 0.66 | 0.78 | 0.66 | 0.61 | 0.78 | 0.67 | 0.86 | 0.63 | 40.50 |
-| visa | cashew | patchcore-n150 | 50/100 | 0.96 | 0.48 | 0.56 | 0.74 | 0.66 | 0.48 | 0.78 | 0.51 | 0.86 | 0.51 | 14.80 |
+| visa | cashew | patchcore-n150 | 50/100 | 0.96 | 0.56 | 0.64 | 0.78 | 0.66 | 0.61 | 0.78 | 0.59 | 0.86 | 0.60 | 12.70 |
 | visa | cashew | patchcore-r18 | 50/100 | 0.95 | 0.40 | 0.64 | 0.70 | 0.66 | 0.58 | 0.78 | 0.59 | 0.86 | 0.63 | 12.90 |
 | visa | cashew | rd | 50/100 | 0.87 | 0.38 | 0.38 | 0.52 | 0.66 | 0.33 | 0.78 | 0.41 | 0.86 | 0.37 | 126.80 |
 | visa | chewinggum | padim | 50/100 | 0.98 | 0.46 | 0.54 | 0.92 | 1.00 | 0.54 | 0.86 | 0.53 | 1.00 | 0.54 | 10.40 |
@@ -60,7 +60,7 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | fryum | patchcore-320-n150 | 50/100 | 0.95 | 0.08 | 0.36 | 0.72 | 0.88 | 0.39 | 0.98 | 0.37 | 0.68 | 0.32 | 21.20 |
 | visa | fryum | patchcore-320-n300 | 50/100 | 0.95 | 0.22 | 0.36 | 0.70 | 0.88 | 0.36 | 0.98 | 0.37 | 0.68 | 0.29 | 33.40 |
 | visa | fryum | patchcore-384-n150 | 50/100 | 0.95 | 0.08 | 0.54 | 0.74 | 0.88 | 0.55 | 0.98 | 0.55 | 0.68 | 0.47 | 38.40 |
-| visa | fryum | patchcore-n150 | 50/100 | 0.95 | 0.26 | 0.28 | 0.76 | 0.88 | 0.27 | 0.98 | 0.29 | 0.68 | 0.21 | 12.50 |
+| visa | fryum | patchcore-n150 | 50/100 | 0.95 | 0.30 | 0.36 | 0.54 | 0.88 | 0.36 | 0.98 | 0.37 | 0.68 | 0.32 | 12.00 |
 | visa | fryum | patchcore-r18 | 50/100 | 0.91 | 0.12 | 0.32 | 0.44 | 0.88 | 0.32 | 0.98 | 0.33 | 0.68 | 0.32 | 13.20 |
 | visa | fryum | rd | 50/100 | 0.88 | 0.20 | 0.24 | 0.52 | 0.88 | 0.27 | 0.98 | 0.24 | 0.68 | 0.21 | 124.50 |
 | visa | macaroni1 | padim | 100/100 | 0.70 | 0.20 | 0.28 | 0.38 | 0.89 | 0.28 | 0.99 | 0.28 | 0.90 | 0.27 | 7.90 |
@@ -135,9 +135,9 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | candle | patchcore-384-n150 | aligned | 93 | 0.56 | 0.01 | 0.39 | 0.97 | 0.04 |
 | visa | candle | patchcore-384-n150 | pca | 95 | 0.54 | 0.01 | 0.39 | 0.95 | 0.04 |
 | visa | candle | patchcore-384-n150 | tinypadim | 85 | 0.49 | 0.01 | 0.44 | 0.97 | 0.04 |
-| visa | candle | patchcore-n150 | aligned | 93 | 0.47 | 0.02 | 0.47 | 0.97 | 0.04 |
-| visa | candle | patchcore-n150 | pca | 95 | 0.51 | 0.02 | 0.45 | 0.96 | 0.04 |
-| visa | candle | patchcore-n150 | tinypadim | 85 | 0.46 | 0.02 | 0.48 | 0.97 | 0.04 |
+| visa | candle | patchcore-n150 | aligned | 93 | 0.64 | 0.02 | 0.43 | 0.97 | 0.04 |
+| visa | candle | patchcore-n150 | pca | 95 | 0.65 | 0.02 | 0.41 | 0.96 | 0.04 |
+| visa | candle | patchcore-n150 | tinypadim | 85 | 0.59 | 0.02 | 0.46 | 0.97 | 0.04 |
 | visa | candle | patchcore-r18 | aligned | 93 | 0.59 | 0.01 | 0.33 | 0.97 | 0.04 |
 | visa | candle | patchcore-r18 | pca | 95 | 0.60 | 0.01 | 0.32 | 0.97 | 0.04 |
 | visa | candle | patchcore-r18 | tinypadim | 85 | 0.53 | 0.01 | 0.36 | 0.98 | 0.04 |
@@ -183,9 +183,9 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | cashew | patchcore-384-n150 | aligned | 33 | 0.27 | 0.02 | 0.33 | 0.97 | 0.04 |
 | visa | cashew | patchcore-384-n150 | pca | 39 | 0.23 | 0.02 | 0.36 | 0.98 | 0.04 |
 | visa | cashew | patchcore-384-n150 | tinypadim | 43 | 0.25 | 0.02 | 0.35 | 0.97 | 0.04 |
-| visa | cashew | patchcore-n150 | aligned | 33 | 0.43 | 0.01 | 0.29 | 0.96 | 0.04 |
-| visa | cashew | patchcore-n150 | pca | 39 | 0.51 | 0.01 | 0.28 | 0.97 | 0.04 |
-| visa | cashew | patchcore-n150 | tinypadim | 43 | 0.42 | 0.01 | 0.31 | 0.97 | 0.04 |
+| visa | cashew | patchcore-n150 | aligned | 33 | 0.54 | 0.01 | 0.24 | 0.98 | 0.04 |
+| visa | cashew | patchcore-n150 | pca | 39 | 0.54 | 0.01 | 0.26 | 0.98 | 0.04 |
+| visa | cashew | patchcore-n150 | tinypadim | 43 | 0.51 | 0.01 | 0.29 | 0.98 | 0.04 |
 | visa | cashew | patchcore-r18 | aligned | 33 | 0.34 | 0.01 | 0.38 | 0.97 | 0.04 |
 | visa | cashew | patchcore-r18 | pca | 39 | 0.41 | 0.01 | 0.34 | 0.95 | 0.04 |
 | visa | cashew | patchcore-r18 | tinypadim | 43 | 0.39 | 0.01 | 0.37 | 0.97 | 0.04 |
@@ -222,9 +222,9 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | fryum | patchcore-384-n150 | aligned | 44 | 0.18 | 0.01 | 0.39 | 0.98 | 0.04 |
 | visa | fryum | patchcore-384-n150 | pca | 49 | 0.16 | 0.01 | 0.40 | 0.98 | 0.04 |
 | visa | fryum | patchcore-384-n150 | tinypadim | 34 | 0.17 | 0.01 | 0.34 | 0.99 | 0.04 |
-| visa | fryum | patchcore-n150 | aligned | 44 | 0.27 | 0.02 | 0.31 | 0.97 | 0.04 |
-| visa | fryum | patchcore-n150 | pca | 49 | 0.30 | 0.02 | 0.32 | 0.98 | 0.04 |
-| visa | fryum | patchcore-n150 | tinypadim | 34 | 0.20 | 0.02 | 0.30 | 0.98 | 0.04 |
+| visa | fryum | patchcore-n150 | aligned | 44 | 0.36 | 0.02 | 0.29 | 0.97 | 0.04 |
+| visa | fryum | patchcore-n150 | pca | 49 | 0.36 | 0.02 | 0.33 | 0.98 | 0.04 |
+| visa | fryum | patchcore-n150 | tinypadim | 34 | 0.26 | 0.02 | 0.29 | 0.98 | 0.04 |
 | visa | fryum | patchcore-r18 | aligned | 44 | 0.23 | 0.02 | 0.42 | 0.98 | 0.04 |
 | visa | fryum | patchcore-r18 | pca | 49 | 0.18 | 0.02 | 0.44 | 0.98 | 0.04 |
 | visa | fryum | patchcore-r18 | tinypadim | 34 | 0.11 | 0.02 | 0.43 | 0.97 | 0.04 |

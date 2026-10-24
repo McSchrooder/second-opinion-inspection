@@ -58,7 +58,7 @@ for c in $VISA;  do run visa  "$c" rd "" --epochs 10; done
 
 # resolution and training-set size, small fixed subsets so the PatchCore bank fits in VRAM
 for c in $WEAK;  do run visa  "$c" patchcore "-384-n150" --size 384 --train-n 150; done
-for c in $WEAK;  do run visa  "$c" patchcore "-256-n150" --train-n 150; done
+for c in $WEAK;  do run visa  "$c" patchcore "-n150" --train-n 150; done
 for c in $WEAK;  do run visa  "$c" patchcore "-320-n150" --size 320 --train-n 150; done
 for c in $MVTEC; do run mvtec "$c" patchcore "-320-n300" --size 320 --train-n 300; done
 for c in $VISA;  do run visa  "$c" patchcore "-320-n300" --size 320 --train-n 300; done

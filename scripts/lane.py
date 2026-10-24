@@ -265,16 +265,23 @@ def make_figures(df: pd.DataFrame, frr_df: pd.DataFrame, scores: dict, standins:
     out.mkdir(parents=True, exist_ok=True)
     col = "aligned_rec@0.01" if "aligned_rec@0.01" in df else "all_rec@0.01"
 
+    # one dot per model and category, main models only, fixed colours
+    main = [("padim", "#2a78d6"), ("patchcore", "#eb6834"), ("rd", "#1baf7a"),
+            ("patchcore-320-n300", "#eda100"), ("patchcore-r18", "#e87ba4")]
     fig, ax = plt.subplots(figsize=(6, 5))
-    for model, g in df.groupby("model"):
-        ax.scatter(g.auroc, g[col], label=model, s=40)
-        for _, r in g.iterrows():
-            ax.annotate(r.category, (r.auroc, r[col]), fontsize=6, alpha=0.7, xytext=(3, 3), textcoords="offset points")
-    ax.set_xlabel("image AUROC")
-    ax.set_ylabel("recovery at 1% escape (" + ("simulated lane" if col.startswith("aligned") else "all goods") + ")")
-    ax.set_title("Image AUROC vs recovery at 1% escape", fontsize=10)
+    for model, color in main:
+        g = df[df.model == model]
+        if g.empty:
+            continue
+        ax.scatter(g.auroc, g[col], label=model, s=36, color=color, edgecolor="#ffffff", linewidth=0.8)
+    g = df[df.model == "patchcore"]
+    for _, r in g.iterrows():
+        ax.annotate(r.category, (r.auroc, r[col]), fontsize=6, color="#52514e", xytext=(4, 2), textcoords="offset points")
+    ax.set_xlabel("image AUROC", fontsize=8)
+    ax.set_ylabel("recovery at 1% escape, " + ("simulated lane" if col.startswith("aligned") else "all goods"), fontsize=8)
+    ax.set_title("Image AUROC vs recovery at 1% escape, labels on PatchCore", fontsize=10, loc="left")
     ax.grid(alpha=0.3)
-    ax.legend(fontsize=7)
+    ax.legend(fontsize=7, frameon=False)
     fig.tight_layout()
     fig.savefig(out / "auroc_vs_recovery.png", dpi=150)
     plt.close(fig)

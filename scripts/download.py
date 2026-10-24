@@ -1,9 +1,9 @@
-"""Download a dataset through anomalib's datamodule.
+"""Download a dataset into data/<name>.
 
-usage: python scripts/download.py visa|mvtec [--root DATA_DIR] [--categories bottle hazelnut]
+usage: python scripts/download.py visa|mvtec [--root data] [--categories bottle hazelnut]
 
-MVTec's official host (mydrive.ch) is unreliable; if it fails we fall back to a
-Hugging Face mirror of the extracted folders and fetch only the categories asked for.
+MVTec's official host is unreliable. If it fails we pull the requested categories from a
+Hugging Face mirror of the extracted folders instead.
 """
 import argparse
 from pathlib import Path
@@ -25,8 +25,7 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("dataset", choices=DATASETS)
     p.add_argument("--root", default="data")
-    p.add_argument("--categories", nargs="*", default=["bottle", "hazelnut"],
-                   help="mvtec mirror fallback only; default: bottle hazelnut")
+    p.add_argument("--categories", nargs="*", default=["bottle", "hazelnut"], help="mvtec mirror only")
     a = p.parse_args()
     root = Path(a.root) / a.dataset
     try:
@@ -34,7 +33,7 @@ def main() -> None:
     except Exception as e:  # noqa: BLE001
         if a.dataset != "mvtec":
             raise
-        print(f"official download failed ({e.__class__.__name__}), using mirror {MVTEC_MIRROR}")
+        print(f"official download failed ({type(e).__name__}), using mirror {MVTEC_MIRROR}")
         mvtec_from_mirror(root, a.categories)
     print(f"ready: {root}")
 

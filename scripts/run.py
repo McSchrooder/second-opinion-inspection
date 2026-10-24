@@ -22,12 +22,22 @@ import torch
 from sklearn.metrics import roc_auc_score
 
 from anomalib.engine import Engine
-from anomalib.models import Padim, Patchcore, ReverseDistillation
+from anomalib.models import (AnomalyDINO, Cfa, Cflow, Dfkde, Dfm, Dinomaly, Fastflow, FoundAD, Fre, MHPatchcore, Padim,
+                             Patchcore, Rad, ReverseDistillation, Stfpm, SuperADD, Supersimplenet, UniNet, WinClip)
 from anomalib.post_processing import PostProcessor
 from common import DATASETS, make_datamodule, recovery_at, t_recover
 
-MODELS = {"padim": Padim, "patchcore": Patchcore, "rd": ReverseDistillation}
+MODELS = {
+    "padim": Padim, "patchcore": Patchcore, "rd": ReverseDistillation,
+    # bank models: one pass over the goods, no gradient steps
+    "mhpatchcore": MHPatchcore, "dfm": Dfm, "dfkde": Dfkde, "anomalydino": AnomalyDINO, "rad": Rad, "superadd": SuperADD,
+    "winclip": WinClip,  # zero-shot, text prompts only
+    # trained models, pass --epochs
+    "foundad": FoundAD, "stfpm": Stfpm, "fastflow": Fastflow, "cflow": Cflow, "ssn": Supersimplenet,
+    "dinomaly": Dinomaly, "uninet": UniNet, "cfa": Cfa, "fre": Fre,
+}
 DEFAULT_BACKBONE = {"padim": "resnet18", "patchcore": "wide_resnet50_2"}
+OWN_SIZE = {"winclip", "rad", "dinomaly"}  # the model fixes its input size, --size is ignored
 BACKBONE_SHORT = {"resnet18": "r18", "resnet50": "r50", "wide_resnet50_2": "wr50"}
 ESCAPES = (0.0, 0.01, 0.05)
 MAP_STATS = ("map_max", "map_mean", "map_std", "map_p90", "map_p99", "map_frac_hi", "map_cx", "map_cy")
@@ -38,7 +48,7 @@ def variant_tag(a) -> str:
     parts = [a.model]
     if a.size != 256:
         parts.append(str(a.size))
-    if a.backbone and a.backbone != DEFAULT_BACKBONE[a.model]:
+    if a.backbone and a.backbone != DEFAULT_BACKBONE.get(a.model):
         parts.append(BACKBONE_SHORT.get(a.backbone, a.backbone.replace("_", "")))
     if a.train_n:
         parts.append(f"n{a.train_n}")
@@ -75,8 +85,9 @@ def build_model(a):
         kw["backbone"] = a.backbone
     if a.coreset is not None and a.model == "patchcore":
         kw["coreset_sampling_ratio"] = a.coreset
+    if a.model not in OWN_SIZE:
+        kw["pre_processor"] = cls.configure_pre_processor(image_size=(a.size, a.size))
     return cls(
-        pre_processor=cls.configure_pre_processor(image_size=(a.size, a.size)),
         post_processor=PostProcessor(enable_normalization=False, enable_thresholding=False),
         evaluator=False, visualizer=False, **kw,
     )
@@ -148,7 +159,7 @@ def main() -> None:
                     **({"max_epochs": a.epochs} if a.epochs else {}))
 
     res = {"dataset": a.dataset, "category": a.category, "model": variant_tag(a), "size": a.size,
-           "backbone": a.backbone or DEFAULT_BACKBONE[a.model], "coreset": a.coreset,
+           "backbone": a.backbone or DEFAULT_BACKBONE.get(a.model, "default"), "coreset": a.coreset,
            "epochs": a.epochs, "n_train": n_train, "device": device_name(a.accelerator)}
     with timed(res, "fit_s"):
         engine.fit(model=model, datamodule=dm)       # learns "normal" from goods only
@@ -158,7 +169,8 @@ def main() -> None:
     scores = torch.cat([b.pred_score.flatten().cpu() for b in preds]).numpy()
     labels = torch.cat([b.gt_label.flatten().cpu() for b in preds]).numpy().astype(int)
     paths = [str(Path(pth).relative_to(Path(a.root) / a.dataset)) for b in preds for pth in b.image_path]
-    stats = np.concatenate([anomaly_map_stats(b.anomaly_map) for b in preds])
+    stats = np.concatenate([anomaly_map_stats(b.anomaly_map) if b.anomaly_map is not None
+                            else np.full((len(b.pred_score), len(MAP_STATS)), np.nan) for b in preds])  # dfkde has no map
     shutil.rmtree(scratch, ignore_errors=True)
 
     tag = f"{a.dataset}_{a.category}_{res['model']}"

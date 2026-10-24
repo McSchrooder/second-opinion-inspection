@@ -74,8 +74,8 @@ def main() -> None:
     rows = []
     for f in sorted((res / "scores").glob("*.csv")):
         df = pd.read_csv(f).set_index("image")
-        if not set(FEATURES).issubset(df.columns):
-            continue
+        if not set(FEATURES).issubset(df.columns) or df[FEATURES].isna().all().any():
+            continue  # no heatmap stats (dfkde has no anomaly map)
         ds, cat, model = split_tag(f.stem)
         key = f"{ds}_{cat}_{a.standin}"
         if key in standins:

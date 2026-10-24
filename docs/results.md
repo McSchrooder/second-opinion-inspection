@@ -9,10 +9,89 @@ rejected (the simulated reject lane). FRR: share of goods the stand-in rejected 
 Band: two thresholds set on 4 of 5 folds, measured on the 5th, escape target 1%.
 recovery = auto-passed goods, escape = auto-passed defects, review = sent to a human.
 
+## Models at a glance
+
+Means over categories, aligned lane. Candidate subset runs (-n300, -n400, -n450) count as their model.
+Only models that ran on every category of the group. Held-out = the calibrated band, threshold from 4 folds.
+
+**VisA and MVTec AD, 10 categories**
+
+| model | AUROC | lane@1% | held-out recovery | held-out escape | ms/img |
+|---|---|---|---|---|---|
+| rad | 0.96 | 0.77 | 0.73 | 0.01 | 61.88 |
+| mhpatchcore | 0.95 | 0.60 | 0.56 | 0.02 | 12.63 |
+| patchcore | 0.91 | 0.60 | 0.54 | 0.02 | 27.31 |
+| patchcore-320 | 0.92 | 0.61 | 0.52 | 0.01 | 32.70 |
+| rd | 0.90 | 0.54 | 0.48 | 0.01 | 127.19 |
+| patchcore-r18 | 0.91 | 0.57 | 0.45 | 0.01 | 14.43 |
+| anomalydino | 0.93 | 0.51 | 0.43 | 0.02 | 17.52 |
+| dfm | 0.89 | 0.44 | 0.39 | 0.02 | 9.27 |
+| padim | 0.80 | 0.34 | 0.32 | 0.01 | 9.91 |
+| winclip | 0.84 | 0.22 | 0.21 | 0.02 | 352.30 |
+| dfkde | 0.73 | 0.14 | 0.10 | 0.01 | 8.61 |
+
+**GoodsAD, 5 categories**
+
+| model | AUROC | lane@1% | held-out recovery | held-out escape | ms/img |
+|---|---|---|---|---|---|
+| rad | 0.69 | 0.17 | 0.16 | 0.01 | 49.66 |
+| patchcore | 0.77 | 0.10 | 0.11 | 0.01 | 43.78 |
+| anomalydino | 0.77 | 0.08 | 0.08 | 0.01 | 53.96 |
+| dfm | 0.66 | 0.05 | 0.05 | 0.01 | 34.90 |
+| padim | 0.59 | 0.04 | 0.05 | 0.01 | 45.12 |
+| mhpatchcore | 0.61 | 0.03 | 0.03 | 0.01 | 43.16 |
+| dfkde | 0.64 | 0.03 | 0.03 | 0.02 | 38.22 |
+| winclip | 0.51 | 0.01 | 0.02 | 0.01 | 334.80 |
+
+
 ## Recovery at fixed escape, all goods vs simulated lane (zero-miss cutoff)
 
 | dataset | category | model | good/defect | AUROC | all@0 | all@1% | all@5% | aligned FRR | aligned lane@1% | pca FRR | pca lane@1% | tinypadim FRR | tinypadim lane@1% | ms/img |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| goodsad | drink_bottle | anomalydino-n400 | 356/425 | 0.70 | 0.02 | 0.06 | 0.17 | 1.00 | 0.06 | 1.00 | 0.06 | 0.99 | 0.07 | 51.70 |
+| goodsad | drink_bottle | dfkde-n400 | 356/425 | 0.61 | 0.01 | 0.02 | 0.13 | 1.00 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 36.40 |
+| goodsad | drink_bottle | dfm-n400 | 356/425 | 0.59 | 0.03 | 0.05 | 0.17 | 1.00 | 0.05 | 1.00 | 0.05 | 0.99 | 0.05 | 33.80 |
+| goodsad | drink_bottle | mhpatchcore-n400 | 356/425 | 0.57 | 0.00 | 0.01 | 0.07 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 39.70 |
+| goodsad | drink_bottle | padim | 356/425 | 0.53 | 0.00 | 0.01 | 0.09 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 46.20 |
+| goodsad | drink_bottle | patchcore-n400 | 356/425 | 0.69 | 0.04 | 0.13 | 0.25 | 1.00 | 0.13 | 1.00 | 0.13 | 0.99 | 0.13 | 41.00 |
+| goodsad | drink_bottle | rad-n300 | 356/425 | 0.62 | 0.02 | 0.04 | 0.13 | 1.00 | 0.04 | 1.00 | 0.04 | 0.99 | 0.04 | 46.70 |
+| goodsad | drink_bottle | winclip-n400 | 356/425 | 0.50 | 0.01 | 0.02 | 0.06 | 1.00 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 326.50 |
+| goodsad | drink_can | anomalydino-n400 | 147/146 | 0.85 | 0.01 | 0.07 | 0.22 | 0.97 | 0.06 | 1.00 | 0.07 | 0.99 | 0.07 | 56.30 |
+| goodsad | drink_can | dfkde-n400 | 147/146 | 0.69 | 0.01 | 0.02 | 0.05 | 0.97 | 0.01 | 1.00 | 0.02 | 0.99 | 0.02 | 40.30 |
+| goodsad | drink_can | dfm-n400 | 147/146 | 0.64 | 0.01 | 0.01 | 0.10 | 0.97 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 41.60 |
+| goodsad | drink_can | mhpatchcore-n400 | 147/146 | 0.67 | 0.03 | 0.04 | 0.07 | 0.97 | 0.03 | 1.00 | 0.04 | 0.99 | 0.04 | 45.70 |
+| goodsad | drink_can | padim | 147/146 | 0.54 | 0.01 | 0.01 | 0.07 | 0.97 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 45.10 |
+| goodsad | drink_can | patchcore-n400 | 147/146 | 0.93 | 0.01 | 0.03 | 0.56 | 0.97 | 0.03 | 1.00 | 0.03 | 0.99 | 0.03 | 47.40 |
+| goodsad | drink_can | rad-n300 | 147/146 | 0.71 | 0.31 | 0.31 | 0.39 | 0.97 | 0.29 | 1.00 | 0.31 | 0.99 | 0.30 | 51.20 |
+| goodsad | drink_can | winclip-n400 | 147/146 | 0.51 | 0.02 | 0.02 | 0.06 | 0.97 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 344.40 |
+| goodsad | food_bottle | anomalydino-n400 | 243/361 | 0.79 | 0.04 | 0.08 | 0.24 | 1.00 | 0.08 | 1.00 | 0.08 | 1.00 | 0.08 | 53.30 |
+| goodsad | food_bottle | dfkde-n400 | 243/361 | 0.67 | 0.00 | 0.04 | 0.14 | 1.00 | 0.04 | 1.00 | 0.04 | 1.00 | 0.04 | 40.60 |
+| goodsad | food_bottle | dfm-n400 | 243/361 | 0.78 | 0.03 | 0.07 | 0.19 | 1.00 | 0.07 | 1.00 | 0.07 | 1.00 | 0.07 | 32.60 |
+| goodsad | food_bottle | mhpatchcore-n400 | 243/361 | 0.65 | 0.00 | 0.00 | 0.05 | 1.00 | 0.00 | 1.00 | 0.00 | 1.00 | 0.00 | 41.10 |
+| goodsad | food_bottle | padim | 243/361 | 0.71 | 0.05 | 0.12 | 0.19 | 1.00 | 0.12 | 1.00 | 0.12 | 1.00 | 0.12 | 43.90 |
+| goodsad | food_bottle | patchcore-n400 | 243/361 | 0.77 | 0.04 | 0.19 | 0.29 | 1.00 | 0.19 | 1.00 | 0.19 | 1.00 | 0.19 | 43.00 |
+| goodsad | food_bottle | rad-n300 | 243/361 | 0.73 | 0.10 | 0.12 | 0.28 | 1.00 | 0.12 | 1.00 | 0.12 | 1.00 | 0.12 | 47.80 |
+| goodsad | food_bottle | winclip-n400 | 243/361 | 0.52 | 0.00 | 0.02 | 0.05 | 1.00 | 0.02 | 1.00 | 0.02 | 1.00 | 0.02 | 330.30 |
+| goodsad | food_box | anomalydino-n400 | 146/251 | 0.81 | 0.05 | 0.08 | 0.34 | 1.00 | 0.08 | 1.00 | 0.08 | 0.98 | 0.06 | 55.70 |
+| goodsad | food_box | dfkde-n400 | 146/251 | 0.63 | 0.01 | 0.03 | 0.10 | 1.00 | 0.03 | 1.00 | 0.03 | 0.98 | 0.03 | 37.80 |
+| goodsad | food_box | dfm-n400 | 146/251 | 0.68 | 0.02 | 0.07 | 0.17 | 1.00 | 0.07 | 1.00 | 0.07 | 0.98 | 0.05 | 33.80 |
+| goodsad | food_box | mhpatchcore-n400 | 146/251 | 0.62 | 0.04 | 0.08 | 0.10 | 1.00 | 0.08 | 1.00 | 0.08 | 0.98 | 0.07 | 45.80 |
+| goodsad | food_box | padim | 146/251 | 0.61 | 0.03 | 0.04 | 0.08 | 1.00 | 0.04 | 1.00 | 0.04 | 0.98 | 0.03 | 46.30 |
+| goodsad | food_box | patchcore-n400 | 146/251 | 0.76 | 0.03 | 0.09 | 0.23 | 1.00 | 0.09 | 1.00 | 0.09 | 0.98 | 0.08 | 46.10 |
+| goodsad | food_box | rad-n300 | 146/251 | 0.69 | 0.12 | 0.13 | 0.33 | 1.00 | 0.13 | 1.00 | 0.13 | 0.98 | 0.11 | 50.40 |
+| goodsad | food_box | winclip-n400 | 146/251 | 0.50 | 0.00 | 0.00 | 0.05 | 1.00 | 0.00 | 1.00 | 0.00 | 0.98 | 0.00 | 338.80 |
+| goodsad | food_package | anomalydino-n400 | 253/230 | 0.71 | 0.05 | 0.10 | 0.20 | 1.00 | 0.10 | 0.99 | 0.10 | 1.00 | 0.10 | 52.80 |
+| goodsad | food_package | dfkde-n400 | 253/230 | 0.59 | 0.00 | 0.02 | 0.08 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 36.00 |
+| goodsad | food_package | dfm-n400 | 253/230 | 0.64 | 0.02 | 0.04 | 0.19 | 1.00 | 0.04 | 0.99 | 0.04 | 1.00 | 0.04 | 32.70 |
+| goodsad | food_package | mhpatchcore-n400 | 253/230 | 0.53 | 0.02 | 0.03 | 0.08 | 1.00 | 0.03 | 0.99 | 0.03 | 1.00 | 0.03 | 43.50 |
+| goodsad | food_package | padim | 253/230 | 0.58 | 0.02 | 0.02 | 0.08 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 44.10 |
+| goodsad | food_package | patchcore-n400 | 253/230 | 0.71 | 0.01 | 0.06 | 0.19 | 1.00 | 0.05 | 0.99 | 0.06 | 1.00 | 0.06 | 41.40 |
+| goodsad | food_package | rad-n300 | 253/230 | 0.71 | 0.11 | 0.26 | 0.38 | 1.00 | 0.25 | 0.99 | 0.26 | 1.00 | 0.26 | 52.20 |
+| goodsad | food_package | winclip-n400 | 253/230 | 0.49 | 0.00 | 0.00 | 0.02 | 1.00 | 0.00 | 0.99 | 0.00 | 1.00 | 0.00 | 334.00 |
+| mvtec | bottle | anomalydino | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 16.90 |
+| mvtec | bottle | dfkde | 20/63 | 0.96 | 0.35 | 0.35 | 0.80 | 0.95 | 0.37 | 0.80 | 0.31 | 0.05 | 0.00 | 9.60 |
+| mvtec | bottle | dfm | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 10.80 |
+| mvtec | bottle | mhpatchcore | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 14.50 |
 | mvtec | bottle | padim | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.80 | 0.94 | 0.05 | 0.00 | 10.70 |
 | mvtec | bottle | padim-cpu | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.80 | 0.94 | 0.05 | 0.00 | 27.70 |
 | mvtec | bottle | patchcore | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 18.70 |
@@ -20,12 +99,26 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | mvtec | bottle | patchcore-cpu | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 283.10 |
 | mvtec | bottle | patchcore-r18 | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 11.30 |
 | mvtec | bottle | patchcore-r18-cpu | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 85.50 |
+| mvtec | bottle | rad | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 63.90 |
 | mvtec | bottle | rd | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.80 | 0.94 | 0.05 | 1.00 | 128.20 |
+| mvtec | bottle | superadd-vitb-n100 | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 85.50 |
+| mvtec | bottle | winclip | 20/63 | 0.99 | 0.80 | 0.80 | 0.95 | 0.95 | 0.84 | 0.80 | 0.81 | 0.05 | 1.00 | 381.90 |
+| mvtec | hazelnut | anomalydino | 40/70 | 1.00 | 0.85 | 0.85 | 1.00 | 0.90 | 0.83 | 0.78 | 0.81 | 0.78 | 0.81 | 20.90 |
+| mvtec | hazelnut | dfkde | 40/70 | 0.74 | 0.07 | 0.07 | 0.12 | 0.90 | 0.08 | 0.78 | 0.10 | 0.78 | 0.06 | 10.90 |
+| mvtec | hazelnut | dfm | 40/70 | 0.97 | 0.12 | 0.12 | 0.90 | 0.90 | 0.11 | 0.78 | 0.10 | 0.78 | 0.03 | 11.80 |
+| mvtec | hazelnut | mhpatchcore | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 14.50 |
 | mvtec | hazelnut | padim | 40/70 | 0.62 | 0.15 | 0.15 | 0.30 | 0.90 | 0.11 | 0.78 | 0.10 | 0.78 | 0.06 | 13.00 |
 | mvtec | hazelnut | patchcore | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 25.80 |
 | mvtec | hazelnut | patchcore-320-n300 | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 36.00 |
 | mvtec | hazelnut | patchcore-r18 | 40/70 | 1.00 | 0.95 | 0.95 | 1.00 | 0.90 | 0.94 | 0.78 | 0.94 | 0.78 | 0.94 | 14.40 |
+| mvtec | hazelnut | rad | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 143.60 |
 | mvtec | hazelnut | rd | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 130.40 |
+| mvtec | hazelnut | superadd-vitb-n100 | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 86.40 |
+| mvtec | hazelnut | winclip | 40/70 | 0.93 | 0.23 | 0.23 | 0.62 | 0.90 | 0.22 | 0.78 | 0.23 | 0.78 | 0.19 | 358.20 |
+| visa | candle | anomalydino-n450 | 100/100 | 0.96 | 0.37 | 0.54 | 0.72 | 0.93 | 0.52 | 0.95 | 0.53 | 0.85 | 0.52 | 14.00 |
+| visa | candle | dfkde | 100/100 | 0.83 | 0.14 | 0.29 | 0.43 | 0.93 | 0.28 | 0.95 | 0.27 | 0.85 | 0.29 | 7.00 |
+| visa | candle | dfm | 100/100 | 0.95 | 0.28 | 0.60 | 0.80 | 0.93 | 0.59 | 0.95 | 0.58 | 0.85 | 0.54 | 8.00 |
+| visa | candle | mhpatchcore | 100/100 | 0.96 | 0.44 | 0.70 | 0.76 | 0.93 | 0.69 | 0.95 | 0.71 | 0.85 | 0.69 | 15.00 |
 | visa | candle | padim | 100/100 | 0.93 | 0.55 | 0.58 | 0.68 | 0.93 | 0.56 | 0.95 | 0.58 | 0.85 | 0.52 | 8.90 |
 | visa | candle | patchcore | 100/100 | 0.97 | 0.33 | 0.66 | 0.93 | 0.93 | 0.66 | 0.95 | 0.65 | 0.85 | 0.61 | 37.30 |
 | visa | candle | patchcore-320-n150 | 100/100 | 0.96 | 0.38 | 0.75 | 0.85 | 0.93 | 0.74 | 0.95 | 0.74 | 0.85 | 0.73 | 20.20 |
@@ -33,7 +126,14 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | candle | patchcore-384-n150 | 100/100 | 0.95 | 0.52 | 0.67 | 0.82 | 0.93 | 0.68 | 0.95 | 0.66 | 0.85 | 0.62 | 38.20 |
 | visa | candle | patchcore-n150 | 100/100 | 0.95 | 0.61 | 0.75 | 0.84 | 0.93 | 0.74 | 0.95 | 0.75 | 0.85 | 0.72 | 11.50 |
 | visa | candle | patchcore-r18 | 100/100 | 0.97 | 0.58 | 0.67 | 0.81 | 0.93 | 0.67 | 0.95 | 0.68 | 0.85 | 0.62 | 17.60 |
+| visa | candle | rad-n300 | 100/100 | 0.98 | 0.80 | 0.89 | 0.94 | 0.93 | 0.88 | 0.95 | 0.88 | 0.85 | 0.87 | 53.50 |
 | visa | candle | rd | 100/100 | 0.95 | 0.42 | 0.67 | 0.78 | 0.93 | 0.66 | 0.95 | 0.65 | 0.85 | 0.64 | 123.00 |
+| visa | candle | superadd-vitb-n100 | 100/100 | 0.95 | 0.51 | 0.63 | 0.83 | 0.93 | 0.63 | 0.95 | 0.63 | 0.85 | 0.62 | 79.00 |
+| visa | candle | winclip | 100/100 | 0.95 | 0.36 | 0.51 | 0.63 | 0.93 | 0.53 | 0.95 | 0.51 | 0.85 | 0.48 | 336.00 |
+| visa | capsules | anomalydino-n450 | 60/100 | 0.90 | 0.17 | 0.17 | 0.50 | 0.97 | 0.16 | 0.97 | 0.17 | 0.98 | 0.17 | 16.90 |
+| visa | capsules | dfkde | 60/100 | 0.57 | 0.00 | 0.02 | 0.07 | 0.97 | 0.02 | 0.97 | 0.02 | 0.98 | 0.02 | 8.80 |
+| visa | capsules | dfm | 60/100 | 0.69 | 0.08 | 0.12 | 0.17 | 0.97 | 0.12 | 0.97 | 0.12 | 0.98 | 0.12 | 9.40 |
+| visa | capsules | mhpatchcore | 60/100 | 0.81 | 0.02 | 0.03 | 0.32 | 0.97 | 0.03 | 0.97 | 0.03 | 0.98 | 0.03 | 11.90 |
 | visa | capsules | padim | 60/100 | 0.58 | 0.00 | 0.02 | 0.12 | 0.97 | 0.02 | 0.97 | 0.02 | 0.98 | 0.02 | 10.10 |
 | visa | capsules | patchcore | 60/100 | 0.72 | 0.02 | 0.03 | 0.05 | 0.97 | 0.03 | 0.97 | 0.03 | 0.98 | 0.03 | 25.70 |
 | visa | capsules | patchcore-320-n150 | 60/100 | 0.78 | 0.03 | 0.08 | 0.18 | 0.97 | 0.09 | 0.97 | 0.07 | 0.98 | 0.08 | 21.70 |
@@ -41,7 +141,13 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | capsules | patchcore-384-n150 | 60/100 | 0.84 | 0.02 | 0.12 | 0.25 | 0.97 | 0.12 | 0.97 | 0.09 | 0.98 | 0.12 | 39.80 |
 | visa | capsules | patchcore-n150 | 60/100 | 0.73 | 0.03 | 0.03 | 0.07 | 0.97 | 0.03 | 0.97 | 0.03 | 0.98 | 0.03 | 11.90 |
 | visa | capsules | patchcore-r18 | 60/100 | 0.68 | 0.02 | 0.05 | 0.10 | 0.97 | 0.05 | 0.97 | 0.03 | 0.98 | 0.05 | 14.00 |
+| visa | capsules | rad-n300 | 60/100 | 0.97 | 0.67 | 0.67 | 0.88 | 0.97 | 0.67 | 0.97 | 0.67 | 0.98 | 0.66 | 50.60 |
 | visa | capsules | rd | 60/100 | 0.79 | 0.10 | 0.10 | 0.13 | 0.97 | 0.10 | 0.97 | 0.09 | 0.98 | 0.10 | 131.50 |
+| visa | capsules | winclip | 60/100 | 0.79 | 0.02 | 0.05 | 0.18 | 0.97 | 0.05 | 0.97 | 0.05 | 0.98 | 0.05 | 424.40 |
+| visa | cashew | anomalydino | 50/100 | 0.95 | 0.46 | 0.52 | 0.74 | 0.66 | 0.52 | 0.78 | 0.59 | 0.86 | 0.44 | 24.00 |
+| visa | cashew | dfkde | 50/100 | 0.86 | 0.08 | 0.08 | 0.38 | 0.66 | 0.12 | 0.78 | 0.08 | 0.86 | 0.07 | 8.70 |
+| visa | cashew | dfm | 50/100 | 0.96 | 0.72 | 0.72 | 0.76 | 0.66 | 0.64 | 0.78 | 0.67 | 0.86 | 0.67 | 9.30 |
+| visa | cashew | mhpatchcore | 50/100 | 0.97 | 0.40 | 0.70 | 0.82 | 0.66 | 0.64 | 0.78 | 0.64 | 0.86 | 0.65 | 12.70 |
 | visa | cashew | padim | 50/100 | 0.84 | 0.06 | 0.20 | 0.28 | 0.66 | 0.09 | 0.78 | 0.15 | 0.86 | 0.12 | 10.90 |
 | visa | cashew | patchcore | 50/100 | 0.97 | 0.66 | 0.66 | 0.80 | 0.66 | 0.64 | 0.78 | 0.62 | 0.86 | 0.63 | 25.10 |
 | visa | cashew | patchcore-320-n150 | 50/100 | 0.97 | 0.44 | 0.78 | 0.84 | 0.66 | 0.79 | 0.78 | 0.77 | 0.86 | 0.77 | 21.30 |
@@ -49,12 +155,24 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | cashew | patchcore-384-n150 | 50/100 | 0.96 | 0.24 | 0.66 | 0.78 | 0.66 | 0.61 | 0.78 | 0.67 | 0.86 | 0.63 | 40.50 |
 | visa | cashew | patchcore-n150 | 50/100 | 0.96 | 0.56 | 0.64 | 0.78 | 0.66 | 0.61 | 0.78 | 0.59 | 0.86 | 0.60 | 12.70 |
 | visa | cashew | patchcore-r18 | 50/100 | 0.95 | 0.40 | 0.64 | 0.70 | 0.66 | 0.58 | 0.78 | 0.59 | 0.86 | 0.63 | 12.90 |
+| visa | cashew | rad-n300 | 50/100 | 0.98 | 0.66 | 0.68 | 0.96 | 0.66 | 0.64 | 0.78 | 0.69 | 0.86 | 0.65 | 53.30 |
 | visa | cashew | rd | 50/100 | 0.87 | 0.38 | 0.38 | 0.52 | 0.66 | 0.33 | 0.78 | 0.41 | 0.86 | 0.37 | 126.80 |
+| visa | cashew | winclip | 50/100 | 0.91 | 0.02 | 0.04 | 0.52 | 0.66 | 0.06 | 0.78 | 0.05 | 0.86 | 0.05 | 346.70 |
+| visa | chewinggum | anomalydino | 50/100 | 0.99 | 0.54 | 0.58 | 0.98 | 1.00 | 0.58 | 0.86 | 0.60 | 1.00 | 0.58 | 18.00 |
+| visa | chewinggum | dfkde | 50/100 | 0.72 | 0.10 | 0.20 | 0.20 | 1.00 | 0.20 | 0.86 | 0.19 | 1.00 | 0.20 | 8.70 |
+| visa | chewinggum | dfm | 50/100 | 0.98 | 0.60 | 0.74 | 0.90 | 1.00 | 0.74 | 0.86 | 0.70 | 1.00 | 0.74 | 9.30 |
+| visa | chewinggum | mhpatchcore | 50/100 | 1.00 | 0.90 | 0.94 | 1.00 | 1.00 | 0.94 | 0.86 | 0.93 | 1.00 | 0.94 | 12.00 |
 | visa | chewinggum | padim | 50/100 | 0.98 | 0.46 | 0.54 | 0.92 | 1.00 | 0.54 | 0.86 | 0.53 | 1.00 | 0.54 | 10.40 |
 | visa | chewinggum | patchcore | 50/100 | 1.00 | 0.80 | 0.84 | 1.00 | 1.00 | 0.84 | 0.86 | 0.84 | 1.00 | 0.84 | 24.60 |
 | visa | chewinggum | patchcore-320-n300 | 50/100 | 0.99 | 0.36 | 0.78 | 1.00 | 1.00 | 0.78 | 0.86 | 0.77 | 1.00 | 0.78 | 37.20 |
 | visa | chewinggum | patchcore-r18 | 50/100 | 0.99 | 0.62 | 0.76 | 1.00 | 1.00 | 0.76 | 0.86 | 0.74 | 1.00 | 0.76 | 12.90 |
+| visa | chewinggum | rad-n300 | 50/100 | 0.99 | 0.50 | 0.58 | 0.98 | 1.00 | 0.58 | 0.86 | 0.53 | 1.00 | 0.58 | 53.30 |
 | visa | chewinggum | rd | 50/100 | 0.99 | 0.44 | 0.72 | 0.98 | 1.00 | 0.72 | 0.86 | 0.70 | 1.00 | 0.72 | 125.70 |
+| visa | chewinggum | winclip | 50/100 | 0.96 | 0.12 | 0.16 | 0.62 | 1.00 | 0.16 | 0.86 | 0.19 | 1.00 | 0.16 | 337.30 |
+| visa | fryum | anomalydino | 50/100 | 0.94 | 0.18 | 0.24 | 0.68 | 0.88 | 0.25 | 0.98 | 0.24 | 0.68 | 0.15 | 16.70 |
+| visa | fryum | dfkde | 50/100 | 0.83 | 0.04 | 0.24 | 0.36 | 0.88 | 0.20 | 0.98 | 0.24 | 0.68 | 0.24 | 8.70 |
+| visa | fryum | dfm | 50/100 | 0.95 | 0.68 | 0.70 | 0.82 | 0.88 | 0.70 | 0.98 | 0.69 | 0.68 | 0.59 | 9.30 |
+| visa | fryum | mhpatchcore | 50/100 | 0.96 | 0.38 | 0.42 | 0.74 | 0.88 | 0.39 | 0.98 | 0.43 | 0.68 | 0.41 | 12.00 |
 | visa | fryum | padim | 50/100 | 0.84 | 0.36 | 0.36 | 0.44 | 0.88 | 0.36 | 0.98 | 0.35 | 0.68 | 0.21 | 9.40 |
 | visa | fryum | patchcore | 50/100 | 0.96 | 0.46 | 0.56 | 0.68 | 0.88 | 0.59 | 0.98 | 0.57 | 0.68 | 0.50 | 22.50 |
 | visa | fryum | patchcore-320-n150 | 50/100 | 0.95 | 0.08 | 0.36 | 0.72 | 0.88 | 0.39 | 0.98 | 0.37 | 0.68 | 0.32 | 21.20 |
@@ -62,7 +180,13 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | fryum | patchcore-384-n150 | 50/100 | 0.95 | 0.08 | 0.54 | 0.74 | 0.88 | 0.55 | 0.98 | 0.55 | 0.68 | 0.47 | 38.40 |
 | visa | fryum | patchcore-n150 | 50/100 | 0.95 | 0.30 | 0.36 | 0.54 | 0.88 | 0.36 | 0.98 | 0.37 | 0.68 | 0.32 | 12.00 |
 | visa | fryum | patchcore-r18 | 50/100 | 0.91 | 0.12 | 0.32 | 0.44 | 0.88 | 0.32 | 0.98 | 0.33 | 0.68 | 0.32 | 13.20 |
+| visa | fryum | rad-n300 | 50/100 | 1.00 | 0.74 | 0.98 | 1.00 | 0.88 | 0.98 | 0.98 | 0.98 | 0.68 | 0.97 | 51.30 |
 | visa | fryum | rd | 50/100 | 0.88 | 0.20 | 0.24 | 0.52 | 0.88 | 0.27 | 0.98 | 0.24 | 0.68 | 0.21 | 124.50 |
+| visa | fryum | winclip | 50/100 | 0.73 | 0.00 | 0.02 | 0.10 | 0.88 | 0.02 | 0.98 | 0.02 | 0.68 | 0.03 | 331.30 |
+| visa | macaroni1 | anomalydino-n450 | 100/100 | 0.83 | 0.03 | 0.17 | 0.33 | 0.89 | 0.16 | 0.99 | 0.17 | 0.90 | 0.14 | 15.00 |
+| visa | macaroni1 | dfkde | 100/100 | 0.63 | 0.02 | 0.03 | 0.13 | 0.89 | 0.03 | 0.99 | 0.03 | 0.90 | 0.03 | 7.50 |
+| visa | macaroni1 | dfm | 100/100 | 0.77 | 0.16 | 0.23 | 0.28 | 0.89 | 0.22 | 0.99 | 0.23 | 0.90 | 0.19 | 7.50 |
+| visa | macaroni1 | mhpatchcore | 100/100 | 0.98 | 0.36 | 0.37 | 0.93 | 0.89 | 0.35 | 0.99 | 0.36 | 0.90 | 0.34 | 10.50 |
 | visa | macaroni1 | padim | 100/100 | 0.70 | 0.20 | 0.28 | 0.38 | 0.89 | 0.28 | 0.99 | 0.28 | 0.90 | 0.27 | 7.90 |
 | visa | macaroni1 | patchcore | 100/100 | 0.81 | 0.16 | 0.24 | 0.38 | 0.89 | 0.25 | 0.99 | 0.24 | 0.90 | 0.21 | 35.10 |
 | visa | macaroni1 | patchcore-320-n150 | 100/100 | 0.87 | 0.22 | 0.33 | 0.58 | 0.89 | 0.33 | 0.99 | 0.33 | 0.90 | 0.31 | 20.70 |
@@ -70,7 +194,13 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni1 | patchcore-384-n150 | 100/100 | 0.89 | 0.33 | 0.39 | 0.63 | 0.89 | 0.39 | 0.99 | 0.38 | 0.90 | 0.38 | 36.10 |
 | visa | macaroni1 | patchcore-n150 | 100/100 | 0.80 | 0.21 | 0.29 | 0.33 | 0.89 | 0.29 | 0.99 | 0.29 | 0.90 | 0.26 | 11.50 |
 | visa | macaroni1 | patchcore-r18 | 100/100 | 0.89 | 0.27 | 0.53 | 0.61 | 0.89 | 0.54 | 0.99 | 0.54 | 0.90 | 0.51 | 17.40 |
+| visa | macaroni1 | rad-n300 | 100/100 | 0.94 | 0.57 | 0.58 | 0.78 | 0.89 | 0.56 | 0.99 | 0.58 | 0.90 | 0.58 | 51.00 |
 | visa | macaroni1 | rd | 100/100 | 0.89 | 0.31 | 0.48 | 0.64 | 0.89 | 0.48 | 0.99 | 0.48 | 0.90 | 0.47 | 123.10 |
+| visa | macaroni1 | winclip | 100/100 | 0.79 | 0.10 | 0.15 | 0.34 | 0.89 | 0.16 | 0.99 | 0.15 | 0.90 | 0.14 | 335.50 |
+| visa | macaroni2 | anomalydino-n450 | 100/100 | 0.74 | 0.07 | 0.11 | 0.24 | 0.96 | 0.10 | 0.96 | 0.11 | 0.93 | 0.11 | 15.50 |
+| visa | macaroni2 | dfkde | 100/100 | 0.47 | 0.01 | 0.01 | 0.03 | 0.96 | 0.01 | 0.96 | 0.00 | 0.93 | 0.01 | 7.50 |
+| visa | macaroni2 | dfm | 100/100 | 0.70 | 0.12 | 0.21 | 0.34 | 0.96 | 0.22 | 0.96 | 0.21 | 0.93 | 0.20 | 8.00 |
+| visa | macaroni2 | mhpatchcore | 100/100 | 0.87 | 0.11 | 0.11 | 0.44 | 0.96 | 0.08 | 0.96 | 0.09 | 0.93 | 0.10 | 10.50 |
 | visa | macaroni2 | padim | 100/100 | 0.60 | 0.12 | 0.14 | 0.15 | 0.96 | 0.12 | 0.96 | 0.12 | 0.93 | 0.10 | 8.00 |
 | visa | macaroni2 | patchcore | 100/100 | 0.66 | 0.02 | 0.11 | 0.15 | 0.96 | 0.10 | 0.96 | 0.10 | 0.93 | 0.10 | 35.50 |
 | visa | macaroni2 | patchcore-320-n150 | 100/100 | 0.64 | 0.00 | 0.06 | 0.21 | 0.96 | 0.05 | 0.96 | 0.05 | 0.93 | 0.05 | 20.00 |
@@ -78,17 +208,153 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni2 | patchcore-384-n150 | 100/100 | 0.68 | 0.00 | 0.07 | 0.12 | 0.96 | 0.06 | 0.96 | 0.06 | 0.93 | 0.06 | 34.20 |
 | visa | macaroni2 | patchcore-n150 | 100/100 | 0.62 | 0.03 | 0.05 | 0.18 | 0.96 | 0.04 | 0.96 | 0.04 | 0.93 | 0.04 | 11.00 |
 | visa | macaroni2 | patchcore-r18 | 100/100 | 0.72 | 0.04 | 0.23 | 0.31 | 0.96 | 0.22 | 0.96 | 0.22 | 0.93 | 0.23 | 18.00 |
+| visa | macaroni2 | rad-n300 | 100/100 | 0.79 | 0.44 | 0.48 | 0.58 | 0.96 | 0.46 | 0.96 | 0.48 | 0.93 | 0.45 | 47.00 |
 | visa | macaroni2 | rd | 100/100 | 0.64 | 0.00 | 0.02 | 0.14 | 0.96 | 0.02 | 0.96 | 0.02 | 0.93 | 0.02 | 125.40 |
+| visa | macaroni2 | winclip | 100/100 | 0.67 | 0.07 | 0.08 | 0.16 | 0.96 | 0.08 | 0.96 | 0.08 | 0.93 | 0.09 | 335.00 |
+| visa | pipe_fryum | anomalydino | 50/100 | 0.99 | 0.38 | 0.98 | 1.00 | 1.00 | 0.98 | 1.00 | 0.98 | 0.74 | 1.00 | 17.30 |
+| visa | pipe_fryum | dfkde | 50/100 | 0.73 | 0.04 | 0.08 | 0.10 | 1.00 | 0.08 | 1.00 | 0.08 | 0.74 | 0.08 | 8.70 |
+| visa | pipe_fryum | dfm | 50/100 | 0.90 | 0.02 | 0.08 | 0.62 | 1.00 | 0.08 | 1.00 | 0.08 | 0.74 | 0.03 | 9.30 |
+| visa | pipe_fryum | mhpatchcore | 50/100 | 1.00 | 0.84 | 0.92 | 1.00 | 1.00 | 0.92 | 1.00 | 0.92 | 0.74 | 0.89 | 12.70 |
 | visa | pipe_fryum | padim | 50/100 | 0.89 | 0.34 | 0.38 | 0.54 | 1.00 | 0.38 | 1.00 | 0.38 | 0.74 | 0.19 | 9.80 |
 | visa | pipe_fryum | patchcore | 50/100 | 0.99 | 0.68 | 0.94 | 0.94 | 1.00 | 0.94 | 1.00 | 0.94 | 0.74 | 0.92 | 22.80 |
 | visa | pipe_fryum | patchcore-320-n300 | 50/100 | 1.00 | 0.86 | 0.90 | 0.98 | 1.00 | 0.90 | 1.00 | 0.90 | 0.74 | 0.86 | 31.70 |
 | visa | pipe_fryum | patchcore-r18 | 50/100 | 0.98 | 0.34 | 0.62 | 0.96 | 1.00 | 0.62 | 1.00 | 0.62 | 0.74 | 0.59 | 12.60 |
+| visa | pipe_fryum | rad-n300 | 50/100 | 1.00 | 0.90 | 0.94 | 1.00 | 1.00 | 0.94 | 1.00 | 0.94 | 0.74 | 0.92 | 51.30 |
 | visa | pipe_fryum | rd | 50/100 | 0.99 | 0.86 | 0.86 | 0.96 | 1.00 | 0.86 | 1.00 | 0.86 | 0.74 | 0.84 | 133.30 |
+| visa | pipe_fryum | winclip | 50/100 | 0.68 | 0.02 | 0.04 | 0.14 | 1.00 | 0.04 | 1.00 | 0.04 | 0.74 | 0.05 | 336.70 |
 
 ## Calibrated band on the lane (held-out folds, escape target 1%)
 
 | dataset | category | model | lane | lane goods | recovery | escape | review | confirm precision | 95% escape bound |
 |---|---|---|---|---|---|---|---|---|---|
+| goodsad | drink_bottle | anomalydino-n400 | aligned | 356 | 0.06 | 0.01 | 0.89 | 0.83 | 0.01 |
+| goodsad | drink_bottle | anomalydino-n400 | pca | 356 | 0.06 | 0.01 | 0.89 | 0.83 | 0.01 |
+| goodsad | drink_bottle | anomalydino-n400 | tinypadim | 353 | 0.06 | 0.01 | 0.90 | 0.84 | 0.01 |
+| goodsad | drink_bottle | dfkde-n400 | aligned | 356 | 0.02 | 0.01 | 0.94 | 0.81 | 0.01 |
+| goodsad | drink_bottle | dfkde-n400 | pca | 356 | 0.02 | 0.01 | 0.94 | 0.81 | 0.01 |
+| goodsad | drink_bottle | dfkde-n400 | tinypadim | 353 | 0.02 | 0.01 | 0.94 | 0.80 | 0.01 |
+| goodsad | drink_bottle | dfm-n400 | aligned | 356 | 0.05 | 0.01 | 0.95 | 0.75 | 0.01 |
+| goodsad | drink_bottle | dfm-n400 | pca | 356 | 0.05 | 0.01 | 0.95 | 0.75 | 0.01 |
+| goodsad | drink_bottle | dfm-n400 | tinypadim | 353 | 0.05 | 0.01 | 0.95 | 0.75 | 0.01 |
+| goodsad | drink_bottle | mhpatchcore-n400 | aligned | 356 | 0.01 | 0.01 | 0.96 | 0.63 | 0.01 |
+| goodsad | drink_bottle | mhpatchcore-n400 | pca | 356 | 0.01 | 0.01 | 0.96 | 0.63 | 0.01 |
+| goodsad | drink_bottle | mhpatchcore-n400 | tinypadim | 353 | 0.01 | 0.01 | 0.96 | 0.74 | 0.01 |
+| goodsad | drink_bottle | padim | aligned | 356 | 0.02 | 0.01 | 0.96 | 0.49 | 0.01 |
+| goodsad | drink_bottle | padim | pca | 356 | 0.02 | 0.01 | 0.96 | 0.49 | 0.01 |
+| goodsad | drink_bottle | padim | tinypadim | 353 | 0.02 | 0.01 | 0.96 | 0.44 | 0.01 |
+| goodsad | drink_bottle | patchcore-n400 | aligned | 356 | 0.11 | 0.01 | 0.91 | 0.73 | 0.01 |
+| goodsad | drink_bottle | patchcore-n400 | pca | 356 | 0.11 | 0.01 | 0.91 | 0.73 | 0.01 |
+| goodsad | drink_bottle | patchcore-n400 | tinypadim | 353 | 0.11 | 0.01 | 0.90 | 0.79 | 0.01 |
+| goodsad | drink_bottle | rad-n300 | aligned | 356 | 0.04 | 0.01 | 0.95 | 0.47 | 0.01 |
+| goodsad | drink_bottle | rad-n300 | pca | 356 | 0.04 | 0.01 | 0.95 | 0.47 | 0.01 |
+| goodsad | drink_bottle | rad-n300 | tinypadim | 353 | 0.04 | 0.01 | 0.95 | 0.47 | 0.01 |
+| goodsad | drink_bottle | winclip-n400 | aligned | 356 | 0.03 | 0.01 | 0.96 | 0.46 | 0.01 |
+| goodsad | drink_bottle | winclip-n400 | pca | 356 | 0.03 | 0.01 | 0.96 | 0.46 | 0.01 |
+| goodsad | drink_bottle | winclip-n400 | tinypadim | 353 | 0.03 | 0.01 | 0.96 | 0.40 | 0.01 |
+| goodsad | drink_can | anomalydino-n400 | aligned | 143 | 0.07 | 0.01 | 0.73 | 0.94 | 0.03 |
+| goodsad | drink_can | anomalydino-n400 | pca | 147 | 0.09 | 0.01 | 0.72 | 0.96 | 0.03 |
+| goodsad | drink_can | anomalydino-n400 | tinypadim | 145 | 0.08 | 0.01 | 0.73 | 0.96 | 0.03 |
+| goodsad | drink_can | dfkde-n400 | aligned | 143 | 0.03 | 0.03 | 0.83 | 0.93 | 0.03 |
+| goodsad | drink_can | dfkde-n400 | pca | 147 | 0.03 | 0.03 | 0.82 | 0.92 | 0.03 |
+| goodsad | drink_can | dfkde-n400 | tinypadim | 145 | 0.03 | 0.03 | 0.83 | 0.93 | 0.03 |
+| goodsad | drink_can | dfm-n400 | aligned | 143 | 0.01 | 0.01 | 0.93 | 0.67 | 0.03 |
+| goodsad | drink_can | dfm-n400 | pca | 147 | 0.02 | 0.01 | 0.93 | 0.82 | 0.03 |
+| goodsad | drink_can | dfm-n400 | tinypadim | 145 | 0.01 | 0.01 | 0.93 | 0.69 | 0.03 |
+| goodsad | drink_can | mhpatchcore-n400 | aligned | 143 | 0.03 | 0.03 | 0.90 | 0.90 | 0.03 |
+| goodsad | drink_can | mhpatchcore-n400 | pca | 147 | 0.05 | 0.03 | 0.88 | 0.89 | 0.03 |
+| goodsad | drink_can | mhpatchcore-n400 | tinypadim | 145 | 0.05 | 0.03 | 0.89 | 0.90 | 0.03 |
+| goodsad | drink_can | padim | aligned | 143 | 0.03 | 0.01 | 0.90 | 0.85 | 0.03 |
+| goodsad | drink_can | padim | pca | 147 | 0.02 | 0.01 | 0.90 | 0.88 | 0.03 |
+| goodsad | drink_can | padim | tinypadim | 145 | 0.02 | 0.01 | 0.90 | 0.83 | 0.03 |
+| goodsad | drink_can | patchcore-n400 | aligned | 143 | 0.10 | 0.01 | 0.55 | 0.97 | 0.03 |
+| goodsad | drink_can | patchcore-n400 | pca | 147 | 0.07 | 0.01 | 0.57 | 0.97 | 0.03 |
+| goodsad | drink_can | patchcore-n400 | tinypadim | 145 | 0.07 | 0.01 | 0.57 | 0.97 | 0.03 |
+| goodsad | drink_can | rad-n300 | aligned | 143 | 0.29 | 0.01 | 0.84 | 0.17 | 0.03 |
+| goodsad | drink_can | rad-n300 | pca | 147 | 0.31 | 0.01 | 0.82 | 0.11 | 0.03 |
+| goodsad | drink_can | rad-n300 | tinypadim | 145 | 0.30 | 0.01 | 0.82 | 0.11 | 0.03 |
+| goodsad | drink_can | winclip-n400 | aligned | 143 | 0.02 | 0.01 | 0.96 | 0.62 | 0.03 |
+| goodsad | drink_can | winclip-n400 | pca | 147 | 0.02 | 0.01 | 0.96 | 0.25 | 0.03 |
+| goodsad | drink_can | winclip-n400 | tinypadim | 145 | 0.02 | 0.01 | 0.96 | 0.50 | 0.03 |
+| goodsad | food_bottle | anomalydino-n400 | aligned | 243 | 0.09 | 0.01 | 0.82 | 0.95 | 0.01 |
+| goodsad | food_bottle | anomalydino-n400 | pca | 243 | 0.09 | 0.01 | 0.82 | 0.95 | 0.01 |
+| goodsad | food_bottle | anomalydino-n400 | tinypadim | 242 | 0.09 | 0.01 | 0.82 | 0.95 | 0.01 |
+| goodsad | food_bottle | dfkde-n400 | aligned | 243 | 0.05 | 0.01 | 0.91 | 0.84 | 0.01 |
+| goodsad | food_bottle | dfkde-n400 | pca | 243 | 0.05 | 0.01 | 0.91 | 0.84 | 0.01 |
+| goodsad | food_bottle | dfkde-n400 | tinypadim | 242 | 0.05 | 0.01 | 0.91 | 0.85 | 0.01 |
+| goodsad | food_bottle | dfm-n400 | aligned | 243 | 0.07 | 0.01 | 0.81 | 0.92 | 0.01 |
+| goodsad | food_bottle | dfm-n400 | pca | 243 | 0.07 | 0.01 | 0.81 | 0.92 | 0.01 |
+| goodsad | food_bottle | dfm-n400 | tinypadim | 242 | 0.07 | 0.01 | 0.81 | 0.92 | 0.01 |
+| goodsad | food_bottle | mhpatchcore-n400 | aligned | 243 | 0.00 | 0.01 | 0.92 | 0.85 | 0.01 |
+| goodsad | food_bottle | mhpatchcore-n400 | pca | 243 | 0.00 | 0.01 | 0.92 | 0.85 | 0.01 |
+| goodsad | food_bottle | mhpatchcore-n400 | tinypadim | 242 | 0.00 | 0.01 | 0.92 | 0.88 | 0.01 |
+| goodsad | food_bottle | padim | aligned | 243 | 0.12 | 0.01 | 0.91 | 0.79 | 0.01 |
+| goodsad | food_bottle | padim | pca | 243 | 0.12 | 0.01 | 0.91 | 0.79 | 0.01 |
+| goodsad | food_bottle | padim | tinypadim | 242 | 0.12 | 0.01 | 0.91 | 0.75 | 0.01 |
+| goodsad | food_bottle | patchcore-n400 | aligned | 243 | 0.17 | 0.01 | 0.74 | 0.96 | 0.01 |
+| goodsad | food_bottle | patchcore-n400 | pca | 243 | 0.17 | 0.01 | 0.74 | 0.96 | 0.01 |
+| goodsad | food_bottle | patchcore-n400 | tinypadim | 242 | 0.17 | 0.01 | 0.74 | 0.95 | 0.01 |
+| goodsad | food_bottle | rad-n300 | aligned | 243 | 0.13 | 0.01 | 0.86 | 0.92 | 0.01 |
+| goodsad | food_bottle | rad-n300 | pca | 243 | 0.13 | 0.01 | 0.86 | 0.92 | 0.01 |
+| goodsad | food_bottle | rad-n300 | tinypadim | 242 | 0.12 | 0.01 | 0.87 | 0.95 | 0.01 |
+| goodsad | food_bottle | winclip-n400 | aligned | 243 | 0.02 | 0.01 | 0.96 | 0.82 | 0.01 |
+| goodsad | food_bottle | winclip-n400 | pca | 243 | 0.02 | 0.01 | 0.96 | 0.82 | 0.01 |
+| goodsad | food_bottle | winclip-n400 | tinypadim | 242 | 0.02 | 0.01 | 0.95 | 0.68 | 0.01 |
+| goodsad | food_box | anomalydino-n400 | aligned | 146 | 0.08 | 0.02 | 0.83 | 0.94 | 0.01 |
+| goodsad | food_box | anomalydino-n400 | pca | 146 | 0.08 | 0.02 | 0.83 | 0.94 | 0.01 |
+| goodsad | food_box | anomalydino-n400 | tinypadim | 143 | 0.06 | 0.02 | 0.83 | 0.93 | 0.01 |
+| goodsad | food_box | dfkde-n400 | aligned | 146 | 0.03 | 0.02 | 0.92 | 0.89 | 0.01 |
+| goodsad | food_box | dfkde-n400 | pca | 146 | 0.03 | 0.02 | 0.92 | 0.89 | 0.01 |
+| goodsad | food_box | dfkde-n400 | tinypadim | 143 | 0.03 | 0.02 | 0.93 | 0.83 | 0.01 |
+| goodsad | food_box | dfm-n400 | aligned | 146 | 0.07 | 0.01 | 0.93 | 0.77 | 0.01 |
+| goodsad | food_box | dfm-n400 | pca | 146 | 0.07 | 0.01 | 0.93 | 0.77 | 0.01 |
+| goodsad | food_box | dfm-n400 | tinypadim | 143 | 0.05 | 0.01 | 0.94 | 0.77 | 0.01 |
+| goodsad | food_box | mhpatchcore-n400 | aligned | 146 | 0.07 | 0.01 | 0.92 | 0.89 | 0.01 |
+| goodsad | food_box | mhpatchcore-n400 | pca | 146 | 0.07 | 0.01 | 0.92 | 0.89 | 0.01 |
+| goodsad | food_box | mhpatchcore-n400 | tinypadim | 143 | 0.07 | 0.01 | 0.91 | 0.86 | 0.01 |
+| goodsad | food_box | padim | aligned | 146 | 0.04 | 0.01 | 0.92 | 0.87 | 0.01 |
+| goodsad | food_box | padim | pca | 146 | 0.04 | 0.01 | 0.92 | 0.87 | 0.01 |
+| goodsad | food_box | padim | tinypadim | 143 | 0.04 | 0.01 | 0.92 | 0.87 | 0.01 |
+| goodsad | food_box | patchcore-n400 | aligned | 146 | 0.10 | 0.01 | 0.89 | 0.90 | 0.01 |
+| goodsad | food_box | patchcore-n400 | pca | 146 | 0.10 | 0.01 | 0.89 | 0.90 | 0.01 |
+| goodsad | food_box | patchcore-n400 | tinypadim | 143 | 0.08 | 0.01 | 0.91 | 0.87 | 0.01 |
+| goodsad | food_box | rad-n300 | aligned | 146 | 0.14 | 0.02 | 0.91 | 0.73 | 0.01 |
+| goodsad | food_box | rad-n300 | pca | 146 | 0.14 | 0.02 | 0.91 | 0.73 | 0.01 |
+| goodsad | food_box | rad-n300 | tinypadim | 143 | 0.12 | 0.02 | 0.92 | 0.71 | 0.01 |
+| goodsad | food_box | winclip-n400 | aligned | 146 | 0.01 | 0.02 | 0.96 | 0.77 | 0.01 |
+| goodsad | food_box | winclip-n400 | pca | 146 | 0.01 | 0.02 | 0.96 | 0.77 | 0.01 |
+| goodsad | food_box | winclip-n400 | tinypadim | 143 | 0.00 | 0.02 | 0.96 | 0.79 | 0.01 |
+| goodsad | food_package | anomalydino-n400 | aligned | 252 | 0.10 | 0.01 | 0.87 | 0.84 | 0.02 |
+| goodsad | food_package | anomalydino-n400 | pca | 250 | 0.10 | 0.01 | 0.87 | 0.84 | 0.02 |
+| goodsad | food_package | anomalydino-n400 | tinypadim | 253 | 0.10 | 0.01 | 0.87 | 0.84 | 0.02 |
+| goodsad | food_package | dfkde-n400 | aligned | 252 | 0.01 | 0.01 | 0.93 | 0.68 | 0.02 |
+| goodsad | food_package | dfkde-n400 | pca | 250 | 0.01 | 0.01 | 0.94 | 0.67 | 0.02 |
+| goodsad | food_package | dfkde-n400 | tinypadim | 253 | 0.01 | 0.01 | 0.95 | 0.68 | 0.02 |
+| goodsad | food_package | dfm-n400 | aligned | 252 | 0.04 | 0.01 | 0.90 | 0.83 | 0.02 |
+| goodsad | food_package | dfm-n400 | pca | 250 | 0.04 | 0.01 | 0.90 | 0.82 | 0.02 |
+| goodsad | food_package | dfm-n400 | tinypadim | 253 | 0.04 | 0.01 | 0.90 | 0.82 | 0.02 |
+| goodsad | food_package | mhpatchcore-n400 | aligned | 252 | 0.02 | 0.01 | 0.95 | 0.60 | 0.02 |
+| goodsad | food_package | mhpatchcore-n400 | pca | 250 | 0.02 | 0.01 | 0.96 | 0.60 | 0.02 |
+| goodsad | food_package | mhpatchcore-n400 | tinypadim | 253 | 0.02 | 0.01 | 0.95 | 0.58 | 0.02 |
+| goodsad | food_package | padim | aligned | 252 | 0.02 | 0.01 | 0.96 | 0.55 | 0.02 |
+| goodsad | food_package | padim | pca | 250 | 0.02 | 0.01 | 0.95 | 0.48 | 0.02 |
+| goodsad | food_package | padim | tinypadim | 253 | 0.02 | 0.01 | 0.95 | 0.51 | 0.02 |
+| goodsad | food_package | patchcore-n400 | aligned | 252 | 0.05 | 0.01 | 0.94 | 0.58 | 0.02 |
+| goodsad | food_package | patchcore-n400 | pca | 250 | 0.05 | 0.01 | 0.94 | 0.58 | 0.02 |
+| goodsad | food_package | patchcore-n400 | tinypadim | 253 | 0.06 | 0.01 | 0.94 | 0.61 | 0.02 |
+| goodsad | food_package | rad-n300 | aligned | 252 | 0.22 | 0.01 | 0.84 | 0.70 | 0.02 |
+| goodsad | food_package | rad-n300 | pca | 250 | 0.22 | 0.01 | 0.84 | 0.80 | 0.02 |
+| goodsad | food_package | rad-n300 | tinypadim | 253 | 0.22 | 0.01 | 0.85 | 0.75 | 0.02 |
+| goodsad | food_package | winclip-n400 | aligned | 252 | 0.00 | 0.01 | 0.97 | 0.56 | 0.02 |
+| goodsad | food_package | winclip-n400 | pca | 250 | 0.00 | 0.01 | 0.97 | 0.61 | 0.02 |
+| goodsad | food_package | winclip-n400 | tinypadim | 253 | 0.00 | 0.01 | 0.97 | 0.59 | 0.02 |
+| mvtec | bottle | anomalydino | aligned | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | anomalydino | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | dfkde | aligned | 19 | 0.37 | 0.02 | 0.29 | 0.98 | 0.06 |
+| mvtec | bottle | dfkde | pca | 16 | 0.35 | 0.02 | 0.30 | 0.98 | 0.06 |
+| mvtec | bottle | dfm | aligned | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | dfm | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | mhpatchcore | aligned | 19 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | mhpatchcore | pca | 16 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | padim | aligned | 19 | 0.95 | 0.02 | 0.00 | 0.98 | 0.06 |
 | mvtec | bottle | padim | pca | 16 | 0.93 | 0.02 | 0.00 | 0.98 | 0.06 |
 | mvtec | bottle | padim-cpu | aligned | 19 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
@@ -103,8 +369,26 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | mvtec | bottle | patchcore-r18 | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | patchcore-r18-cpu | aligned | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | patchcore-r18-cpu | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | rad | aligned | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | rad | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | rd | aligned | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | rd | pca | 16 | 0.93 | 0.02 | 0.00 | 0.99 | 0.06 |
+| mvtec | bottle | superadd-vitb-n100 | aligned | 19 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | superadd-vitb-n100 | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
+| mvtec | bottle | winclip | aligned | 19 | 0.95 | 0.03 | 0.07 | 0.98 | 0.06 |
+| mvtec | bottle | winclip | pca | 16 | 0.80 | 0.03 | 0.07 | 0.99 | 0.06 |
+| mvtec | hazelnut | anomalydino | aligned | 36 | 0.86 | 0.01 | 0.04 | 0.99 | 0.05 |
+| mvtec | hazelnut | anomalydino | pca | 31 | 0.87 | 0.01 | 0.03 | 0.99 | 0.05 |
+| mvtec | hazelnut | anomalydino | tinypadim | 31 | 0.87 | 0.01 | 0.03 | 0.99 | 0.05 |
+| mvtec | hazelnut | dfkde | aligned | 36 | 0.09 | 0.01 | 0.67 | 0.97 | 0.05 |
+| mvtec | hazelnut | dfkde | pca | 31 | 0.10 | 0.01 | 0.68 | 0.94 | 0.05 |
+| mvtec | hazelnut | dfkde | tinypadim | 31 | 0.06 | 0.01 | 0.70 | 0.94 | 0.05 |
+| mvtec | hazelnut | dfm | aligned | 36 | 0.24 | 0.03 | 0.29 | 0.98 | 0.05 |
+| mvtec | hazelnut | dfm | pca | 31 | 0.18 | 0.03 | 0.28 | 0.97 | 0.05 |
+| mvtec | hazelnut | dfm | tinypadim | 31 | 0.09 | 0.03 | 0.31 | 0.97 | 0.05 |
+| mvtec | hazelnut | mhpatchcore | aligned | 36 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | mhpatchcore | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | mhpatchcore | tinypadim | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | padim | aligned | 36 | 0.14 | 0.01 | 0.88 | 0.92 | 0.05 |
 | mvtec | hazelnut | padim | pca | 31 | 0.10 | 0.01 | 0.90 | 0.89 | 0.05 |
 | mvtec | hazelnut | padim | tinypadim | 31 | 0.07 | 0.01 | 0.91 | 0.89 | 0.05 |
@@ -117,9 +401,30 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | mvtec | hazelnut | patchcore-r18 | aligned | 36 | 0.94 | 0.01 | 0.00 | 0.97 | 0.05 |
 | mvtec | hazelnut | patchcore-r18 | pca | 31 | 0.93 | 0.01 | 0.01 | 0.99 | 0.05 |
 | mvtec | hazelnut | patchcore-r18 | tinypadim | 31 | 0.94 | 0.01 | 0.01 | 0.99 | 0.05 |
+| mvtec | hazelnut | rad | aligned | 36 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | rad | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | rad | tinypadim | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | rd | aligned | 36 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | rd | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | rd | tinypadim | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | superadd-vitb-n100 | aligned | 36 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | superadd-vitb-n100 | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | superadd-vitb-n100 | tinypadim | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | winclip | aligned | 36 | 0.30 | 0.01 | 0.44 | 0.96 | 0.05 |
+| mvtec | hazelnut | winclip | pca | 31 | 0.29 | 0.01 | 0.42 | 0.96 | 0.05 |
+| mvtec | hazelnut | winclip | tinypadim | 31 | 0.22 | 0.01 | 0.47 | 0.96 | 0.05 |
+| visa | candle | anomalydino-n450 | aligned | 93 | 0.41 | 0.01 | 0.43 | 0.97 | 0.04 |
+| visa | candle | anomalydino-n450 | pca | 95 | 0.39 | 0.01 | 0.44 | 0.96 | 0.04 |
+| visa | candle | anomalydino-n450 | tinypadim | 85 | 0.40 | 0.01 | 0.42 | 0.96 | 0.04 |
+| visa | candle | dfkde | aligned | 93 | 0.21 | 0.03 | 0.70 | 0.95 | 0.04 |
+| visa | candle | dfkde | pca | 95 | 0.19 | 0.03 | 0.70 | 0.95 | 0.04 |
+| visa | candle | dfkde | tinypadim | 85 | 0.16 | 0.03 | 0.71 | 0.95 | 0.04 |
+| visa | candle | dfm | aligned | 93 | 0.30 | 0.01 | 0.53 | 0.95 | 0.04 |
+| visa | candle | dfm | pca | 95 | 0.33 | 0.01 | 0.52 | 0.96 | 0.04 |
+| visa | candle | dfm | tinypadim | 85 | 0.26 | 0.01 | 0.56 | 0.96 | 0.04 |
+| visa | candle | mhpatchcore | aligned | 93 | 0.47 | 0.03 | 0.37 | 0.97 | 0.04 |
+| visa | candle | mhpatchcore | pca | 95 | 0.48 | 0.03 | 0.36 | 0.96 | 0.04 |
+| visa | candle | mhpatchcore | tinypadim | 85 | 0.46 | 0.03 | 0.35 | 0.97 | 0.04 |
 | visa | candle | padim | aligned | 93 | 0.56 | 0.02 | 0.40 | 0.97 | 0.04 |
 | visa | candle | padim | pca | 95 | 0.57 | 0.02 | 0.38 | 0.96 | 0.04 |
 | visa | candle | padim | tinypadim | 85 | 0.48 | 0.02 | 0.43 | 0.97 | 0.04 |
@@ -141,9 +446,30 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | candle | patchcore-r18 | aligned | 93 | 0.59 | 0.01 | 0.33 | 0.97 | 0.04 |
 | visa | candle | patchcore-r18 | pca | 95 | 0.60 | 0.01 | 0.32 | 0.97 | 0.04 |
 | visa | candle | patchcore-r18 | tinypadim | 85 | 0.53 | 0.01 | 0.36 | 0.98 | 0.04 |
+| visa | candle | rad-n300 | aligned | 93 | 0.81 | 0.01 | 0.18 | 0.98 | 0.04 |
+| visa | candle | rad-n300 | pca | 95 | 0.82 | 0.01 | 0.18 | 0.97 | 0.04 |
+| visa | candle | rad-n300 | tinypadim | 85 | 0.79 | 0.01 | 0.21 | 0.97 | 0.04 |
 | visa | candle | rd | aligned | 93 | 0.48 | 0.01 | 0.45 | 0.97 | 0.04 |
 | visa | candle | rd | pca | 95 | 0.44 | 0.01 | 0.47 | 0.96 | 0.04 |
 | visa | candle | rd | tinypadim | 85 | 0.44 | 0.01 | 0.49 | 0.97 | 0.04 |
+| visa | candle | superadd-vitb-n100 | aligned | 93 | 0.51 | 0.01 | 0.45 | 0.97 | 0.04 |
+| visa | candle | superadd-vitb-n100 | pca | 95 | 0.53 | 0.01 | 0.49 | 0.95 | 0.04 |
+| visa | candle | superadd-vitb-n100 | tinypadim | 85 | 0.51 | 0.01 | 0.52 | 0.94 | 0.04 |
+| visa | candle | winclip | aligned | 93 | 0.40 | 0.01 | 0.41 | 0.98 | 0.04 |
+| visa | candle | winclip | pca | 95 | 0.39 | 0.01 | 0.44 | 0.98 | 0.04 |
+| visa | candle | winclip | tinypadim | 85 | 0.34 | 0.01 | 0.44 | 0.97 | 0.04 |
+| visa | capsules | anomalydino-n450 | aligned | 58 | 0.15 | 0.01 | 0.53 | 0.96 | 0.04 |
+| visa | capsules | anomalydino-n450 | pca | 58 | 0.17 | 0.01 | 0.55 | 0.97 | 0.04 |
+| visa | capsules | anomalydino-n450 | tinypadim | 59 | 0.17 | 0.01 | 0.55 | 0.97 | 0.04 |
+| visa | capsules | dfkde | aligned | 58 | 0.00 | 0.01 | 0.94 | 0.92 | 0.04 |
+| visa | capsules | dfkde | pca | 58 | 0.00 | 0.01 | 0.94 | 0.92 | 0.04 |
+| visa | capsules | dfkde | tinypadim | 59 | 0.00 | 0.01 | 0.93 | 0.93 | 0.04 |
+| visa | capsules | dfm | aligned | 58 | 0.09 | 0.03 | 0.82 | 0.97 | 0.04 |
+| visa | capsules | dfm | pca | 58 | 0.09 | 0.03 | 0.80 | 0.93 | 0.04 |
+| visa | capsules | dfm | tinypadim | 59 | 0.10 | 0.03 | 0.78 | 0.94 | 0.04 |
+| visa | capsules | mhpatchcore | aligned | 58 | 0.02 | 0.01 | 0.68 | 0.96 | 0.04 |
+| visa | capsules | mhpatchcore | pca | 58 | 0.03 | 0.01 | 0.66 | 0.95 | 0.04 |
+| visa | capsules | mhpatchcore | tinypadim | 59 | 0.02 | 0.01 | 0.67 | 0.95 | 0.04 |
 | visa | capsules | padim | aligned | 58 | 0.00 | 0.01 | 0.89 | 0.88 | 0.04 |
 | visa | capsules | padim | pca | 58 | 0.02 | 0.01 | 0.89 | 0.88 | 0.04 |
 | visa | capsules | padim | tinypadim | 59 | 0.00 | 0.01 | 0.89 | 0.91 | 0.04 |
@@ -165,9 +491,27 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | capsules | patchcore-r18 | aligned | 58 | 0.03 | 0.01 | 0.75 | 0.96 | 0.04 |
 | visa | capsules | patchcore-r18 | pca | 58 | 0.00 | 0.01 | 0.77 | 0.95 | 0.04 |
 | visa | capsules | patchcore-r18 | tinypadim | 59 | 0.03 | 0.01 | 0.75 | 0.96 | 0.04 |
+| visa | capsules | rad-n300 | aligned | 58 | 0.67 | 0.01 | 0.24 | 0.99 | 0.04 |
+| visa | capsules | rad-n300 | pca | 58 | 0.67 | 0.01 | 0.23 | 0.98 | 0.04 |
+| visa | capsules | rad-n300 | tinypadim | 59 | 0.66 | 0.01 | 0.24 | 0.98 | 0.04 |
 | visa | capsules | rd | aligned | 58 | 0.10 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | capsules | rd | pca | 58 | 0.08 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | capsules | rd | tinypadim | 59 | 0.10 | 0.01 | 0.67 | 0.96 | 0.04 |
+| visa | capsules | winclip | aligned | 58 | 0.02 | 0.02 | 0.76 | 0.96 | 0.04 |
+| visa | capsules | winclip | pca | 58 | 0.02 | 0.02 | 0.76 | 0.94 | 0.04 |
+| visa | capsules | winclip | tinypadim | 59 | 0.02 | 0.02 | 0.77 | 0.95 | 0.04 |
+| visa | cashew | anomalydino | aligned | 33 | 0.46 | 0.01 | 0.29 | 0.99 | 0.04 |
+| visa | cashew | anomalydino | pca | 39 | 0.54 | 0.01 | 0.30 | 0.96 | 0.04 |
+| visa | cashew | anomalydino | tinypadim | 43 | 0.41 | 0.01 | 0.39 | 0.97 | 0.04 |
+| visa | cashew | dfkde | aligned | 33 | 0.12 | 0.01 | 0.70 | 0.96 | 0.04 |
+| visa | cashew | dfkde | pca | 39 | 0.07 | 0.01 | 0.70 | 0.98 | 0.04 |
+| visa | cashew | dfkde | tinypadim | 43 | 0.07 | 0.01 | 0.72 | 0.97 | 0.04 |
+| visa | cashew | dfm | aligned | 33 | 0.63 | 0.01 | 0.28 | 0.98 | 0.04 |
+| visa | cashew | dfm | pca | 39 | 0.66 | 0.01 | 0.29 | 0.98 | 0.04 |
+| visa | cashew | dfm | tinypadim | 43 | 0.67 | 0.01 | 0.29 | 0.97 | 0.04 |
+| visa | cashew | mhpatchcore | aligned | 33 | 0.45 | 0.03 | 0.23 | 0.98 | 0.04 |
+| visa | cashew | mhpatchcore | pca | 39 | 0.48 | 0.03 | 0.22 | 0.97 | 0.04 |
+| visa | cashew | mhpatchcore | tinypadim | 43 | 0.48 | 0.03 | 0.26 | 0.98 | 0.04 |
 | visa | cashew | padim | aligned | 33 | 0.03 | 0.01 | 0.58 | 0.97 | 0.04 |
 | visa | cashew | padim | pca | 39 | 0.05 | 0.01 | 0.60 | 0.98 | 0.04 |
 | visa | cashew | padim | tinypadim | 43 | 0.02 | 0.01 | 0.60 | 0.97 | 0.04 |
@@ -189,9 +533,27 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | cashew | patchcore-r18 | aligned | 33 | 0.34 | 0.01 | 0.38 | 0.97 | 0.04 |
 | visa | cashew | patchcore-r18 | pca | 39 | 0.41 | 0.01 | 0.34 | 0.95 | 0.04 |
 | visa | cashew | patchcore-r18 | tinypadim | 43 | 0.39 | 0.01 | 0.37 | 0.97 | 0.04 |
+| visa | cashew | rad-n300 | aligned | 33 | 0.63 | 0.01 | 0.24 | 0.99 | 0.04 |
+| visa | cashew | rad-n300 | pca | 39 | 0.69 | 0.01 | 0.22 | 0.99 | 0.04 |
+| visa | cashew | rad-n300 | tinypadim | 43 | 0.62 | 0.01 | 0.24 | 0.98 | 0.04 |
 | visa | cashew | rd | aligned | 33 | 0.34 | 0.01 | 0.50 | 0.97 | 0.04 |
 | visa | cashew | rd | pca | 39 | 0.41 | 0.01 | 0.50 | 0.97 | 0.04 |
 | visa | cashew | rd | tinypadim | 43 | 0.36 | 0.01 | 0.49 | 0.96 | 0.04 |
+| visa | cashew | winclip | aligned | 33 | 0.06 | 0.02 | 0.46 | 0.99 | 0.04 |
+| visa | cashew | winclip | pca | 39 | 0.07 | 0.02 | 0.46 | 0.97 | 0.04 |
+| visa | cashew | winclip | tinypadim | 43 | 0.09 | 0.02 | 0.49 | 0.99 | 0.04 |
+| visa | chewinggum | anomalydino | aligned | 50 | 0.60 | 0.03 | 0.13 | 0.98 | 0.04 |
+| visa | chewinggum | anomalydino | pca | 43 | 0.66 | 0.03 | 0.10 | 0.99 | 0.04 |
+| visa | chewinggum | anomalydino | tinypadim | 50 | 0.60 | 0.03 | 0.13 | 0.98 | 0.04 |
+| visa | chewinggum | dfkde | aligned | 50 | 0.12 | 0.01 | 0.78 | 0.94 | 0.04 |
+| visa | chewinggum | dfkde | pca | 43 | 0.07 | 0.01 | 0.81 | 0.92 | 0.04 |
+| visa | chewinggum | dfkde | tinypadim | 50 | 0.12 | 0.01 | 0.78 | 0.94 | 0.04 |
+| visa | chewinggum | dfm | aligned | 50 | 0.62 | 0.01 | 0.17 | 0.98 | 0.04 |
+| visa | chewinggum | dfm | pca | 43 | 0.58 | 0.01 | 0.17 | 0.98 | 0.04 |
+| visa | chewinggum | dfm | tinypadim | 50 | 0.62 | 0.01 | 0.17 | 0.98 | 0.04 |
+| visa | chewinggum | mhpatchcore | aligned | 50 | 0.90 | 0.01 | 0.03 | 0.97 | 0.04 |
+| visa | chewinggum | mhpatchcore | pca | 43 | 0.91 | 0.01 | 0.02 | 0.97 | 0.04 |
+| visa | chewinggum | mhpatchcore | tinypadim | 50 | 0.90 | 0.01 | 0.03 | 0.97 | 0.04 |
 | visa | chewinggum | padim | aligned | 50 | 0.48 | 0.01 | 0.21 | 0.98 | 0.04 |
 | visa | chewinggum | padim | pca | 43 | 0.49 | 0.01 | 0.20 | 0.97 | 0.04 |
 | visa | chewinggum | padim | tinypadim | 50 | 0.48 | 0.01 | 0.21 | 0.98 | 0.04 |
@@ -204,9 +566,27 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | chewinggum | patchcore-r18 | aligned | 50 | 0.62 | 0.02 | 0.13 | 0.98 | 0.04 |
 | visa | chewinggum | patchcore-r18 | pca | 43 | 0.63 | 0.02 | 0.12 | 0.99 | 0.04 |
 | visa | chewinggum | patchcore-r18 | tinypadim | 50 | 0.62 | 0.02 | 0.13 | 0.98 | 0.04 |
+| visa | chewinggum | rad-n300 | aligned | 50 | 0.52 | 0.01 | 0.17 | 0.97 | 0.04 |
+| visa | chewinggum | rad-n300 | pca | 43 | 0.44 | 0.01 | 0.17 | 0.97 | 0.04 |
+| visa | chewinggum | rad-n300 | tinypadim | 50 | 0.52 | 0.01 | 0.17 | 0.97 | 0.04 |
 | visa | chewinggum | rd | aligned | 50 | 0.48 | 0.01 | 0.19 | 0.99 | 0.04 |
 | visa | chewinggum | rd | pca | 43 | 0.44 | 0.01 | 0.18 | 0.98 | 0.04 |
 | visa | chewinggum | rd | tinypadim | 50 | 0.48 | 0.01 | 0.19 | 0.99 | 0.04 |
+| visa | chewinggum | winclip | aligned | 50 | 0.12 | 0.01 | 0.35 | 0.97 | 0.04 |
+| visa | chewinggum | winclip | pca | 43 | 0.16 | 0.01 | 0.33 | 0.98 | 0.04 |
+| visa | chewinggum | winclip | tinypadim | 50 | 0.12 | 0.01 | 0.35 | 0.97 | 0.04 |
+| visa | fryum | anomalydino | aligned | 44 | 0.23 | 0.03 | 0.35 | 0.97 | 0.04 |
+| visa | fryum | anomalydino | pca | 49 | 0.20 | 0.03 | 0.43 | 0.96 | 0.04 |
+| visa | fryum | anomalydino | tinypadim | 34 | 0.17 | 0.03 | 0.42 | 0.98 | 0.04 |
+| visa | fryum | dfkde | aligned | 44 | 0.05 | 0.01 | 0.73 | 0.97 | 0.04 |
+| visa | fryum | dfkde | pca | 49 | 0.06 | 0.01 | 0.72 | 0.96 | 0.04 |
+| visa | fryum | dfkde | tinypadim | 34 | 0.09 | 0.01 | 0.71 | 0.97 | 0.04 |
+| visa | fryum | dfm | aligned | 44 | 0.71 | 0.01 | 0.40 | 0.97 | 0.04 |
+| visa | fryum | dfm | pca | 49 | 0.70 | 0.01 | 0.39 | 0.97 | 0.04 |
+| visa | fryum | dfm | tinypadim | 34 | 0.55 | 0.01 | 0.48 | 0.97 | 0.04 |
+| visa | fryum | mhpatchcore | aligned | 44 | 0.36 | 0.01 | 0.28 | 0.98 | 0.04 |
+| visa | fryum | mhpatchcore | pca | 49 | 0.41 | 0.01 | 0.27 | 0.97 | 0.04 |
+| visa | fryum | mhpatchcore | tinypadim | 34 | 0.36 | 0.01 | 0.25 | 0.99 | 0.04 |
 | visa | fryum | padim | aligned | 44 | 0.36 | 0.01 | 0.65 | 0.95 | 0.04 |
 | visa | fryum | padim | pca | 49 | 0.35 | 0.01 | 0.67 | 0.96 | 0.04 |
 | visa | fryum | padim | tinypadim | 34 | 0.20 | 0.01 | 0.72 | 0.98 | 0.04 |
@@ -228,9 +608,27 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | fryum | patchcore-r18 | aligned | 44 | 0.23 | 0.02 | 0.42 | 0.98 | 0.04 |
 | visa | fryum | patchcore-r18 | pca | 49 | 0.18 | 0.02 | 0.44 | 0.98 | 0.04 |
 | visa | fryum | patchcore-r18 | tinypadim | 34 | 0.11 | 0.02 | 0.43 | 0.97 | 0.04 |
+| visa | fryum | rad-n300 | aligned | 44 | 0.75 | 0.01 | 0.06 | 0.97 | 0.04 |
+| visa | fryum | rad-n300 | pca | 49 | 0.78 | 0.01 | 0.06 | 0.98 | 0.04 |
+| visa | fryum | rad-n300 | tinypadim | 34 | 0.78 | 0.01 | 0.04 | 0.98 | 0.04 |
 | visa | fryum | rd | aligned | 44 | 0.23 | 0.01 | 0.51 | 0.97 | 0.04 |
 | visa | fryum | rd | pca | 49 | 0.22 | 0.01 | 0.52 | 0.98 | 0.04 |
 | visa | fryum | rd | tinypadim | 34 | 0.20 | 0.01 | 0.49 | 0.99 | 0.04 |
+| visa | fryum | winclip | aligned | 44 | 0.00 | 0.01 | 0.74 | 0.95 | 0.04 |
+| visa | fryum | winclip | pca | 49 | 0.00 | 0.01 | 0.76 | 0.95 | 0.04 |
+| visa | fryum | winclip | tinypadim | 34 | 0.00 | 0.01 | 0.73 | 0.95 | 0.04 |
+| visa | macaroni1 | anomalydino-n450 | aligned | 89 | 0.06 | 0.02 | 0.82 | 0.93 | 0.04 |
+| visa | macaroni1 | anomalydino-n450 | pca | 99 | 0.09 | 0.02 | 0.80 | 0.96 | 0.04 |
+| visa | macaroni1 | anomalydino-n450 | tinypadim | 90 | 0.06 | 0.02 | 0.83 | 0.93 | 0.04 |
+| visa | macaroni1 | dfkde | aligned | 89 | 0.02 | 0.01 | 0.95 | 0.56 | 0.04 |
+| visa | macaroni1 | dfkde | pca | 99 | 0.02 | 0.01 | 0.94 | 0.83 | 0.04 |
+| visa | macaroni1 | dfkde | tinypadim | 90 | 0.02 | 0.01 | 0.95 | 0.72 | 0.04 |
+| visa | macaroni1 | dfm | aligned | 89 | 0.16 | 0.02 | 0.88 | 0.83 | 0.04 |
+| visa | macaroni1 | dfm | pca | 99 | 0.16 | 0.02 | 0.85 | 0.63 | 0.04 |
+| visa | macaroni1 | dfm | tinypadim | 90 | 0.13 | 0.02 | 0.88 | 0.79 | 0.04 |
+| visa | macaroni1 | mhpatchcore | aligned | 89 | 0.45 | 0.04 | 0.32 | 0.97 | 0.04 |
+| visa | macaroni1 | mhpatchcore | pca | 99 | 0.46 | 0.04 | 0.32 | 0.95 | 0.04 |
+| visa | macaroni1 | mhpatchcore | tinypadim | 90 | 0.43 | 0.04 | 0.34 | 0.96 | 0.04 |
 | visa | macaroni1 | padim | aligned | 89 | 0.20 | 0.01 | 0.85 | 0.57 | 0.04 |
 | visa | macaroni1 | padim | pca | 99 | 0.21 | 0.01 | 0.84 | 0.46 | 0.04 |
 | visa | macaroni1 | padim | tinypadim | 90 | 0.19 | 0.01 | 0.86 | 0.46 | 0.04 |
@@ -252,9 +650,27 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni1 | patchcore-r18 | aligned | 89 | 0.32 | 0.02 | 0.67 | 0.96 | 0.04 |
 | visa | macaroni1 | patchcore-r18 | pca | 99 | 0.30 | 0.02 | 0.67 | 0.94 | 0.04 |
 | visa | macaroni1 | patchcore-r18 | tinypadim | 90 | 0.29 | 0.02 | 0.67 | 0.93 | 0.04 |
+| visa | macaroni1 | rad-n300 | aligned | 89 | 0.55 | 0.01 | 0.47 | 0.95 | 0.04 |
+| visa | macaroni1 | rad-n300 | pca | 99 | 0.57 | 0.01 | 0.45 | 0.95 | 0.04 |
+| visa | macaroni1 | rad-n300 | tinypadim | 90 | 0.57 | 0.01 | 0.45 | 0.92 | 0.04 |
 | visa | macaroni1 | rd | aligned | 89 | 0.32 | 0.01 | 0.60 | 0.96 | 0.04 |
 | visa | macaroni1 | rd | pca | 99 | 0.35 | 0.01 | 0.59 | 0.95 | 0.04 |
 | visa | macaroni1 | rd | tinypadim | 90 | 0.30 | 0.01 | 0.61 | 0.92 | 0.04 |
+| visa | macaroni1 | winclip | aligned | 89 | 0.10 | 0.01 | 0.81 | 0.92 | 0.04 |
+| visa | macaroni1 | winclip | pca | 99 | 0.10 | 0.01 | 0.82 | 0.89 | 0.04 |
+| visa | macaroni1 | winclip | tinypadim | 90 | 0.10 | 0.01 | 0.82 | 0.92 | 0.04 |
+| visa | macaroni2 | anomalydino-n450 | aligned | 96 | 0.08 | 0.01 | 0.81 | 0.90 | 0.04 |
+| visa | macaroni2 | anomalydino-n450 | pca | 96 | 0.07 | 0.01 | 0.83 | 0.89 | 0.04 |
+| visa | macaroni2 | anomalydino-n450 | tinypadim | 93 | 0.10 | 0.01 | 0.80 | 0.91 | 0.04 |
+| visa | macaroni2 | dfkde | aligned | 96 | 0.01 | 0.01 | 0.97 | 0.00 | 0.04 |
+| visa | macaroni2 | dfkde | pca | 96 | 0.00 | 0.01 | 0.98 | 0.00 | 0.04 |
+| visa | macaroni2 | dfkde | tinypadim | 93 | 0.01 | 0.01 | 0.97 | 0.00 | 0.04 |
+| visa | macaroni2 | dfm | aligned | 96 | 0.16 | 0.01 | 0.89 | 0.67 | 0.04 |
+| visa | macaroni2 | dfm | pca | 96 | 0.13 | 0.01 | 0.89 | 0.60 | 0.04 |
+| visa | macaroni2 | dfm | tinypadim | 93 | 0.15 | 0.01 | 0.90 | 0.56 | 0.04 |
+| visa | macaroni2 | mhpatchcore | aligned | 96 | 0.08 | 0.02 | 0.75 | 0.94 | 0.04 |
+| visa | macaroni2 | mhpatchcore | pca | 96 | 0.09 | 0.02 | 0.74 | 0.94 | 0.04 |
+| visa | macaroni2 | mhpatchcore | tinypadim | 93 | 0.12 | 0.02 | 0.74 | 0.93 | 0.04 |
 | visa | macaroni2 | padim | aligned | 96 | 0.10 | 0.01 | 0.89 | 0.80 | 0.04 |
 | visa | macaroni2 | padim | pca | 96 | 0.11 | 0.01 | 0.88 | 0.75 | 0.04 |
 | visa | macaroni2 | padim | tinypadim | 93 | 0.09 | 0.01 | 0.90 | 0.75 | 0.04 |
@@ -276,9 +692,27 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni2 | patchcore-r18 | aligned | 96 | 0.03 | 0.02 | 0.87 | 0.89 | 0.04 |
 | visa | macaroni2 | patchcore-r18 | pca | 96 | 0.03 | 0.02 | 0.87 | 0.89 | 0.04 |
 | visa | macaroni2 | patchcore-r18 | tinypadim | 93 | 0.08 | 0.02 | 0.84 | 0.89 | 0.04 |
+| visa | macaroni2 | rad-n300 | aligned | 96 | 0.43 | 0.01 | 0.75 | 0.79 | 0.04 |
+| visa | macaroni2 | rad-n300 | pca | 96 | 0.44 | 0.01 | 0.75 | 0.79 | 0.04 |
+| visa | macaroni2 | rad-n300 | tinypadim | 93 | 0.42 | 0.01 | 0.76 | 0.67 | 0.04 |
 | visa | macaroni2 | rd | aligned | 96 | 0.01 | 0.01 | 0.92 | 0.82 | 0.04 |
 | visa | macaroni2 | rd | pca | 96 | 0.01 | 0.01 | 0.92 | 0.82 | 0.04 |
 | visa | macaroni2 | rd | tinypadim | 93 | 0.01 | 0.01 | 0.92 | 0.69 | 0.04 |
+| visa | macaroni2 | winclip | aligned | 96 | 0.07 | 0.01 | 0.88 | 0.88 | 0.04 |
+| visa | macaroni2 | winclip | pca | 96 | 0.07 | 0.01 | 0.87 | 0.86 | 0.04 |
+| visa | macaroni2 | winclip | tinypadim | 93 | 0.09 | 0.01 | 0.89 | 0.86 | 0.04 |
+| visa | pipe_fryum | anomalydino | aligned | 50 | 0.50 | 0.01 | 0.15 | 0.97 | 0.04 |
+| visa | pipe_fryum | anomalydino | pca | 50 | 0.50 | 0.01 | 0.15 | 0.97 | 0.04 |
+| visa | pipe_fryum | anomalydino | tinypadim | 37 | 0.41 | 0.01 | 0.15 | 0.99 | 0.04 |
+| visa | pipe_fryum | dfkde | aligned | 50 | 0.04 | 0.01 | 0.81 | 0.97 | 0.04 |
+| visa | pipe_fryum | dfkde | pca | 50 | 0.04 | 0.01 | 0.81 | 0.97 | 0.04 |
+| visa | pipe_fryum | dfkde | tinypadim | 37 | 0.03 | 0.01 | 0.84 | 0.96 | 0.04 |
+| visa | pipe_fryum | dfm | aligned | 50 | 0.04 | 0.01 | 0.63 | 0.96 | 0.04 |
+| visa | pipe_fryum | dfm | pca | 50 | 0.04 | 0.01 | 0.63 | 0.96 | 0.04 |
+| visa | pipe_fryum | dfm | tinypadim | 37 | 0.00 | 0.01 | 0.61 | 0.96 | 0.04 |
+| visa | pipe_fryum | mhpatchcore | aligned | 50 | 0.86 | 0.01 | 0.03 | 0.96 | 0.04 |
+| visa | pipe_fryum | mhpatchcore | pca | 50 | 0.86 | 0.01 | 0.03 | 0.96 | 0.04 |
+| visa | pipe_fryum | mhpatchcore | tinypadim | 37 | 0.81 | 0.01 | 0.04 | 0.98 | 0.04 |
 | visa | pipe_fryum | padim | aligned | 50 | 0.36 | 0.01 | 0.55 | 0.98 | 0.04 |
 | visa | pipe_fryum | padim | pca | 50 | 0.36 | 0.01 | 0.55 | 0.98 | 0.04 |
 | visa | pipe_fryum | padim | tinypadim | 37 | 0.13 | 0.01 | 0.66 | 0.98 | 0.04 |
@@ -291,9 +725,15 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | pipe_fryum | patchcore-r18 | aligned | 50 | 0.40 | 0.01 | 0.25 | 0.97 | 0.04 |
 | visa | pipe_fryum | patchcore-r18 | pca | 50 | 0.40 | 0.01 | 0.25 | 0.97 | 0.04 |
 | visa | pipe_fryum | patchcore-r18 | tinypadim | 37 | 0.44 | 0.01 | 0.23 | 0.99 | 0.04 |
+| visa | pipe_fryum | rad-n300 | aligned | 50 | 0.90 | 0.01 | 0.03 | 0.98 | 0.04 |
+| visa | pipe_fryum | rad-n300 | pca | 50 | 0.90 | 0.01 | 0.03 | 0.98 | 0.04 |
+| visa | pipe_fryum | rad-n300 | tinypadim | 37 | 0.86 | 0.01 | 0.03 | 0.98 | 0.04 |
 | visa | pipe_fryum | rd | aligned | 50 | 0.86 | 0.01 | 0.05 | 0.96 | 0.04 |
 | visa | pipe_fryum | rd | pca | 50 | 0.86 | 0.01 | 0.05 | 0.96 | 0.04 |
 | visa | pipe_fryum | rd | tinypadim | 37 | 0.84 | 0.01 | 0.07 | 0.99 | 0.04 |
+| visa | pipe_fryum | winclip | aligned | 50 | 0.04 | 0.02 | 0.82 | 0.93 | 0.04 |
+| visa | pipe_fryum | winclip | pca | 50 | 0.04 | 0.02 | 0.82 | 0.93 | 0.04 |
+| visa | pipe_fryum | winclip | tinypadim | 37 | 0.03 | 0.02 | 0.81 | 0.97 | 0.04 |
 
 95% escape bound: Clopper-Pearson upper limit with zero escapes on the calibration defects (80% of test defects).
 
@@ -350,6 +790,26 @@ the bin is hard and small. Neither is the real line. We report both ends.
 | visa | pipe_fryum | pca | 0.76 (1.00) n=50 |  n=3 | 1.00 n=5 | 0.90 n=10 |
 | visa | pipe_fryum | tinypadim | 0.62 (0.74) n=37 |  n=3 | 0.80 n=5 | 0.60 n=10 |
 | visa | pipe_fryum | template | 0.76 (1.00) n=50 |  n=3 | 0.80 n=5 | 0.90 n=10 |
+| goodsad | drink_bottle | aligned | 0.11 (1.00) n=356 | 0.22 n=18 | 0.14 n=36 | 0.08 n=72 |
+| goodsad | drink_bottle | pca | 0.11 (1.00) n=356 | 0.38 n=18 | 0.17 n=36 | 0.13 n=72 |
+| goodsad | drink_bottle | tinypadim | 0.11 (0.99) n=353 | 0.50 n=18 | 0.17 n=36 | 0.07 n=72 |
+| goodsad | drink_bottle | template | 0.11 (1.00) n=356 | 0.60 n=18 | 0.06 n=36 | 0.08 n=72 |
+| goodsad | drink_can | aligned | 0.10 (0.97) n=143 | 0.20 n=8 | 0.20 n=15 | 0.17 n=30 |
+| goodsad | drink_can | pca | 0.07 (1.00) n=147 |  n=8 | 1.00 n=15 | 0.17 n=30 |
+| goodsad | drink_can | tinypadim | 0.07 (0.99) n=145 | 1.00 n=8 | 0.80 n=15 | 0.87 n=30 |
+| goodsad | drink_can | template | 0.09 (0.97) n=142 | 0.20 n=8 | 0.20 n=15 | 0.20 n=30 |
+| goodsad | food_bottle | aligned | 0.17 (1.00) n=243 | 0.43 n=13 | 0.32 n=25 | 0.18 n=49 |
+| goodsad | food_bottle | pca | 0.17 (1.00) n=243 | 0.20 n=13 | 0.28 n=25 | 0.10 n=49 |
+| goodsad | food_bottle | tinypadim | 0.17 (1.00) n=242 | 0.63 n=13 | 0.24 n=25 | 0.27 n=49 |
+| goodsad | food_bottle | template | 0.17 (1.00) n=243 | 0.23 n=13 | 0.28 n=25 | 0.24 n=49 |
+| goodsad | food_box | aligned | 0.10 (1.00) n=146 | 0.50 n=8 | 0.47 n=15 | 0.20 n=30 |
+| goodsad | food_box | pca | 0.10 (1.00) n=146 | 0.20 n=8 | 0.27 n=15 | 0.17 n=30 |
+| goodsad | food_box | tinypadim | 0.08 (0.98) n=143 | 0.00 n=8 | 0.20 n=15 | 0.03 n=30 |
+| goodsad | food_box | template | 0.10 (1.00) n=146 | 0.50 n=8 | 0.47 n=15 | 0.20 n=30 |
+| goodsad | food_package | aligned | 0.05 (1.00) n=252 | 0.23 n=13 | 0.27 n=26 | 0.04 n=51 |
+| goodsad | food_package | pca | 0.05 (0.99) n=250 | 0.07 n=13 | 0.12 n=26 | 0.04 n=51 |
+| goodsad | food_package | tinypadim | 0.06 (1.00) n=253 | 0.07 n=13 | 0.08 n=26 | 0.02 n=51 |
+| goodsad | food_package | template | 0.06 (1.00) n=253 | 0.40 n=13 | 0.26 n=26 | 0.04 n=51 |
 
 n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 
@@ -357,6 +817,56 @@ n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 
 | category | model | lane goods | raw recovery | raw escape | trees recovery | trees escape | silhouette | nn purity |
 |---|---|---|---|---|---|---|---|---|
+| bottle | anomalydino | 19 | 1.00 | 0.02 | 0.75 | 0.06 | 0.31 | 0.97 |
+| hazelnut | anomalydino | 36 | 0.86 | 0.01 | 0.49 | 0.01 | 0.29 | 0.98 |
+| cashew | anomalydino | 33 | 0.46 | 0.01 | 0.49 | 0.02 | 0.10 | 0.82 |
+| chewinggum | anomalydino | 50 | 0.60 | 0.03 | 0.44 | 0.04 | 0.33 | 0.93 |
+| fryum | anomalydino | 44 | 0.23 | 0.03 | 0.19 | 0.01 | 0.16 | 0.83 |
+| pipe_fryum | anomalydino | 50 | 0.50 | 0.01 | 0.20 | 0.01 | 0.21 | 0.93 |
+| drink_bottle | anomalydino-n400 | 356 | 0.06 | 0.01 | 0.03 | 0.00 | 0.04 | 0.58 |
+| drink_can | anomalydino-n400 | 143 | 0.07 | 0.01 | 0.10 | 0.02 | 0.15 | 0.75 |
+| food_bottle | anomalydino-n400 | 243 | 0.09 | 0.01 | 0.02 | 0.01 | 0.07 | 0.67 |
+| food_box | anomalydino-n400 | 146 | 0.08 | 0.02 | 0.04 | 0.01 | 0.08 | 0.66 |
+| food_package | anomalydino-n400 | 252 | 0.10 | 0.01 | 0.02 | 0.00 | 0.05 | 0.56 |
+| candle | anomalydino-n450 | 93 | 0.41 | 0.01 | 0.51 | 0.01 | 0.25 | 0.83 |
+| capsules | anomalydino-n450 | 58 | 0.15 | 0.01 | 0.09 | 0.03 | 0.12 | 0.75 |
+| macaroni1 | anomalydino-n450 | 89 | 0.06 | 0.02 | 0.08 | 0.01 | 0.10 | 0.67 |
+| macaroni2 | anomalydino-n450 | 96 | 0.08 | 0.01 | 0.03 | 0.01 | 0.04 | 0.56 |
+| bottle | dfm | 19 | 1.00 | 0.02 | 0.85 | 0.00 | 0.26 | 0.97 |
+| hazelnut | dfm | 36 | 0.24 | 0.03 | 0.89 | 0.00 | 0.27 | 0.92 |
+| candle | dfm | 93 | 0.30 | 0.01 | 0.12 | 0.01 | 0.24 | 0.82 |
+| capsules | dfm | 58 | 0.09 | 0.03 | 0.02 | 0.01 | -0.00 | 0.61 |
+| cashew | dfm | 33 | 0.63 | 0.01 | 0.23 | 0.02 | -0.10 | 0.86 |
+| chewinggum | dfm | 50 | 0.62 | 0.01 | 0.22 | 0.00 | 0.25 | 0.91 |
+| fryum | dfm | 44 | 0.71 | 0.01 | 0.61 | 0.01 | 0.08 | 0.88 |
+| macaroni1 | dfm | 89 | 0.16 | 0.02 | 0.00 | 0.00 | 0.12 | 0.66 |
+| macaroni2 | dfm | 96 | 0.16 | 0.01 | 0.01 | 0.01 | 0.03 | 0.57 |
+| pipe_fryum | dfm | 50 | 0.04 | 0.01 | 0.26 | 0.03 | 0.11 | 0.80 |
+| drink_bottle | dfm-n400 | 356 | 0.05 | 0.01 | 0.05 | 0.01 | 0.01 | 0.55 |
+| drink_can | dfm-n400 | 143 | 0.01 | 0.01 | 0.01 | 0.01 | 0.07 | 0.60 |
+| food_bottle | dfm-n400 | 243 | 0.07 | 0.01 | 0.06 | 0.01 | 0.08 | 0.69 |
+| food_box | dfm-n400 | 146 | 0.07 | 0.01 | 0.01 | 0.02 | 0.03 | 0.61 |
+| food_package | dfm-n400 | 252 | 0.04 | 0.01 | 0.00 | 0.00 | 0.03 | 0.55 |
+| bottle | mhpatchcore | 19 | 1.00 | 0.03 | 1.00 | 0.00 | 0.47 | 1.00 |
+| hazelnut | mhpatchcore | 36 | 1.00 | 0.01 | 1.00 | 0.00 | 0.40 | 0.99 |
+| candle | mhpatchcore | 93 | 0.47 | 0.03 | 0.20 | 0.02 | 0.30 | 0.84 |
+| capsules | mhpatchcore | 58 | 0.02 | 0.01 | 0.09 | 0.02 | 0.05 | 0.69 |
+| cashew | mhpatchcore | 33 | 0.45 | 0.03 | 0.30 | 0.03 | 0.13 | 0.86 |
+| chewinggum | mhpatchcore | 50 | 0.90 | 0.01 | 0.52 | 0.01 | 0.42 | 0.94 |
+| fryum | mhpatchcore | 44 | 0.36 | 0.01 | 0.40 | 0.02 | 0.15 | 0.89 |
+| macaroni1 | mhpatchcore | 89 | 0.45 | 0.04 | 0.19 | 0.02 | 0.28 | 0.85 |
+| macaroni2 | mhpatchcore | 96 | 0.08 | 0.02 | 0.01 | 0.01 | 0.13 | 0.70 |
+| pipe_fryum | mhpatchcore | 50 | 0.86 | 0.01 | 0.54 | 0.00 | 0.26 | 0.95 |
+| drink_bottle | mhpatchcore-n400 | 356 | 0.01 | 0.01 | 0.01 | 0.00 | 0.01 | 0.51 |
+| drink_can | mhpatchcore-n400 | 143 | 0.03 | 0.03 | 0.00 | 0.00 | 0.04 | 0.53 |
+| food_bottle | mhpatchcore-n400 | 243 | 0.00 | 0.01 | 0.05 | 0.01 | 0.01 | 0.59 |
+| food_box | mhpatchcore-n400 | 146 | 0.07 | 0.01 | 0.00 | 0.00 | 0.01 | 0.56 |
+| food_package | mhpatchcore-n400 | 252 | 0.02 | 0.01 | 0.02 | 0.00 | 0.00 | 0.50 |
+| drink_bottle | padim | 356 | 0.02 | 0.01 | 0.01 | 0.01 | 0.01 | 0.52 |
+| drink_can | padim | 143 | 0.03 | 0.01 | 0.01 | 0.01 | 0.01 | 0.54 |
+| food_bottle | padim | 243 | 0.12 | 0.01 | 0.08 | 0.01 | 0.04 | 0.65 |
+| food_box | padim | 146 | 0.04 | 0.01 | 0.03 | 0.01 | 0.01 | 0.58 |
+| food_package | padim | 252 | 0.02 | 0.01 | 0.00 | 0.00 | 0.02 | 0.50 |
 | bottle | padim | 19 | 0.95 | 0.02 | 0.95 | 0.02 | 0.31 | 0.96 |
 | hazelnut | padim | 36 | 0.14 | 0.01 | 0.23 | 0.03 | 0.09 | 0.77 |
 | candle | padim | 93 | 0.56 | 0.02 | 0.46 | 0.01 | 0.19 | 0.81 |
@@ -407,6 +917,11 @@ n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 | fryum | patchcore-n150 | 44 | 0.36 | 0.02 | 0.51 | 0.01 | 0.18 | 0.86 |
 | macaroni1 | patchcore-n150 | 89 | 0.21 | 0.01 | 0.07 | 0.02 | 0.08 | 0.65 |
 | macaroni2 | patchcore-n150 | 96 | 0.02 | 0.02 | 0.00 | 0.00 | 0.02 | 0.54 |
+| drink_bottle | patchcore-n400 | 356 | 0.11 | 0.01 | 0.06 | 0.01 | 0.05 | 0.61 |
+| drink_can | patchcore-n400 | 143 | 0.10 | 0.01 | 0.18 | 0.01 | 0.29 | 0.84 |
+| food_bottle | patchcore-n400 | 243 | 0.17 | 0.01 | 0.11 | 0.00 | 0.07 | 0.69 |
+| food_box | patchcore-n400 | 146 | 0.10 | 0.01 | 0.02 | 0.01 | 0.07 | 0.68 |
+| food_package | patchcore-n400 | 252 | 0.05 | 0.01 | 0.02 | 0.00 | 0.06 | 0.57 |
 | bottle | patchcore-r18 | 19 | 1.00 | 0.02 | 1.00 | 0.02 | 0.42 | 1.00 |
 | hazelnut | patchcore-r18 | 36 | 0.94 | 0.01 | 0.86 | 0.01 | 0.38 | 0.97 |
 | candle | patchcore-r18 | 93 | 0.59 | 0.01 | 0.37 | 0.02 | 0.32 | 0.86 |
@@ -418,6 +933,21 @@ n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 | macaroni2 | patchcore-r18 | 96 | 0.03 | 0.02 | 0.07 | 0.01 | 0.05 | 0.61 |
 | pipe_fryum | patchcore-r18 | 50 | 0.40 | 0.01 | 0.02 | 0.01 | 0.22 | 0.90 |
 | bottle | patchcore-r18-cpu | 19 | 1.00 | 0.02 | 0.90 | 0.02 | 0.42 | 0.99 |
+| bottle | rad | 19 | 1.00 | 0.02 | 0.95 | 0.02 | 0.31 | 0.97 |
+| hazelnut | rad | 36 | 1.00 | 0.01 | 1.00 | 0.00 | 0.34 | 0.99 |
+| drink_bottle | rad-n300 | 356 | 0.04 | 0.01 | 0.07 | 0.01 | 0.02 | 0.59 |
+| drink_can | rad-n300 | 143 | 0.29 | 0.01 | 0.32 | 0.02 | 0.05 | 0.68 |
+| food_bottle | rad-n300 | 243 | 0.13 | 0.01 | 0.15 | 0.01 | 0.06 | 0.69 |
+| food_box | rad-n300 | 146 | 0.14 | 0.02 | 0.23 | 0.01 | 0.06 | 0.68 |
+| food_package | rad-n300 | 252 | 0.22 | 0.01 | 0.07 | 0.01 | 0.05 | 0.64 |
+| candle | rad-n300 | 93 | 0.81 | 0.01 | 0.38 | 0.02 | 0.28 | 0.90 |
+| capsules | rad-n300 | 58 | 0.67 | 0.01 | 0.42 | 0.02 | 0.22 | 0.92 |
+| cashew | rad-n300 | 33 | 0.63 | 0.01 | 0.32 | 0.01 | 0.09 | 0.85 |
+| chewinggum | rad-n300 | 50 | 0.52 | 0.01 | 0.34 | 0.01 | 0.27 | 0.88 |
+| fryum | rad-n300 | 44 | 0.75 | 0.01 | 0.00 | 0.00 | 0.19 | 0.94 |
+| macaroni1 | rad-n300 | 89 | 0.55 | 0.01 | 0.35 | 0.00 | 0.17 | 0.78 |
+| macaroni2 | rad-n300 | 96 | 0.43 | 0.01 | 0.11 | 0.00 | 0.10 | 0.67 |
+| pipe_fryum | rad-n300 | 50 | 0.90 | 0.01 | 0.16 | 0.00 | 0.21 | 0.95 |
 | bottle | rd | 19 | 1.00 | 0.02 | 0.90 | 0.02 | 0.33 | 0.98 |
 | hazelnut | rd | 36 | 1.00 | 0.01 | 1.00 | 0.00 | 0.44 | 1.00 |
 | candle | rd | 93 | 0.48 | 0.01 | 0.45 | 0.00 | 0.29 | 0.86 |
@@ -428,5 +958,21 @@ n: goods in the bin. Blank: fewer than 5 goods or 5 defects in the bin.
 | macaroni1 | rd | 89 | 0.32 | 0.01 | 0.11 | 0.00 | 0.14 | 0.72 |
 | macaroni2 | rd | 96 | 0.01 | 0.01 | 0.07 | 0.04 | 0.02 | 0.54 |
 | pipe_fryum | rd | 50 | 0.86 | 0.01 | 0.54 | 0.01 | 0.28 | 0.93 |
+| bottle | superadd-vitb-n100 | 19 | 1.00 | 0.02 | 1.00 | 0.02 | 0.44 | 1.00 |
+| bottle | winclip | 19 | 0.95 | 0.03 | 0.50 | 0.06 | 0.30 | 0.91 |
+| hazelnut | winclip | 36 | 0.30 | 0.01 | 0.39 | 0.03 | 0.30 | 0.76 |
+| candle | winclip | 93 | 0.40 | 0.01 | 0.36 | 0.00 | 0.38 | 0.84 |
+| capsules | winclip | 58 | 0.02 | 0.02 | 0.09 | 0.04 | 0.11 | 0.65 |
+| cashew | winclip | 33 | 0.06 | 0.02 | 0.30 | 0.01 | 0.20 | 0.84 |
+| chewinggum | winclip | 50 | 0.12 | 0.01 | 0.02 | 0.03 | 0.33 | 0.87 |
+| fryum | winclip | 44 | 0.00 | 0.01 | 0.25 | 0.02 | 0.05 | 0.66 |
+| macaroni1 | winclip | 89 | 0.10 | 0.01 | 0.26 | 0.01 | 0.17 | 0.66 |
+| macaroni2 | winclip | 96 | 0.07 | 0.01 | 0.03 | 0.04 | 0.06 | 0.55 |
+| pipe_fryum | winclip | 50 | 0.04 | 0.02 | 0.00 | 0.00 | 0.03 | 0.57 |
+| drink_bottle | winclip-n400 | 356 | 0.03 | 0.01 | 0.02 | 0.01 | -0.00 | 0.51 |
+| drink_can | winclip-n400 | 143 | 0.02 | 0.01 | 0.00 | 0.00 | 0.00 | 0.51 |
+| food_bottle | winclip-n400 | 243 | 0.02 | 0.01 | 0.00 | 0.00 | -0.00 | 0.54 |
+| food_box | winclip-n400 | 146 | 0.01 | 0.02 | 0.01 | 0.01 | -0.00 | 0.51 |
+| food_package | winclip-n400 | 252 | 0.00 | 0.01 | 0.00 | 0.00 | 0.00 | 0.49 |
 
 With 40 to 90 lane goods per category the trees do not beat the raw score.

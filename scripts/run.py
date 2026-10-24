@@ -38,7 +38,7 @@ MODELS = {
 }
 DEFAULT_BACKBONE = {"padim": "resnet18", "patchcore": "wide_resnet50_2"}
 OWN_SIZE = {"winclip", "rad", "dinomaly", "superadd"}  # the model fixes its input size, --size is ignored
-BACKBONE_SHORT = {"resnet18": "r18", "resnet50": "r50", "wide_resnet50_2": "wr50"}
+BACKBONE_SHORT = {"resnet18": "r18", "resnet50": "r50", "wide_resnet50_2": "wr50", "vit_base_patch16_dinov3": "vitb"}
 ESCAPES = (0.0, 0.01, 0.05)
 MAP_STATS = ("map_max", "map_mean", "map_std", "map_p90", "map_p99", "map_frac_hi", "map_cx", "map_cy")
 

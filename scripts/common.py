@@ -1,4 +1,5 @@
 """Shared helpers: datamodules, result-file naming, the reject lane, recovery at fixed escape."""
+import re
 from pathlib import Path
 
 import numpy as np
@@ -25,10 +26,17 @@ def make_datamodule(dataset: str, root: Path, category: str, **kw):
 DATASETS = ("visa", "mvtec", "goodsad")
 
 
-def is_main(model: str) -> bool:
-    """The reference PatchCore run of a category: all training images, or the 400-image subset on GoodsAD,
-    where the full bank would not fit in VRAM."""
-    return model in ("patchcore", "patchcore-n400")
+def main_rows(df: pd.DataFrame, model: str) -> pd.DataFrame:
+    """Rows of `model`, one per category. Where the full run does not exist (bank too big for VRAM) the
+    -n<subset> run of the same model stands in, e.g. patchcore-n400 on GoodsAD, rad-n300 on VisA."""
+    exact = df[df.model == model]
+    sub = df[df.model.str.fullmatch(re.escape(model) + r"-n\d+")]
+    return pd.concat([exact, sub[~sub.category.isin(exact.category)]])
+
+
+def family(model: str) -> str:
+    """Model name with the candidate subset tag folded in: rad-n300 -> rad. Keeps -n150 (a deliberate variant)."""
+    return re.sub(r"-n(300|400|450)$", "", model)
 
 
 def split_tag(tag: str) -> tuple[str, str, str]:

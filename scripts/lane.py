@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from common import build_lane, is_main, recovery_at, split_tag, t_recover
+from common import build_lane, family, main_rows, recovery_at, split_tag, t_recover
 
 ESCAPES = (0.0, 0.01, 0.05)
 CONFIRM_GOOD_FPR = 0.02   # t_confirm: at most 2 % of calibration goods above it
@@ -157,6 +157,7 @@ def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float
         "",
         f"Band: two thresholds set on 4 of 5 folds, measured on the 5th, escape target {escape:.0%}.",
         "recovery = auto-passed goods, escape = auto-passed defects, review = sent to a human.",
+        *glance_section(df, escape),
         "",
         "## Recovery at fixed escape, all goods vs simulated lane (zero-miss cutoff)",
         "",
@@ -199,9 +200,30 @@ def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float
     path.write_text("\n".join(lines) + "\n")
 
 
+def glance_section(df: pd.DataFrame, escape: float) -> list[str]:
+    """Means over categories per model. Only models that ran on every category of the group."""
+    d = df.assign(fam=df.model.map(family))
+    lines = ["", "## Models at a glance", "",
+             "Means over categories, aligned lane. Candidate subset runs (-n300, -n400, -n450) count as their model.",
+             "Only models that ran on every category of the group. Held-out = the calibrated band, threshold from 4 folds.", ""]
+    groups = (("VisA and MVTec AD, 10 categories", d[d.dataset != "goodsad"]), ("GoodsAD, 5 categories", d[d.dataset == "goodsad"]))
+    for title, part in groups:
+        if part.empty:
+            continue
+        g = part.groupby("fam").agg(n=("category", "nunique"), auroc=("auroc", "mean"), lane=("aligned_rec@0.01", "mean"),
+                                    cv_rec=("aligned_cv_recovery", "mean"), cv_esc=("aligned_cv_escape", "mean"),
+                                    ms=("ms_per_image", "mean"))
+        g = g[g.n == part.category.nunique()].sort_values("cv_rec", ascending=False)
+        lines += [f"**{title}**", "", f"| model | AUROC | lane@{escape:.0%} | held-out recovery | held-out escape | ms/img |",
+                  "|---|---|---|---|---|---|"]
+        lines += [f"| {m} | {fmt(r.auroc)} | {fmt(r.lane)} | {fmt(r.cv_rec)} | {fmt(r.cv_esc)} | {fmt(r.ms)} |" for m, r in g.iterrows()]
+        lines.append("")
+    return lines
+
+
 def frr_section(frr_df: pd.DataFrame, escape: float) -> list[str]:
     """PatchCore recovery on bins built by each stand-in at each primary reject rate. Does the bin builder matter?"""
-    d = frr_df[frr_df.model.map(is_main)]
+    d = main_rows(frr_df, "patchcore")
     if d.empty:
         return []
     bins = ["zero-miss"] + [f"{f:.2f}" for f in FRRS]
@@ -271,14 +293,15 @@ def make_figures(df: pd.DataFrame, frr_df: pd.DataFrame, scores: dict, standins:
 
     # one dot per model and category, main models only, fixed colours
     main = [("padim", "#2a78d6"), ("patchcore", "#eb6834"), ("rd", "#1baf7a"),
-            ("patchcore-320-n300", "#eda100"), ("patchcore-r18", "#e87ba4")]
+            ("patchcore-320-n300", "#eda100"), ("patchcore-r18", "#e87ba4"),
+            ("mhpatchcore", "#008300"), ("anomalydino", "#e34948"), ("rad", "#6250d6")]
     fig, ax = plt.subplots(figsize=(6, 5))
     for model, color in main:
-        g = df[df.model.map(is_main)] if model == "patchcore" else df[df.model == model]
+        g = main_rows(df, model)
         if g.empty:
             continue
         ax.scatter(g.auroc, g[col], label=model, s=36, color=color, edgecolor="#ffffff", linewidth=0.8)
-    g = df[df.model.map(is_main)]
+    g = main_rows(df, "patchcore")
     for _, r in g.iterrows():
         ax.annotate(r.category, (r.auroc, r[col]), fontsize=6, color="#52514e", xytext=(4, 2), textcoords="offset points")
     ax.set_xlabel("image AUROC", fontsize=8)
@@ -324,7 +347,7 @@ def make_figures(df: pd.DataFrame, frr_df: pd.DataFrame, scores: dict, standins:
     plt.close(fig)
 
     # recovery vs primary reject rate, PatchCore, one line per stand-in
-    d = frr_df[frr_df.model.map(is_main) & (frr_df.bin != "zero-miss")]
+    d = main_rows(frr_df[frr_df.bin != "zero-miss"], "patchcore")
     if d.empty:
         return
     colors = {"aligned": "#2a78d6", "pca": "#eb6834", "tinypadim": "#1baf7a", "template": "#8a8a8a"}

@@ -111,19 +111,26 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
 
 
 def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
-    """Mean lane recovery vs latency. GPU runs filled, CPU runs (tag suffix -cpu) hollow."""
+    """Mean lane recovery vs latency per model on the GPU. A hollow marker at the same height shows
+    the same model's latency on the CPU where it was timed (tag suffix -cpu, bottle only)."""
     names = dict(MODELS)
-    keys = list(names) + [f"{m}-cpu" for m in names]
-    g = df[df.model.isin(keys)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean")).reset_index()
-    fig, ax = plt.subplots(figsize=(6.8, 4.4))
-    for _, r in g.iterrows():
-        cpu = r.model.endswith("-cpu")
-        base = r.model[:-4] if cpu else r.model
-        ax.scatter(r.ms, r.rec, s=48, facecolor="#ffffff" if cpu else SERIES[0], edgecolor=SERIES[0], linewidth=1.5, zorder=3)
-        ax.annotate(names[base] + (" (cpu)" if cpu else ""), (r.ms, r.rec), xytext=(6, 2), textcoords="offset points", fontsize=7, color=INK2)
+    gpu = df[df.model.isin(names)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
+    cpu = df[df.model.str.endswith("-cpu")].groupby("model").agg(ms=("ms_per_image", "mean"))
+    offsets = {"patchcore": (-6, -12), "patchcore-320-n300": (6, 4)}
+    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    for m, r in gpu.iterrows():
+        ax.scatter(r.ms, r.rec, s=48, color=SERIES[0], edgecolor="#ffffff", linewidth=1.5, zorder=3)
+        dx, dy = offsets.get(m, (6, 2))
+        ax.annotate(names[m], (r.ms, r.rec), xytext=(dx, dy), textcoords="offset points", fontsize=7, color=INK2,
+                    ha="right" if dx < 0 else "left")
+        if f"{m}-cpu" in cpu.index:
+            cms = cpu.loc[f"{m}-cpu", "ms"]
+            ax.plot([r.ms, cms], [r.rec, r.rec], color=SERIES[0], lw=0.8, ls=":", zorder=2)
+            ax.scatter(cms, r.rec, s=48, facecolor="#ffffff", edgecolor=SERIES[0], linewidth=1.5, zorder=3)
+            ax.annotate("cpu", (cms, r.rec), xytext=(6, 2), textcoords="offset points", fontsize=7, color=INK2)
     ax.set_xscale("log")
-    ax.set_xlabel("inference ms per image, log scale", fontsize=8, color=INK2)
-    ax.set_ylabel("mean recovery at 1% escape, lane", fontsize=8, color=INK2)
+    ax.set_xlabel("inference ms per image, log scale. Filled: GPU. Hollow: same model on CPU", fontsize=8, color=INK2)
+    ax.set_ylabel("mean recovery at 1% escape, lane, 10 categories", fontsize=8, color=INK2)
     ax.set_ylim(0.3, 0.8)
     ax.set_title("Latency vs recovery per model", fontsize=10, color=INK, loc="left")
     fig.text(0.01, 0.01, ", ".join(f"{k}: {v}" for k, v in sorted(devices.items())), fontsize=6.5, color=INK2)

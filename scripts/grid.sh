@@ -37,7 +37,7 @@ run() {
 # standin DATASET CATEGORY
 standin() {
   local tag="$1_$2"
-  [ -f "$OUT/standin/${tag}_pca.csv" ] && { log "skip standin $tag"; return; }
+  [ -f "$OUT/standin/${tag}_tinypadim.csv" ] && { log "skip standin $tag"; return; }
   log "standin $tag"
   timeout -s KILL 1800 "$PY" scripts/standin.py "$1" "$2" --root "$ROOT" --out "$OUT" > "$OUT/logs/standin_$tag.log" 2>&1 || log "FAIL  standin $tag"
 }

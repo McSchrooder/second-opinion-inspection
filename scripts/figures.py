@@ -28,7 +28,7 @@ VARIANTS = [("patchcore", "256 px, all images"), ("patchcore-n150", "256 px, 150
             ("patchcore-320-n150", "320 px, 150 images"), ("patchcore-384-n150", "384 px, 150 images"),
             ("patchcore-320-n300", "320 px, 300 images")]
 WEAK = ["candle", "cashew", "fryum", "macaroni1", "capsules", "macaroni2"]
-COL = "template_rec@0.01"
+COL = "aligned_rec@0.01"
 
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
 SEQ = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6",

@@ -66,7 +66,7 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--results", default="results")
     p.add_argument("--escape", type=float, default=0.01)
-    p.add_argument("--standin", default="template")
+    p.add_argument("--standin", default="aligned")
     a = p.parse_args()
     res = Path(a.results)
 

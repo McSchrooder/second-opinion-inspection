@@ -7,7 +7,7 @@ One file per run (dataset_category_model.csv) with the prototype's columns:
 plus dataset, category, model appended. `split` is "test" throughout: we do not
 hold out a validation subset up front, thresholds in docs/results.md are
 calibrated 5-fold on the test split instead. `variant` is "original" (no nuisance
-copies). `rule_score` is the golden-template stand-in score (our simulated
+copies). `rule_score` is the aligned golden-template stand-in score (our simulated
 primary camera) when available. `decision` is left empty for the evaluator.
 """
 import argparse
@@ -31,13 +31,13 @@ def main() -> None:
     out = Path(a.out) if a.out else res / "items"
     out.mkdir(parents=True, exist_ok=True)
 
-    standins = {f.stem: pd.read_csv(f).set_index("image") for f in (res / "standin").glob("*_template.csv")}
+    standins = {f.stem: pd.read_csv(f).set_index("image") for f in (res / "standin").glob("*_aligned.csv")}
     n = 0
     for f in sorted((res / "scores").glob("*.csv")):
         ds, rest = f.stem.split("_", 1)
         cat, model = rest.rsplit("_", 1)
         df = pd.read_csv(f)
-        rule = standins.get(f"{ds}_{cat}_template")
+        rule = standins.get(f"{ds}_{cat}_aligned")
         rows = []
         for i, r in df.iterrows():
             rs = rule.loc[r.image, "score"] if rule is not None and r.image in rule.index else ""

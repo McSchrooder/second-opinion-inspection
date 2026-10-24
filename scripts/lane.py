@@ -212,6 +212,10 @@ def frr_section(frr_df: pd.DataFrame, escape: float) -> list[str]:
         "Columns: share of goods the stand-in rejects. `zero-miss`: cutoff at its weakest defect, resulting",
         "reject rate in brackets. `template`: the unaligned rule camera.",
         "",
+        "The stand-in dilemma: a dumb primary rejects goods for reasons our model does not share, so the",
+        "bin is easy and recovery looks good. A smart primary rejects the goods our model also doubts, so",
+        "the bin is hard and small. Neither is the real line. We report both ends.",
+        "",
         "| dataset | category | stand-in | " + " | ".join(bins) + " |",
         "|---|---|---|" + "---|" * len(bins),
     ]

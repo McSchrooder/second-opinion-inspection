@@ -68,7 +68,7 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni1 | patchcore-320-n150 | 100/100 | 0.87 | 0.22 | 0.33 | 0.58 | 0.89 | 0.33 | 0.99 | 0.33 | 0.90 | 0.31 | 20.70 |
 | visa | macaroni1 | patchcore-320-n300 | 100/100 | 0.85 | 0.21 | 0.23 | 0.51 | 0.89 | 0.22 | 0.99 | 0.23 | 0.90 | 0.20 | 30.90 |
 | visa | macaroni1 | patchcore-384-n150 | 100/100 | 0.89 | 0.33 | 0.39 | 0.63 | 0.89 | 0.39 | 0.99 | 0.38 | 0.90 | 0.38 | 36.10 |
-| visa | macaroni1 | patchcore-n150 | 100/100 | 0.81 | 0.13 | 0.24 | 0.37 | 0.89 | 0.24 | 0.99 | 0.24 | 0.90 | 0.20 | 12.60 |
+| visa | macaroni1 | patchcore-n150 | 100/100 | 0.80 | 0.21 | 0.29 | 0.33 | 0.89 | 0.29 | 0.99 | 0.29 | 0.90 | 0.26 | 11.50 |
 | visa | macaroni1 | patchcore-r18 | 100/100 | 0.89 | 0.27 | 0.53 | 0.61 | 0.89 | 0.54 | 0.99 | 0.54 | 0.90 | 0.51 | 17.40 |
 | visa | macaroni1 | rd | 100/100 | 0.89 | 0.31 | 0.48 | 0.64 | 0.89 | 0.48 | 0.99 | 0.48 | 0.90 | 0.47 | 123.10 |
 | visa | macaroni2 | padim | 100/100 | 0.60 | 0.12 | 0.14 | 0.15 | 0.96 | 0.12 | 0.96 | 0.12 | 0.93 | 0.10 | 8.00 |
@@ -246,9 +246,9 @@ recovery = auto-passed goods, escape = auto-passed defects, review = sent to a h
 | visa | macaroni1 | patchcore-384-n150 | aligned | 89 | 0.33 | 0.01 | 0.58 | 0.94 | 0.04 |
 | visa | macaroni1 | patchcore-384-n150 | pca | 99 | 0.33 | 0.01 | 0.61 | 0.95 | 0.04 |
 | visa | macaroni1 | patchcore-384-n150 | tinypadim | 90 | 0.31 | 0.01 | 0.62 | 0.94 | 0.04 |
-| visa | macaroni1 | patchcore-n150 | aligned | 89 | 0.19 | 0.01 | 0.69 | 0.94 | 0.04 |
-| visa | macaroni1 | patchcore-n150 | pca | 99 | 0.13 | 0.01 | 0.73 | 0.94 | 0.04 |
-| visa | macaroni1 | patchcore-n150 | tinypadim | 90 | 0.14 | 0.01 | 0.72 | 0.92 | 0.04 |
+| visa | macaroni1 | patchcore-n150 | aligned | 89 | 0.21 | 0.01 | 0.70 | 0.95 | 0.04 |
+| visa | macaroni1 | patchcore-n150 | pca | 99 | 0.23 | 0.01 | 0.69 | 0.91 | 0.04 |
+| visa | macaroni1 | patchcore-n150 | tinypadim | 90 | 0.19 | 0.01 | 0.71 | 0.92 | 0.04 |
 | visa | macaroni1 | patchcore-r18 | aligned | 89 | 0.32 | 0.02 | 0.67 | 0.96 | 0.04 |
 | visa | macaroni1 | patchcore-r18 | pca | 99 | 0.30 | 0.02 | 0.67 | 0.94 | 0.04 |
 | visa | macaroni1 | patchcore-r18 | tinypadim | 90 | 0.29 | 0.02 | 0.67 | 0.93 | 0.04 |
@@ -303,6 +303,10 @@ Figures: `docs/figures/auroc_vs_recovery.png`, `docs/figures/recovery_curves.png
 
 Columns: share of goods the stand-in rejects. `zero-miss`: cutoff at its weakest defect, resulting
 reject rate in brackets. `template`: the unaligned rule camera.
+
+The stand-in dilemma: a dumb primary rejects goods for reasons our model does not share, so the
+bin is easy and recovery looks good. A smart primary rejects the goods our model also doubts, so
+the bin is hard and small. Neither is the real line. We report both ends.
 
 | dataset | category | stand-in | zero-miss | 0.05 | 0.10 | 0.20 |
 |---|---|---|---|---|---|---|

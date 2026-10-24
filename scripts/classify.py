@@ -1,15 +1,8 @@
-"""Second stage on the reject lane: does a classifier on anomaly-map features beat the raw score?
+"""Does a second-stage classifier on heatmap statistics beat the raw score on the lane?
 
-On a real line the technician's decisions label the reject bin. Here the lane is
-labelled by construction, so we can ask the same question on public data:
-
-  stage 1  raw anomaly score (PatchCore etc.), threshold at fixed escape
-  stage 2  gradient-boosted trees on [score + anomaly-map stats (+ stand-in score)],
-           trained on 4 folds of the lane, scored on the 5th, threshold at fixed escape
-
-Both are evaluated with the same folds and the same metric: recovery of lane goods
-at an escape target. Also reports a separability check: silhouette of the two
-labels in feature space, and nearest-neighbour label purity.
+Trees on [score + heatmap stats + stand-in score], 5-fold on the lane, same recovery-at-escape
+metric as the raw score. Also a separability check (silhouette, nearest-neighbour purity).
+Result so far: no gain with 40-90 lane goods per category.
 
 usage: python scripts/classify.py [--results results] [--escape 0.01] [--standin template]
 """
@@ -24,26 +17,11 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
+from common import build_lane, split_tag, t_recover
+
 FOLDS = 5
 SEED = 0
 FEATURES = ["score", "map_max", "map_mean", "map_std", "map_p90", "map_p99", "map_frac_hi", "map_cx", "map_cy"]
-
-
-def split_tag(tag: str) -> tuple[str, str, str]:
-    ds, rest = tag.split("_", 1)
-    cat, model = rest.rsplit("_", 1)
-    return ds, cat, model
-
-
-def build_lane(standin: pd.DataFrame) -> pd.Index:
-    thr = standin.loc[standin.label == 1, "score"].min()
-    return standin[standin.score >= thr].index
-
-
-def t_recover(defect_scores: np.ndarray, escape: float) -> float:
-    d = np.sort(defect_scores)
-    k = int(np.floor(escape * len(d)))
-    return float(d[min(k, len(d) - 1)])
 
 
 def cv_recovery(scores_fn, X: np.ndarray, y: np.ndarray, escape: float) -> tuple[float, float]:
@@ -101,7 +79,7 @@ def main() -> None:
         ds, cat, model = split_tag(f.stem)
         key = f"{ds}_{cat}_{a.standin}"
         if key in standins:
-            lane = df.loc[df.index.intersection(build_lane(standins[key]))].copy()
+            lane = df.loc[df.index.intersection(build_lane(standins[key])[0])].copy()
             lane["standin"] = standins[key].loc[lane.index, "score"].values
             feats = FEATURES + ["standin"]
         else:

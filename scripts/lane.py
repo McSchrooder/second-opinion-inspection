@@ -1,15 +1,9 @@
-"""Reject-lane evaluation with calibrated two-threshold bands.
+"""Evaluate scores on the simulated reject lane and write docs/results.md.
 
-Reads per-image scores written by run.py (results/scores/*.csv) and stand-in
-primary-camera scores written by standin.py (results/standin/*.csv), builds the
-simulated reject lane, and reports what matters for the product:
-
-  recovery  : share of good items in the lane we auto-recover
-  escape    : share of true defects we auto-recover (must stay near zero)
-  review    : share of lane items sent to a human (between the two thresholds)
-
-Thresholds are calibrated on held-out folds (5-fold over the lane), so the
-numbers are not fitted on the images they are evaluated on.
+Reads results/scores/*.csv (run.py) and results/standin/*.csv (standin.py). The lane is
+what the stand-in camera flags. On it we report recovery (goods auto-passed), escape
+(defects auto-passed), review (sent to a human) with two thresholds calibrated on 4 folds
+and measured on the 5th, plus a 95% upper bound on escape.
 
 usage: python scripts/lane.py [--results results] [--docs docs/results.md] [--escape 0.01]
 """
@@ -21,6 +15,8 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
+
+from common import build_lane, recovery_at, split_tag, t_recover
 
 ESCAPES = (0.0, 0.01, 0.05)
 CONFIRM_GOOD_FPR = 0.02   # t_confirm: at most 2 % of calibration goods above it
@@ -34,18 +30,6 @@ def escape_upper_bound(n_defects: int, observed: int = 0, conf: float = 0.95) ->
         return 1.0
     from scipy.stats import beta
     return float(beta.ppf(conf, observed + 1, n_defects - observed))
-
-
-def t_recover(defect_scores: np.ndarray, escape: float) -> float:
-    """Threshold that lets through at most `escape` of calibration defects."""
-    d = np.sort(defect_scores)
-    k = int(np.floor(escape * len(d)))
-    return float(d[min(k, len(d) - 1)])
-
-
-def recovery_at(scores: np.ndarray, labels: np.ndarray, escape: float) -> float:
-    thr = t_recover(scores[labels == 1], escape)
-    return float((scores[labels == 0] < thr).mean()) if (labels == 0).any() else float("nan")
 
 
 def cv_band(scores: np.ndarray, labels: np.ndarray, escape: float) -> dict:
@@ -74,21 +58,6 @@ def cv_band(scores: np.ndarray, labels: np.ndarray, escape: float) -> dict:
 
 
 STANDINS = ("template", "pca")
-
-
-def split_tag(tag: str) -> tuple[str, str, str]:
-    """'visa_pipe_fryum_patchcore' -> ('visa', 'pipe_fryum', 'patchcore'). Model names have no underscores."""
-    ds, rest = tag.split("_", 1)
-    cat, model = rest.rsplit("_", 1)
-    return ds, cat, model
-
-
-def build_lane(standin: pd.DataFrame) -> tuple[pd.Index, float]:
-    """Flag everything at or above the lowest defect score (catch every defect)."""
-    thr = standin.loc[standin.label == 1, "score"].min()
-    flagged = standin[standin.score >= thr]
-    frr = float((flagged.label == 0).sum() / (standin.label == 0).sum())
-    return flagged.index, frr
 
 
 def main() -> None:

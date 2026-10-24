@@ -11,6 +11,7 @@ mkdir -p "$OUT/logs"
 MVTEC="bottle hazelnut"
 VISA="candle cashew chewinggum fryum pipe_fryum macaroni1 macaroni2 capsules"
 WEAK="candle cashew fryum macaroni1 macaroni2 capsules"
+GOODSAD="drink_can drink_bottle food_bottle food_package food_box"
 
 log() { echo "$(date +%H:%M:%S) $*" | tee -a "$LOG"; }
 
@@ -64,5 +65,9 @@ for c in $VISA;  do run visa  "$c" patchcore "-320-n300" --size 320 --train-n 30
 
 for c in $MVTEC; do run mvtec "$c" patchcore "-r18" --backbone resnet18; done
 for c in $VISA;  do run visa  "$c" patchcore "-r18" --backbone resnet18; done
+
+# GoodsAD: 3000 px supermarket goods, up to 1000 training images, so PatchCore gets a 400-image subset
+for c in $GOODSAD; do standin goodsad "$c"; done
+for c in $GOODSAD; do run goodsad "$c" padim ""; run goodsad "$c" patchcore "-n400" --train-n 400; done
 
 log "grid finished"

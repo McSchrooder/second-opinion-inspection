@@ -24,7 +24,7 @@ from anomalib.models import Padim, Patchcore, ReverseDistillation
 from anomalib.post_processing import PostProcessor
 from common import recovery_at, t_recover
 
-DATASETS = {"visa": Visa, "mvtec": MVTecAD}
+DATASETS = {"visa": Visa, "mvtec": MVTecAD, "goodsad": MVTecAD}  # GoodsAD ships in MVTec AD layout
 MODELS = {"padim": Padim, "patchcore": Patchcore, "rd": ReverseDistillation}
 DEFAULT_BACKBONE = {"padim": "resnet18", "patchcore": "wide_resnet50_2"}
 BACKBONE_SHORT = {"resnet18": "r18", "resnet50": "r50", "wide_resnet50_2": "wr50"}

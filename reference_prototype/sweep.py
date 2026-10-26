@@ -31,6 +31,8 @@ def main() -> None:
     ap.add_argument("--coreset-ratio", type=float, default=0.01)
     ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2, 3, 4])
     ap.add_argument("--margins", type=float, nargs="+", default=[0.0, 0.05, 0.1, 0.2])
+    ap.add_argument("--split-by", choices=["source", "item"], default="source",
+                    help="source: all variants of one image stay on the same side (no leakage); item: v0.2 behaviour")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     S = a.image_size
@@ -47,7 +49,8 @@ def main() -> None:
         rng = np.random.default_rng(seed)
         pile, _ = build_reject_pile(base_items, inspector, 2, rng)
         is_def = np.array([p.is_defect for p in pile])
-        val = stratified_split(is_def, 0.5, rng)
+        groups = np.array([f"{p.defect_type}/{p.source}" for p in pile]) if a.split_by == "source" else None
+        val = stratified_split(is_def, 0.5, rng, groups)
         model = PatchCore("wide_resnet50_2", a.weights, S, a.coreset_ratio, seed=seed)
         model.fit(train_imgs)
         scores, _ = model.predict(np.stack([p.image for p in pile]), S)

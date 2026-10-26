@@ -1,4 +1,4 @@
-# Reference prototype (Tiago, v0.2, 18 Oct 2026)
+# Reference prototype (Tiago, v0.3, 26 Oct 2026)
 
 A complete, small baseline of the whole product loop: simulate a camera's reject pile, score it with a PatchCore-style model, make a three-way decision, evaluate, and review items in an app. It lives in its own folder so it does not clash with the main model code. Take whatever pieces are useful.
 
@@ -30,14 +30,20 @@ Without internet, pass ImageNet weights with `--weights wide_resnet50_2-95faca4d
 
 The official MVTec per-category link returned 404 on 18 Oct 2026. The bottle category was taken from the Hugging Face mirror `foersben/mvtec-ad` and checked against Table 1 of Bergmann et al., IJCV 2021: 209 train, 20 good test, 63 defective test (3 types), 900 px. Cite the official paper: https://doi.org/10.1007/s11263-020-01400-4
 
-## Results so far (MVTec bottle, test half: 25 to 28 false rejects + 31 defects per run)
+## Results so far (MVTec bottle, test half: 24 to 28 false rejects + 31 defects per run)
+
+Validation and test are split **by source image** (default `--split-by source`), so the light and blur variants of one bottle always land on the same side. v0.2 split per item, which let variants of the same image leak across; Manuel spotted this. `--split-by item` reproduces v0.2.
 
 | Safety margin | Recovery, mean (min to max) | Defects escaped (5 runs) | Runs with an escape | Sent to human |
 |---|---|---|---|---|
-| 0% | 80% (64 to 96%) | 15 of 155 | 5 of 5 | 21% |
-| 5% | 74% (56 to 93%) | 10 of 155 | 4 of 5 | 31% |
-| 10% | 69% (52 to 93%) | 9 of 155 | 3 of 5 | 38% |
-| 20% | 50% (8 to 74%) | 3 of 155 | 1 of 5 | 61% |
+| 0% | 77% (63 to 89%) | 15 of 155 | 5 of 5 | 10% |
+| 5% | 73% (50 to 88%) | 10 of 155 | 4 of 5 | 17% |
+| 10% | 69% (46 to 88%) | 9 of 155 | 3 of 5 | 24% |
+| 20% | 54% (12 to 79%) | 2 of 155 | 1 of 5 | 44% |
+
+Compared with v0.2 (split per item): escapes are the same, recovery within 3 points, the share sent to a human drops by about half. The leak was not hiding escapes.
+
+Note: `recovery_at_zero_escape` in `run_pipeline.py` is computed on the test set and is reported only as an upper bound (`..._upper_bound`). It is never used to set a threshold.
 
 Image AUROC 0.955 to 0.981, heatmap pixel AUROC about 0.98, about 106 ms per image on a 2-core CPU.
 

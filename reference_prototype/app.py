@@ -7,6 +7,9 @@ Two modes, matching the test plan:
   - "With tool":    the technician also sees the tool's decision, score and heatmap.
 Every decision is logged with the time it took (logs/<participant>.csv).
 The ground truth is never shown on screen.
+If user_test_planted.json exists (make_user_test_sets.py), those items show the tool answer
+"Likely good" although they are real defects: a planted error to measure over-reliance.
+Participants are told about it in the debrief.
 """
 from __future__ import annotations
 
@@ -35,10 +38,12 @@ def load(results: str):
     rows = list(csv.DictReader(open(Path(results) / "items.csv")))
     sets = json.load(open(Path(results) / "user_test_sets.json"))
     thr = json.load(open(Path(results) / "thresholds.json"))
-    return {r["id"]: r for r in rows}, sets, thr
+    p = Path(results) / "user_test_planted.json"
+    planted = json.load(open(p)) if p.exists() else {}
+    return {r["id"]: r for r in rows}, sets, thr, planted
 
 
-items, sets, thr = load(str(R))
+items, sets, thr, planted = load(str(R))
 
 st.set_page_config(page_title="Second Opinion – reject review", layout="wide")
 st.title("Second opinion on rejected items")
@@ -62,6 +67,7 @@ if i >= len(queue):
     st.stop()
 
 it = items[queue[i]]
+shown = planted.get(it["id"], it["decision"])  # the answer the participant sees
 st.progress(i / len(queue), text=f"Item {i + 1} of {len(queue)}")
 
 left, right = st.columns(2)
@@ -70,7 +76,7 @@ if mode == "With tool":
     right.image(str(R / "items" / f"{it['id']}_heat.png"),
                 caption="Where the model sees something unusual (red)", width="stretch")
     score = float(it["score"])
-    st.markdown(f"**Tool says:** {LABEL[it['decision']]}")
+    st.markdown(f"**Tool says:** {LABEL[shown]}")
     st.caption(f"Anomaly score {score:.2f}  ·  recover below {thr['t_low']:.2f}  ·  "
                f"confirm defect above {thr['t_high']:.2f}")
 
@@ -89,10 +95,11 @@ if choice:
         w = csv.writer(fh)
         if new:
             w.writerow(["timestamp", "participant", "set", "mode", "item", "seconds",
-                        "participant_decision", "tool_decision", "agreed_with_tool", "is_defect"])
-        tool = it["decision"] if mode == "With tool" else ""
+                        "participant_decision", "tool_decision", "agreed_with_tool", "is_defect", "planted"])
+        tool = shown if mode == "With tool" else ""
         agreed = "" if mode == "Without tool" or tool == "human" else int(tool == choice)
         w.writerow([datetime.now().isoformat(timespec="seconds"), participant, line_set, mode, it["id"],
-                    round(time.time() - st.session_state["t_start"], 1), choice, tool, agreed, it["is_defect"]])
+                    round(time.time() - st.session_state["t_start"], 1), choice, tool, agreed, it["is_defect"],
+                    int(it["id"] in planted)])
     st.session_state.update(i=i + 1, t_start=time.time())
     st.rerun()

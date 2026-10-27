@@ -34,6 +34,7 @@ def main() -> None:
     ap.add_argument("--split-by", choices=["source", "item"], default="source",
                     help="source: all variants of one image stay on the same side (no leakage); item: v0.2 behaviour")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--items-dir", default=None, help="if set, writes items_seed<N>.csv per seed (same columns as run_pipeline items.csv)")
     a = ap.parse_args()
     S = a.image_size
 
@@ -54,6 +55,15 @@ def main() -> None:
         model = PatchCore("wide_resnet50_2", a.weights, S, a.coreset_ratio, seed=seed)
         model.fit(train_imgs)
         scores, _ = model.predict(np.stack([p.image for p in pile]), S)
+        if a.items_dir:
+            from pathlib import Path
+            d = Path(a.items_dir); d.mkdir(parents=True, exist_ok=True)
+            with open(d / f"items_seed{seed}.csv", "w", newline="") as fh:
+                w = csv.writer(fh)
+                w.writerow(["id", "seed", "split", "source", "variant", "defect_type", "is_defect", "score"])
+                for i, p in enumerate(pile):
+                    w.writerow([f"{i:04d}", seed, "val" if val[i] else "test", p.source, p.variant,
+                                p.defect_type, int(p.is_defect), round(float(scores[i]), 5)])
         for m in a.margins:
             tl, th = choose_thresholds(scores[val], is_def[val], m)
             met = pile_metrics(decide(scores, tl, th)[~val], is_def[~val])

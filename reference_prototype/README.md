@@ -12,6 +12,7 @@ A complete, small baseline of the whole product loop: simulate a camera's reject
 | `second_opinion/decide.py` | Three-way decision (recover / human / defect), thresholds from validation then frozen, safety margin, metrics |
 | `run_pipeline.py` | One full run: results, images, heatmaps and user-test sets (A and B) |
 | `sweep.py` | Robustness: several seeds x several safety margins, one model fit per seed |
+| `check_escape_rule.py` | Checks whether an escape count is chance: fixed scores, many redrawn splits, compared with n_test/(n_val+1) |
 | `app.py` | Streamlit review app for the user tests (modes with/without tool, logs time and decisions) |
 | `tests/make_synthetic.py` | Tiny synthetic dataset, only to check the code runs |
 
@@ -20,7 +21,7 @@ A complete, small baseline of the whole product loop: simulate a camera's reject
 ```bash
 pip install -r requirements.txt
 python run_pipeline.py --data-root data/mvtec --category bottle --coreset-ratio 0.01 --out results/bottle
-python sweep.py --data-root data/mvtec --category bottle --seeds 0 1 2 3 4 --margins 0 0.05 0.1 0.2 --out results/sweep.csv
+python sweep.py --data-root data/mvtec --category bottle --seeds 0 1 2 3 4 --margins 0 0.05 0.1 0.2 --out results/sweep.csv --items-dir results/items
 streamlit run app.py -- --results results/bottle
 ```
 
@@ -42,6 +43,8 @@ Validation and test are split **by source image** (default `--split-by source`),
 | 20% | 54% (12 to 79%) | 2 of 155 | 1 of 5 | 44% |
 
 Compared with v0.2 (split per item): escapes are the same, recovery within 3 points, the share sent to a human drops by about half. The leak was not hiding escapes.
+
+Escapes at 0% margin (15 of 155) are above what the lowest-defect rule predicts (about 1/(n+1) = 1/33 per test defect, so about 5 in 5 runs). The cause is chance in these 5 splits: one low-scoring contamination image (003.png) landed in test in all 5. Keeping the scores fixed and redrawing the split 400 times gives 0.938 escapes per run against 0.939 predicted, i.e. 3.0% per test defect. Per-seed scores are in `shared/items/mvtec_bottle_refproto-seed*.csv`.
 
 Note: `recovery_at_zero_escape` in `run_pipeline.py` is computed on the test set and is reported only as an upper bound (`..._upper_bound`). It is never used to set a threshold.
 

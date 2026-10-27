@@ -116,9 +116,12 @@ def main() -> None:
         if "Autonomy" in quest:
             lines += ["", "Autonomy answer for their own line: "
                       + ", ".join(f"{k}: {v}" for k, v in quest.Autonomy.value_counts().items())]
-        if "Heatmap read correctly" in quest:
-            lines += ["Heatmap read correctly: "
-                      + ", ".join(f"{k}: {v}" for k, v in quest["Heatmap read correctly"].value_counts().items())]
+        for col, txt in [("Heatmap place correct (0-3)", "pointed at the right place"),
+                         ("Heatmap call correct (0-3)", "called defect or harmless correctly")]:
+            if col in quest and quest[col].notna().any():
+                v = quest[col].dropna()
+                lines.append(f"Heatmap task, {txt}: median {v.median():.0f} of 3; "
+                             f"{int((v >= 2).sum())} of {len(v)} participants got at least 2 of 3")
         lines.append("")
 
     # 4. order effect check (counterbalancing)

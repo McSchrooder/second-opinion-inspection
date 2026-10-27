@@ -64,6 +64,21 @@ def main() -> None:
     json.dump(sets, open(R / "user_test_sets.json", "w"), indent=2)
     json.dump({i: "recover" for i in planted.id}, open(R / "user_test_planted.json", "w"), indent=2)
 
+    # heatmap task: 3 items not in A or B; the participant points to where the tool sees a problem
+    # and says whether it is a real defect or harmless. One clear defect, two harmless nuisances.
+    used = set(A) | set(B) | set(planted.id)
+    free = d[~d.id.isin(used)]
+    defects = free[(free.is_defect == 1) & (free.decision == "defect")].sort_values("score")
+    task = [defects.id.iloc[len(defects) // 2]]  # a typical, clearly visible defect
+    for v in ("dust", "droplets"):
+        pool = free[(free.is_defect == 0) & (free.variant == v)].sort_values("score", ascending=False)
+        if len(pool):
+            task.append(pool.id.iloc[0])
+    json.dump({"items": task, "truth": {i: ("defect" if int(d.set_index("id").loc[i, "is_defect"]) else "harmless")
+                                        for i in task}},
+              open(R / "heatmap_task.json", "w"), indent=2)
+    print("heatmap task:", task, "(show items/<id>_heat.png)")
+
     for k, ids in sets.items():
         s = d.set_index("id").loc[ids]
         shown = s.decision.where(~s.index.isin(planted.id), "recover")

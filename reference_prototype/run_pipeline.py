@@ -122,7 +122,10 @@ def main() -> None:
         rows.append({"id": f"{i:04d}", "split": "val" if val[i] else "test", "source": p.source,
                      "variant": p.variant, "defect_type": p.defect_type, "is_defect": int(p.is_defect),
                      "score": round(float(scores[i]), 5), "decision": decisions[i],
-                     "rule_score": round(float(rule_scores[i]), 5)})
+                     "rule_score": round(float(rule_scores[i]), 5),
+                     # hottest point of the heatmap, as a fraction of width and height ("where to look")
+                     "peak_x": round(float(np.unravel_index(np.argmax(maps[i]), maps[i].shape)[1] / S), 4),
+                     "peak_y": round(float(np.unravel_index(np.argmax(maps[i]), maps[i].shape)[0] / S), 4)})
     with open(out / "items.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
 

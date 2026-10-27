@@ -5,3 +5,5 @@ scipy
 scikit-learn
 pillow
 streamlit>=1.40
+pandas
+openpyxl

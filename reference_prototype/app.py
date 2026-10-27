@@ -7,6 +7,9 @@ Two modes, matching the test plan:
   - "With tool":    the technician also sees the tool's decision, score and heatmap.
 Every decision is logged with the time it took (logs/<participant>.csv).
 The ground truth is never shown on screen.
+If user_test_planted.json exists (make_user_test_sets.py), those items show the tool answer
+"Likely good" although they are real defects: a planted error to measure over-reliance.
+Participants are told about it in the debrief.
 """
 from __future__ import annotations
 
@@ -35,10 +38,12 @@ def load(results: str):
     rows = list(csv.DictReader(open(Path(results) / "items.csv")))
     sets = json.load(open(Path(results) / "user_test_sets.json"))
     thr = json.load(open(Path(results) / "thresholds.json"))
-    return {r["id"]: r for r in rows}, sets, thr
+    p = Path(results) / "user_test_planted.json"
+    planted = json.load(open(p)) if p.exists() else {}
+    return {r["id"]: r for r in rows}, sets, thr, planted
 
 
-items, sets, thr = load(str(R))
+items, sets, thr, planted = load(str(R))
 
 st.set_page_config(page_title="Second Opinion – reject review", layout="wide")
 st.title("Second opinion on rejected items")
@@ -47,6 +52,12 @@ with st.sidebar:
     participant = st.text_input("Participant ID", "P1")
     line_set = st.selectbox("Image set", list(sets))
     mode = st.radio("Mode", ["Without tool", "With tool"])
+    mark_peak = st.checkbox("Mark where to look", value=False,
+                            help="Draws a ring at the hottest point of the heatmap, even when the score is low. "
+                                 "Off in round 1; candidate change for round 2.")
+    show_score = st.checkbox("Show score and thresholds", value=False,
+                             help="Off in the user tests: with a planted error the score would contradict "
+                                  "the answer shown. Useful for demos and debugging.")
     if st.button("Start / restart this set"):
         st.session_state.update(i=0, t_start=time.time(), started=True)
     st.caption("Ground truth is never shown. Decisions are saved to logs/.")
@@ -62,17 +73,27 @@ if i >= len(queue):
     st.stop()
 
 it = items[queue[i]]
+shown = planted.get(it["id"], it["decision"])  # the answer the participant sees
 st.progress(i / len(queue), text=f"Item {i + 1} of {len(queue)}")
 
 left, right = st.columns(2)
 left.image(str(R / "items" / f"{it['id']}.png"), caption="Rejected by the line camera", width="stretch")
 if mode == "With tool":
-    right.image(str(R / "items" / f"{it['id']}_heat.png"),
-                caption="Where the model sees something unusual (red)", width="stretch")
+    heat_img = str(R / "items" / f"{it['id']}_heat.png")
+    if mark_peak and it.get("peak_x"):
+        from PIL import Image, ImageDraw
+        im = Image.open(heat_img).convert("RGB")
+        d = ImageDraw.Draw(im)
+        x, y, r = float(it["peak_x"]) * im.width, float(it["peak_y"]) * im.height, im.width * 0.06
+        d.ellipse([x - r, y - r, x + r, y + r], outline=(255, 210, 0), width=max(2, im.width // 100))
+        heat_img = im
+    right.image(heat_img, caption="Where the model sees something unusual (red; yellow ring = look here)"
+                if mark_peak else "Where the model sees something unusual (red)", width="stretch")
     score = float(it["score"])
-    st.markdown(f"**Tool says:** {LABEL[it['decision']]}")
-    st.caption(f"Anomaly score {score:.2f}  ·  recover below {thr['t_low']:.2f}  ·  "
-               f"confirm defect above {thr['t_high']:.2f}")
+    st.markdown(f"**Tool says:** {LABEL[shown]}")
+    if show_score:
+        st.caption(f"Anomaly score {score:.2f}  ·  recover below {thr['t_low']:.2f}  ·  "
+                   f"confirm defect above {thr['t_high']:.2f}")
 
 c1, c2 = st.columns(2)
 choice = None
@@ -89,10 +110,11 @@ if choice:
         w = csv.writer(fh)
         if new:
             w.writerow(["timestamp", "participant", "set", "mode", "item", "seconds",
-                        "participant_decision", "tool_decision", "agreed_with_tool", "is_defect"])
-        tool = it["decision"] if mode == "With tool" else ""
+                        "participant_decision", "tool_decision", "agreed_with_tool", "is_defect", "planted", "mark_peak"])
+        tool = shown if mode == "With tool" else ""
         agreed = "" if mode == "Without tool" or tool == "human" else int(tool == choice)
         w.writerow([datetime.now().isoformat(timespec="seconds"), participant, line_set, mode, it["id"],
-                    round(time.time() - st.session_state["t_start"], 1), choice, tool, agreed, it["is_defect"]])
+                    round(time.time() - st.session_state["t_start"], 1), choice, tool, agreed, it["is_defect"],
+                    int(it["id"] in planted), int(mark_peak and mode == "With tool")])
     st.session_state.update(i=i + 1, t_start=time.time())
     st.rerun()

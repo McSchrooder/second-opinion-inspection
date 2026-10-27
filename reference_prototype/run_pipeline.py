@@ -30,13 +30,21 @@ def overlay(img: np.ndarray, heat: np.ndarray, lo: float, hi: float) -> np.ndarr
     return (img * (1 - 0.6 * a) + red * 0.6 * a).astype(np.uint8)
 
 
-def stratified_split(is_defect: np.ndarray, frac: float, rng: np.random.Generator) -> np.ndarray:
-    """Boolean array: True = validation. Same defect share in both halves."""
+def stratified_split(is_defect: np.ndarray, frac: float, rng: np.random.Generator,
+                     groups: np.ndarray | None = None) -> np.ndarray:
+    """Boolean array: True = validation. Same defect share in both halves.
+
+    With `groups` (source image name), all variants of one source image land on the same side,
+    so a light and a blur variant of the same bottle cannot be split between validation and test.
+    """
+    if groups is None:
+        groups = np.arange(len(is_defect)).astype(str)
     val = np.zeros(len(is_defect), dtype=bool)
     for cls in (True, False):
-        idx = np.flatnonzero(is_defect == cls)
-        rng.shuffle(idx)
-        val[idx[: int(round(len(idx) * frac))]] = True
+        g = np.unique(groups[is_defect == cls])
+        rng.shuffle(g)
+        chosen = set(g[: int(round(len(g) * frac))])
+        val |= (is_defect == cls) & np.isin(groups, list(chosen))
     return val
 
 
@@ -53,6 +61,8 @@ def main() -> None:
     ap.add_argument("--safety-margin", type=float, default=0.05,
                     help="widens the human band by this fraction of the score range (fewer escapes, more review)")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--split-by", choices=["source", "item"], default="source",
+                    help="source: all variants of one image stay on the same side (no leakage); item: v0.2 behaviour")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
@@ -71,7 +81,8 @@ def main() -> None:
     inspector.calibrate_never_miss([i.image for i in test_items if i.is_defect])
     pile, primary = build_reject_pile(test_items, inspector, a.nuisance_per_good, rng)
     is_def = np.array([p.is_defect for p in pile])
-    val = stratified_split(is_def, a.val_frac, rng)
+    groups = np.array([f"{p.defect_type}/{p.source}" for p in pile]) if a.split_by == "source" else None
+    val = stratified_split(is_def, a.val_frac, rng, groups)
 
     # 2. second opinion model, trained on good images only
     model = PatchCore(a.backbone, a.weights, S, a.coreset_ratio, seed=a.seed)

@@ -130,7 +130,7 @@ def main() -> None:
         gain = (t_wo - t_w).rename("gain").to_frame().join(order)
         lines += ["## Order check", "",
                   "Median time saved per image, by which mode came first: "
-                  + ", ".join(f"{k}: {v:.1f} s" for k, v in gain.groupby("First mode").gain.median().items()), ""]
+                  + ", ".join(f"{k}: {round(v, 1) + 0.0:.1f} s" for k, v in gain.groupby("First mode").gain.median().items()), ""]
 
     text = "\n".join(lines)
     print(text)

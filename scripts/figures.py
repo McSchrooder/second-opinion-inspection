@@ -2,7 +2,7 @@
 
 usage: python scripts/figures.py [--results results] [--out docs/figures]
 
-  recovery_heatmap.png   category (grouped by tier) x model, recovery at 1% escape on the lane
+  recovery_heatmap.png   category (grouped by tier) x model, held-out recovery on the lane
   resolution_effect.png  PatchCore at 256/320/384 px and 150/300/all training images, weak categories
   speed_vs_recovery.png  mean lane recovery vs inference latency per model
 """
@@ -28,12 +28,12 @@ TIERS = [
 ]
 MODELS = [("padim", "PaDiM"), ("patchcore", "PatchCore"), ("rd", "Reverse Dist."),
           ("patchcore-320-n300", "PatchCore 320\n300 img"), ("patchcore-r18", "PatchCore\nresnet18"),
-          ("mhpatchcore", "MH-PatchCore"), ("anomalydino", "AnomalyDINO"), ("rad", "Rad")]
+          ("mhpatchcore", "MH-PatchCore"), ("anomalydino", "AnomalyDINO"), ("rad", "Rad"), ("dinomaly", "Dinomaly")]
 VARIANTS = [("patchcore", "256 px, all images"), ("patchcore-n150", "256 px, 150 images"),
             ("patchcore-320-n150", "320 px, 150 images"), ("patchcore-384-n150", "384 px, 150 images"),
             ("patchcore-320-n300", "320 px, 300 images")]
 WEAK = ["candle", "cashew", "fryum", "macaroni1", "capsules", "macaroni2"]
-COL = "aligned_rec@0.01"
+COL = "aligned_cv_recovery"  # held-out, the number the report quotes
 
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
 SEQ = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6",
@@ -61,7 +61,7 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
             if len(r):
                 mat[i, j] = r[COL].iloc[0]
     cmap = matplotlib.colors.ListedColormap(SEQ)
-    fig, ax = plt.subplots(figsize=(10.5, 6.2))
+    fig, ax = plt.subplots(figsize=(11.5, 6.4))
     ax.imshow(np.nan_to_num(mat, nan=0), cmap=cmap, vmin=0, vmax=1, aspect="auto")
     ax.set_xticks(range(len(keys)))
     ax.set_xticklabels([n for _, n in MODELS], fontsize=8, color=INK2)
@@ -86,12 +86,13 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
         row += len(cs)
         if row < len(cats) - 0.5:
             ax.axhline(row, color=INK2, linewidth=1.2)
-    ax.set_title("Share of good items recovered at 1% escape, simulated reject lane", fontsize=10, color=INK, loc="left")
+    ax.set_title("Share of good items recovered, simulated reject lane, held-out folds", fontsize=10, color=INK, loc="left")
     for s in ax.spines.values():
         s.set_visible(False)
-    fig.text(0.01, 0.01, "packaged goods: GoodsAD, bank models on 400 training images. Rad: 300 on VisA and GoodsAD. "
+    fig.text(0.01, 0.025, "held-out: line from 4 of 5 folds at the weakest calibration defect, about 1.2% expected escape on VisA, 2% on bottle. Dinomaly trained with a 6-minute cap.", fontsize=6.5, color=INK2)
+    fig.text(0.01, 0.005, "packaged goods: GoodsAD, bank models on 400 training images. Rad: 300 on VisA and GoodsAD. "
              "AnomalyDINO: 450 on the four 900-image VisA categories", fontsize=6.5, color=INK2)
-    fig.tight_layout(rect=(0, 0.03, 1, 1))
+    fig.tight_layout(rect=(0, 0.045, 1, 1))
     fig.savefig(out / "recovery_heatmap.png", dpi=160)
     plt.close(fig)
 
@@ -107,8 +108,8 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
     ax.set_xticks(x)
     ax.set_xticklabels(WEAK, fontsize=8, color=INK2)
     ax.set_ylim(0, 1)
-    ax.set_ylabel("recovery at 1% escape (lane)", fontsize=8, color=INK2)
-    ax.set_title("PatchCore recovery by input resolution and training-set size, lane, 1% escape", fontsize=10, color=INK, loc="left")
+    ax.set_ylabel("held-out recovery (lane)", fontsize=8, color=INK2)
+    ax.set_title("PatchCore recovery by input resolution and training-set size, lane, held-out folds", fontsize=10, color=INK, loc="left")
     style(ax)
     ax.legend(fontsize=7, frameon=False, ncol=3, loc="upper right")
     fig.tight_layout()
@@ -125,7 +126,7 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     rows = rows[rows.category.isin(full[full].index)]
     gpu = rows.groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
     cpu = df[df.model.str.endswith("-cpu")].groupby("model").agg(ms=("ms_per_image", "mean"))
-    offsets = {"patchcore": (-6, 8), "patchcore-320-n300": (6, 4), "patchcore-r18": (6, -11)}
+    offsets = {"patchcore": (6, 5), "patchcore-320-n300": (6, -10), "patchcore-r18": (-6, 6), "anomalydino": (6, -10)}
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     for m, r in gpu.iterrows():
         ax.scatter(r.ms, r.rec, s=48, color=SERIES[0], edgecolor="#ffffff", linewidth=1.5, zorder=3)
@@ -139,8 +140,8 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
             ax.annotate("cpu", (cms, r.rec), xytext=(6, 2), textcoords="offset points", fontsize=7, color=INK2)
     ax.set_xscale("log")
     ax.set_xlabel("inference ms per image, log scale. Filled: GPU. Hollow: same model on CPU", fontsize=8, color=INK2)
-    ax.set_ylabel(f"mean recovery at 1% escape, lane, {rows.category.nunique()} categories", fontsize=8, color=INK2)
-    ax.set_ylim(0.3, 0.85)
+    ax.set_ylabel(f"mean held-out recovery, lane, {rows.category.nunique()} categories", fontsize=8, color=INK2)
+    ax.set_ylim(max(0.0, gpu.rec.min() - 0.08), min(1.0, gpu.rec.max() + 0.08))
     ax.set_title("Latency vs recovery per model", fontsize=10, color=INK, loc="left")
     fig.text(0.01, 0.01, ", ".join(f"{k}: {v}" for k, v in sorted(devices.items())), fontsize=6.5, color=INK2)
     style(ax)

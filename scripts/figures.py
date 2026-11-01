@@ -118,6 +118,11 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
     plt.close(fig)
 
 
+def short(device: str) -> str:
+    """'NVIDIA GeForce RTX 4090' -> 'RTX 4090'"""
+    return device.replace("NVIDIA GeForce ", "").replace("AMD Radeon ", "")
+
+
 def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     """Mean lane recovery vs latency per model on the GPU. A hollow marker at the same height shows
     the same model's latency on the CPU where it was timed (tag suffix -cpu, bottle only)."""
@@ -126,13 +131,17 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     full = rows.groupby("category").model.nunique() == len(names)  # categories with every main model
     rows = rows[rows.category.isin(full[full].index)]
     gpu = rows.groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
+    gpu_devs = [devices.get(m, "") for m in gpu.index if not m.endswith("-cpu")]
+    main_gpu = max(set(gpu_devs), key=gpu_devs.count) if gpu_devs else ""  # the GPU most models ran on
     cpu = df[df.model.str.endswith("-cpu")].groupby("model").agg(ms=("ms_per_image", "mean"))
     offsets = {"patchcore": (6, 5), "patchcore-320-n300": (6, -10), "patchcore-r18": (-6, 6), "anomalydino": (6, -10)}
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     for m, r in gpu.iterrows():
         ax.scatter(r.ms, r.rec, s=48, color=SERIES[0], edgecolor="#ffffff", linewidth=1.5, zorder=3)
         dx, dy = offsets.get(m, (6, 2))
-        ax.annotate(names[m].replace("\n", " "), (r.ms, r.rec), xytext=(dx, dy), textcoords="offset points", fontsize=7, color=INK2,
+        dev = devices.get(m, "")
+        label = names[m].replace("\n", " ") + (f" ({short(dev)})" if dev and dev != main_gpu else "")
+        ax.annotate(label, (r.ms, r.rec), xytext=(dx, dy), textcoords="offset points", fontsize=7, color=INK2,
                     ha="right" if dx < 0 else "left")
         if f"{m}-cpu" in cpu.index:
             cms = cpu.loc[f"{m}-cpu", "ms"]
@@ -144,7 +153,8 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     ax.set_ylabel(f"mean held-out recovery, lane, {rows.category.nunique()} categories", fontsize=8, color=INK2)
     ax.set_ylim(max(0.0, gpu.rec.min() - 0.08), min(1.0, gpu.rec.max() + 0.08))
     ax.set_title("Latency vs recovery per model", fontsize=10, color=INK, loc="left")
-    fig.text(0.01, 0.01, ", ".join(f"{k}: {v}" for k, v in sorted(devices.items())), fontsize=6.5, color=INK2)
+    fig.text(0.01, 0.01, "gpu: " + main_gpu + "; cpu: " + ", ".join(sorted({v for k, v in devices.items() if k.endswith("-cpu")}))
+             + "; in brackets: models timed on another GPU", fontsize=6.5, color=INK2)
     style(ax)
     ax.xaxis.grid(True, color=GRID, linewidth=0.6)
     fig.tight_layout(rect=(0, 0.04, 1, 1))
@@ -162,7 +172,7 @@ def main() -> None:
     for f in Path(a.results).glob("*.json"):
         j = json.load(open(f))
         if "device" in j:
-            devices["cpu" if j["model"].endswith("-cpu") else "gpu"] = j["device"]
+            devices[j["model"]] = j["device"]  # one entry per model; runs of one model share a device
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     heatmap(df, out)

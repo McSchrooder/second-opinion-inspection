@@ -44,8 +44,8 @@ def main() -> None:
             rows.append({
                 "id": f"{i:04d}", "split": "test", "source": r.image, "variant": "original",
                 "defect_type": defect_type(r.image, int(r.label)), "is_defect": int(r.label),
-                "score": round(float(r.score), 5), "decision": "",
-                "rule_score": round(float(rs), 5) if rs != "" else "",
+                "score": float(r.score), "decision": "",
+                "rule_score": float(rs) if rs != "" else "",
                 "dataset": ds, "category": cat, "model": model,
             })
         with (out / f"{f.stem}.csv").open("w", newline="") as fh:

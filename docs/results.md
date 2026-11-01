@@ -9,10 +9,14 @@ rejected (the simulated reject lane). FRR: share of goods the stand-in rejected 
 
 Band: two thresholds set on 4 of 5 folds, measured on the 5th. The lower line lets through at most
 1% of the calibration defects. Under 100 calibration defects that is the weakest one, so a new defect
-slips under it about 1/(n+1) of the time: 1.2% on VisA (80 defects), 2% on bottle (50). GoodsAD has enough
-defects for a real 1%. The rule and its check are in evaluation/.
+slips under it about 1/(n+1) of the time: 1.2% on VisA (80 defects), 2% on bottle (50). On GoodsAD the line
+sits at the 2nd to 4th weakest of 117 to 340, 1.0 to 1.7% expected. The rule and its check are in evaluation/.
 Trained models (dinomaly, foundad, cflow, cfa, fre, fastflow, stfpm) ran with a 6-minute training cap.
 UniNet and SuperSimpleNet are left out: their image scores had not converged in that time.
+gemma4-*: Gemma 4 vision-language model (E2B, E4B), one image per call at 1120 image tokens, score = logP(defect) - logP(good)
+at the verdict token of a forced JSON answer. -zs: zero-shot (-ref1: one good training image in the prompt). -lora: one LoRA
+over all 15 categories, trained on train/good plus the test defects of the other half, 2-fold, scored out of fold.
+Unlike every other row the -lora models have seen real defects of the category, so compare them with that in mind.
 recovery = auto-passed goods, escape = auto-passed defects, review = sent to a human.
 
 ## Models at a glance
@@ -30,27 +34,37 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | superadd-vitb-n100 | 0.96 | 0.71 | 0.61 | 0.01 | 81.04 |
 | mhpatchcore | 0.95 | 0.60 | 0.56 | 0.02 | 12.63 |
 | patchcore | 0.91 | 0.60 | 0.54 | 0.02 | 27.31 |
+| gemma4-e4b-lora | 0.99 | 0.66 | 0.52 | 0.01 | 884.55 |
 | patchcore-320 | 0.92 | 0.61 | 0.52 | 0.01 | 32.70 |
 | foundad-252 | 0.95 | 0.61 | 0.51 | 0.02 | 14.47 |
 | rd | 0.90 | 0.54 | 0.48 | 0.01 | 127.19 |
+| gemma4-e2b-lora | 0.98 | 0.54 | 0.46 | 0.01 | 710.11 |
 | patchcore-r18 | 0.91 | 0.57 | 0.45 | 0.01 | 14.43 |
 | anomalydino | 0.93 | 0.51 | 0.43 | 0.02 | 17.52 |
 | cflow | 0.89 | 0.46 | 0.41 | 0.01 | 58.79 |
 | dfm | 0.89 | 0.44 | 0.39 | 0.02 | 9.27 |
 | fre | 0.88 | 0.43 | 0.37 | 0.01 | 9.34 |
 | cfa | 0.90 | 0.46 | 0.37 | 0.01 | 17.00 |
+| gemma4-e2b-lora-lang | 0.96 | 0.43 | 0.34 | 0.01 | 710.45 |
 | fastflow | 0.86 | 0.42 | 0.32 | 0.01 | 10.26 |
 | padim | 0.80 | 0.34 | 0.32 | 0.01 | 9.91 |
+| gemma4-e4b-zs-ref1 | 0.89 | 0.33 | 0.27 | 0.01 | 1392.04 |
 | winclip | 0.84 | 0.22 | 0.21 | 0.02 | 352.30 |
 | stfpm | 0.83 | 0.22 | 0.20 | 0.01 | 9.39 |
+| gemma4-e2b-zs-ref1 | 0.83 | 0.20 | 0.18 | 0.01 | 1129.41 |
+| gemma4-e2b-zs | 0.84 | 0.15 | 0.14 | 0.01 | 693.62 |
+| gemma4-e4b-zs | 0.87 | 0.17 | 0.12 | 0.01 | 870.99 |
 | dfkde | 0.73 | 0.14 | 0.10 | 0.01 | 8.61 |
 
 **GoodsAD, 5 categories**
 
 | model | AUROC | in-sample lane@1% | held-out recovery | held-out escape | ms/img |
 |---|---|---|---|---|---|
+| gemma4-e2b-lora | 0.93 | 0.18 | 0.19 | 0.01 | 693.06 |
+| gemma4-e4b-lora | 0.94 | 0.17 | 0.18 | 0.01 | 864.18 |
 | rad | 0.69 | 0.17 | 0.16 | 0.01 | 49.66 |
 | superadd-vitb-n100 | 0.68 | 0.11 | 0.13 | 0.01 | 76.80 |
+| gemma4-e2b-lora-lang | 0.88 | 0.11 | 0.12 | 0.01 | 695.16 |
 | patchcore | 0.77 | 0.10 | 0.11 | 0.01 | 43.78 |
 | anomalydino | 0.77 | 0.08 | 0.08 | 0.01 | 53.96 |
 | dfm | 0.66 | 0.05 | 0.05 | 0.01 | 34.90 |
@@ -60,8 +74,12 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | dfkde | 0.64 | 0.03 | 0.03 | 0.02 | 38.22 |
 | dinomaly | 0.61 | 0.02 | 0.03 | 0.01 | 46.52 |
 | fastflow | 0.58 | 0.03 | 0.03 | 0.01 | 41.66 |
+| gemma4-e4b-zs-ref1 | 0.59 | 0.02 | 0.02 | 0.01 | 1389.06 |
 | stfpm | 0.56 | 0.02 | 0.02 | 0.01 | 43.98 |
+| gemma4-e2b-zs | 0.57 | 0.02 | 0.02 | 0.02 | 690.56 |
 | fre | 0.57 | 0.02 | 0.02 | 0.01 | 43.30 |
+| gemma4-e2b-zs-ref1 | 0.54 | 0.02 | 0.02 | 0.01 | 1126.24 |
+| gemma4-e4b-zs | 0.63 | 0.02 | 0.02 | 0.01 | 860.40 |
 | winclip | 0.51 | 0.01 | 0.02 | 0.01 | 334.80 |
 | foundad-252 | 0.58 | 0.02 | 0.02 | 0.01 | 38.38 |
 | cflow | 0.50 | 0.01 | 0.01 | 0.01 | 61.02 |
@@ -80,6 +98,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | drink_bottle | fastflow-n400 | 356/425 | 0.53 | 0.00 | 0.00 | 0.07 | 1.00 | 0.00 | 1.00 | 0.00 | 0.99 | 0.00 | 40.80 |
 | goodsad | drink_bottle | foundad-252-n400 | 356/425 | 0.58 | 0.00 | 0.01 | 0.08 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.00 | 36.90 |
 | goodsad | drink_bottle | fre-n400 | 356/425 | 0.51 | 0.00 | 0.02 | 0.04 | 1.00 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 42.80 |
+| goodsad | drink_bottle | gemma4-e2b-lora | 356/425 | 0.92 | 0.00 | 0.05 | 0.53 | 1.00 | 0.05 | 1.00 | 0.05 | 0.99 | 0.05 | 699.50 |
+| goodsad | drink_bottle | gemma4-e2b-lora-lang | 356/425 | 0.86 | 0.01 | 0.03 | 0.21 | 1.00 | 0.03 | 1.00 | 0.03 | 0.99 | 0.03 | 703.90 |
+| goodsad | drink_bottle | gemma4-e2b-zs | 356/425 | 0.62 | 0.00 | 0.02 | 0.08 | 1.00 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 693.80 |
+| goodsad | drink_bottle | gemma4-e2b-zs-ref1 | 356/425 | 0.54 | 0.00 | 0.01 | 0.05 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 1127.40 |
+| goodsad | drink_bottle | gemma4-e4b-lora | 356/425 | 0.94 | 0.01 | 0.17 | 0.65 | 1.00 | 0.17 | 1.00 | 0.17 | 0.99 | 0.17 | 872.40 |
+| goodsad | drink_bottle | gemma4-e4b-zs | 356/425 | 0.60 | 0.00 | 0.02 | 0.05 | 1.00 | 0.02 | 1.00 | 0.02 | 0.99 | 0.02 | 861.00 |
+| goodsad | drink_bottle | gemma4-e4b-zs-ref1 | 356/425 | 0.61 | 0.00 | 0.01 | 0.07 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 1391.40 |
 | goodsad | drink_bottle | mhpatchcore-n400 | 356/425 | 0.57 | 0.00 | 0.01 | 0.07 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 39.70 |
 | goodsad | drink_bottle | padim | 356/425 | 0.53 | 0.00 | 0.01 | 0.09 | 1.00 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 46.20 |
 | goodsad | drink_bottle | patchcore-n400 | 356/425 | 0.69 | 0.04 | 0.13 | 0.25 | 1.00 | 0.13 | 1.00 | 0.13 | 0.99 | 0.13 | 41.00 |
@@ -96,6 +121,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | drink_can | fastflow-n400 | 147/146 | 0.56 | 0.01 | 0.04 | 0.07 | 0.97 | 0.04 | 1.00 | 0.04 | 0.99 | 0.03 | 48.10 |
 | goodsad | drink_can | foundad-252-n400 | 147/146 | 0.58 | 0.01 | 0.01 | 0.08 | 0.97 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 37.90 |
 | goodsad | drink_can | fre-n400 | 147/146 | 0.54 | 0.00 | 0.02 | 0.06 | 0.97 | 0.02 | 1.00 | 0.02 | 0.99 | 0.01 | 48.50 |
+| goodsad | drink_can | gemma4-e2b-lora | 147/146 | 0.96 | 0.02 | 0.07 | 0.74 | 0.97 | 0.07 | 1.00 | 0.07 | 0.99 | 0.06 | 695.80 |
+| goodsad | drink_can | gemma4-e2b-lora-lang | 147/146 | 0.93 | 0.13 | 0.29 | 0.46 | 0.97 | 0.30 | 1.00 | 0.29 | 0.99 | 0.29 | 693.60 |
+| goodsad | drink_can | gemma4-e2b-zs | 147/146 | 0.56 | 0.02 | 0.03 | 0.09 | 0.97 | 0.03 | 1.00 | 0.03 | 0.99 | 0.03 | 691.90 |
+| goodsad | drink_can | gemma4-e2b-zs-ref1 | 147/146 | 0.49 | 0.01 | 0.03 | 0.05 | 0.97 | 0.03 | 1.00 | 0.03 | 0.99 | 0.03 | 1128.30 |
+| goodsad | drink_can | gemma4-e4b-lora | 147/146 | 0.97 | 0.07 | 0.22 | 0.84 | 0.97 | 0.22 | 1.00 | 0.22 | 0.99 | 0.22 | 866.10 |
+| goodsad | drink_can | gemma4-e4b-zs | 147/146 | 0.67 | 0.00 | 0.01 | 0.16 | 0.97 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 859.80 |
+| goodsad | drink_can | gemma4-e4b-zs-ref1 | 147/146 | 0.58 | 0.03 | 0.05 | 0.18 | 0.97 | 0.06 | 1.00 | 0.05 | 0.99 | 0.05 | 1389.40 |
 | goodsad | drink_can | mhpatchcore-n400 | 147/146 | 0.67 | 0.03 | 0.04 | 0.07 | 0.97 | 0.03 | 1.00 | 0.04 | 0.99 | 0.04 | 45.70 |
 | goodsad | drink_can | padim | 147/146 | 0.54 | 0.01 | 0.01 | 0.07 | 0.97 | 0.01 | 1.00 | 0.01 | 0.99 | 0.01 | 45.10 |
 | goodsad | drink_can | patchcore-n400 | 147/146 | 0.93 | 0.01 | 0.03 | 0.56 | 0.97 | 0.03 | 1.00 | 0.03 | 0.99 | 0.03 | 47.40 |
@@ -112,6 +144,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | food_bottle | fastflow-n400 | 243/361 | 0.63 | 0.00 | 0.01 | 0.10 | 1.00 | 0.01 | 1.00 | 0.01 | 1.00 | 0.01 | 39.90 |
 | goodsad | food_bottle | foundad-252-n400 | 243/361 | 0.63 | 0.00 | 0.01 | 0.12 | 1.00 | 0.01 | 1.00 | 0.01 | 1.00 | 0.01 | 37.70 |
 | goodsad | food_bottle | fre-n400 | 243/361 | 0.63 | 0.00 | 0.02 | 0.06 | 1.00 | 0.02 | 1.00 | 0.02 | 1.00 | 0.02 | 46.50 |
+| goodsad | food_bottle | gemma4-e2b-lora | 243/361 | 0.91 | 0.04 | 0.15 | 0.30 | 1.00 | 0.15 | 1.00 | 0.15 | 1.00 | 0.15 | 688.40 |
+| goodsad | food_bottle | gemma4-e2b-lora-lang | 243/361 | 0.86 | 0.01 | 0.05 | 0.19 | 1.00 | 0.05 | 1.00 | 0.05 | 1.00 | 0.05 | 692.10 |
+| goodsad | food_bottle | gemma4-e2b-zs | 243/361 | 0.58 | 0.00 | 0.02 | 0.11 | 1.00 | 0.02 | 1.00 | 0.02 | 1.00 | 0.02 | 687.90 |
+| goodsad | food_bottle | gemma4-e2b-zs-ref1 | 243/361 | 0.50 | 0.01 | 0.03 | 0.05 | 1.00 | 0.03 | 1.00 | 0.03 | 1.00 | 0.03 | 1125.90 |
+| goodsad | food_bottle | gemma4-e4b-lora | 243/361 | 0.93 | 0.01 | 0.11 | 0.44 | 1.00 | 0.11 | 1.00 | 0.11 | 1.00 | 0.11 | 859.10 |
+| goodsad | food_bottle | gemma4-e4b-zs | 243/361 | 0.65 | 0.00 | 0.02 | 0.10 | 1.00 | 0.02 | 1.00 | 0.02 | 1.00 | 0.02 | 857.20 |
+| goodsad | food_bottle | gemma4-e4b-zs-ref1 | 243/361 | 0.61 | 0.02 | 0.03 | 0.09 | 1.00 | 0.03 | 1.00 | 0.03 | 1.00 | 0.03 | 1389.10 |
 | goodsad | food_bottle | mhpatchcore-n400 | 243/361 | 0.65 | 0.00 | 0.00 | 0.05 | 1.00 | 0.00 | 1.00 | 0.00 | 1.00 | 0.00 | 41.10 |
 | goodsad | food_bottle | padim | 243/361 | 0.71 | 0.05 | 0.12 | 0.19 | 1.00 | 0.12 | 1.00 | 0.12 | 1.00 | 0.12 | 43.90 |
 | goodsad | food_bottle | patchcore-n400 | 243/361 | 0.77 | 0.04 | 0.19 | 0.29 | 1.00 | 0.19 | 1.00 | 0.19 | 1.00 | 0.19 | 43.00 |
@@ -128,6 +167,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | food_box | fastflow-n400 | 146/251 | 0.62 | 0.03 | 0.04 | 0.16 | 1.00 | 0.04 | 1.00 | 0.04 | 0.98 | 0.04 | 37.30 |
 | goodsad | food_box | foundad-252-n400 | 146/251 | 0.59 | 0.03 | 0.03 | 0.14 | 1.00 | 0.03 | 1.00 | 0.03 | 0.98 | 0.03 | 41.30 |
 | goodsad | food_box | fre-n400 | 146/251 | 0.59 | 0.01 | 0.03 | 0.08 | 1.00 | 0.03 | 1.00 | 0.03 | 0.98 | 0.02 | 46.60 |
+| goodsad | food_box | gemma4-e2b-lora | 146/251 | 0.96 | 0.16 | 0.39 | 0.73 | 1.00 | 0.39 | 1.00 | 0.39 | 0.98 | 0.39 | 689.40 |
+| goodsad | food_box | gemma4-e2b-lora-lang | 146/251 | 0.89 | 0.04 | 0.09 | 0.40 | 1.00 | 0.09 | 1.00 | 0.09 | 0.98 | 0.09 | 695.30 |
+| goodsad | food_box | gemma4-e2b-zs | 146/251 | 0.55 | 0.01 | 0.02 | 0.05 | 1.00 | 0.02 | 1.00 | 0.02 | 0.98 | 0.02 | 690.50 |
+| goodsad | food_box | gemma4-e2b-zs-ref1 | 146/251 | 0.59 | 0.00 | 0.01 | 0.05 | 1.00 | 0.01 | 1.00 | 0.01 | 0.98 | 0.01 | 1123.20 |
+| goodsad | food_box | gemma4-e4b-lora | 146/251 | 0.96 | 0.05 | 0.18 | 0.80 | 1.00 | 0.18 | 1.00 | 0.18 | 0.98 | 0.19 | 861.60 |
+| goodsad | food_box | gemma4-e4b-zs | 146/251 | 0.64 | 0.01 | 0.03 | 0.05 | 1.00 | 0.03 | 1.00 | 0.03 | 0.98 | 0.03 | 864.20 |
+| goodsad | food_box | gemma4-e4b-zs-ref1 | 146/251 | 0.57 | 0.00 | 0.00 | 0.01 | 1.00 | 0.00 | 1.00 | 0.00 | 0.98 | 0.00 | 1389.60 |
 | goodsad | food_box | mhpatchcore-n400 | 146/251 | 0.62 | 0.04 | 0.08 | 0.10 | 1.00 | 0.08 | 1.00 | 0.08 | 0.98 | 0.07 | 45.80 |
 | goodsad | food_box | padim | 146/251 | 0.61 | 0.03 | 0.04 | 0.08 | 1.00 | 0.04 | 1.00 | 0.04 | 0.98 | 0.03 | 46.30 |
 | goodsad | food_box | patchcore-n400 | 146/251 | 0.76 | 0.03 | 0.09 | 0.23 | 1.00 | 0.09 | 1.00 | 0.09 | 0.98 | 0.08 | 46.10 |
@@ -144,6 +190,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | food_package | fastflow-n400 | 253/230 | 0.54 | 0.00 | 0.03 | 0.08 | 1.00 | 0.03 | 0.99 | 0.03 | 1.00 | 0.03 | 42.20 |
 | goodsad | food_package | foundad-252-n400 | 253/230 | 0.53 | 0.00 | 0.02 | 0.07 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 38.10 |
 | goodsad | food_package | fre-n400 | 253/230 | 0.57 | 0.02 | 0.02 | 0.05 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 32.10 |
+| goodsad | food_package | gemma4-e2b-lora | 253/230 | 0.92 | 0.01 | 0.23 | 0.44 | 1.00 | 0.23 | 0.99 | 0.23 | 1.00 | 0.23 | 692.20 |
+| goodsad | food_package | gemma4-e2b-lora-lang | 253/230 | 0.86 | 0.08 | 0.08 | 0.32 | 1.00 | 0.08 | 0.99 | 0.08 | 1.00 | 0.08 | 690.90 |
+| goodsad | food_package | gemma4-e2b-zs | 253/230 | 0.56 | 0.00 | 0.01 | 0.06 | 1.00 | 0.01 | 0.99 | 0.01 | 1.00 | 0.01 | 688.70 |
+| goodsad | food_package | gemma4-e2b-zs-ref1 | 253/230 | 0.56 | 0.00 | 0.02 | 0.06 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 1126.40 |
+| goodsad | food_package | gemma4-e4b-lora | 253/230 | 0.93 | 0.14 | 0.18 | 0.57 | 1.00 | 0.17 | 0.99 | 0.18 | 1.00 | 0.18 | 861.70 |
+| goodsad | food_package | gemma4-e4b-zs | 253/230 | 0.61 | 0.01 | 0.02 | 0.06 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 859.80 |
+| goodsad | food_package | gemma4-e4b-zs-ref1 | 253/230 | 0.60 | 0.00 | 0.00 | 0.13 | 1.00 | 0.00 | 0.99 | 0.00 | 1.00 | 0.00 | 1385.80 |
 | goodsad | food_package | mhpatchcore-n400 | 253/230 | 0.53 | 0.02 | 0.03 | 0.08 | 1.00 | 0.03 | 0.99 | 0.03 | 1.00 | 0.03 | 43.50 |
 | goodsad | food_package | padim | 253/230 | 0.58 | 0.02 | 0.02 | 0.08 | 1.00 | 0.02 | 0.99 | 0.02 | 1.00 | 0.02 | 44.10 |
 | goodsad | food_package | patchcore-n400 | 253/230 | 0.71 | 0.01 | 0.06 | 0.19 | 1.00 | 0.05 | 0.99 | 0.06 | 1.00 | 0.06 | 41.40 |
@@ -160,6 +213,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | mvtec | bottle | fastflow | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 12.00 |
 | mvtec | bottle | foundad-252 | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 19.30 |
 | mvtec | bottle | fre | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.80 | 0.94 | 0.05 | 1.00 | 12.00 |
+| mvtec | bottle | gemma4-e2b-lora | 20/63 | 0.99 | 0.60 | 0.60 | 1.00 | 0.95 | 0.63 | 0.80 | 0.56 | 0.05 | 1.00 | 697.90 |
+| mvtec | bottle | gemma4-e2b-lora-lang | 20/63 | 0.95 | 0.25 | 0.25 | 0.45 | 0.95 | 0.26 | 0.80 | 0.25 | 0.05 | 1.00 | 699.20 |
+| mvtec | bottle | gemma4-e2b-zs | 20/63 | 0.86 | 0.05 | 0.05 | 0.25 | 0.95 | 0.05 | 0.80 | 0.00 | 0.05 | 0.00 | 691.40 |
+| mvtec | bottle | gemma4-e2b-zs-ref1 | 20/63 | 0.87 | 0.10 | 0.10 | 0.10 | 0.95 | 0.11 | 0.80 | 0.12 | 0.05 | 0.00 | 1129.70 |
+| mvtec | bottle | gemma4-e4b-lora | 20/63 | 1.00 | 0.85 | 0.85 | 1.00 | 0.95 | 0.84 | 0.80 | 0.88 | 0.05 | 0.00 | 867.30 |
+| mvtec | bottle | gemma4-e4b-zs | 20/63 | 0.87 | 0.00 | 0.00 | 0.25 | 0.95 | 0.00 | 0.80 | 0.00 | 0.05 | 0.00 | 872.80 |
+| mvtec | bottle | gemma4-e4b-zs-ref1 | 20/63 | 1.00 | 0.85 | 0.85 | 0.95 | 0.95 | 0.84 | 0.80 | 0.88 | 0.05 | 0.00 | 1394.40 |
 | mvtec | bottle | mhpatchcore | 20/63 | 1.00 | 1.00 | 1.00 | 1.00 | 0.95 | 1.00 | 0.80 | 1.00 | 0.05 | 1.00 | 14.50 |
 | mvtec | bottle | padim | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.80 | 0.94 | 0.05 | 0.00 | 10.70 |
 | mvtec | bottle | padim-cpu | 20/63 | 1.00 | 0.95 | 0.95 | 1.00 | 0.95 | 0.95 | 0.80 | 0.94 | 0.05 | 0.00 | 27.70 |
@@ -182,6 +242,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | mvtec | hazelnut | fastflow | 40/70 | 0.71 | 0.38 | 0.38 | 0.40 | 0.90 | 0.36 | 0.78 | 0.35 | 0.78 | 0.26 | 12.70 |
 | mvtec | hazelnut | foundad-252 | 40/70 | 1.00 | 0.97 | 0.97 | 1.00 | 0.90 | 0.97 | 0.78 | 0.97 | 0.78 | 0.97 | 19.10 |
 | mvtec | hazelnut | fre | 40/70 | 0.96 | 0.15 | 0.15 | 0.82 | 0.90 | 0.17 | 0.78 | 0.16 | 0.78 | 0.10 | 12.70 |
+| mvtec | hazelnut | gemma4-e2b-lora | 40/70 | 1.00 | 0.97 | 0.97 | 0.97 | 0.90 | 0.97 | 0.78 | 0.97 | 0.78 | 0.97 | 691.10 |
+| mvtec | hazelnut | gemma4-e2b-lora-lang | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 699.70 |
+| mvtec | hazelnut | gemma4-e2b-zs | 40/70 | 0.94 | 0.25 | 0.25 | 0.45 | 0.90 | 0.22 | 0.78 | 0.16 | 0.78 | 0.19 | 692.90 |
+| mvtec | hazelnut | gemma4-e2b-zs-ref1 | 40/70 | 0.98 | 0.47 | 0.47 | 0.88 | 0.90 | 0.50 | 0.78 | 0.61 | 0.78 | 0.42 | 1132.40 |
+| mvtec | hazelnut | gemma4-e4b-lora | 40/70 | 1.00 | 0.85 | 0.85 | 1.00 | 0.90 | 0.86 | 0.78 | 0.87 | 0.78 | 0.84 | 856.10 |
+| mvtec | hazelnut | gemma4-e4b-zs | 40/70 | 0.93 | 0.33 | 0.33 | 0.55 | 0.90 | 0.31 | 0.78 | 0.26 | 0.78 | 0.32 | 864.60 |
+| mvtec | hazelnut | gemma4-e4b-zs-ref1 | 40/70 | 1.00 | 0.95 | 0.95 | 0.97 | 0.90 | 0.94 | 0.78 | 0.94 | 0.78 | 0.94 | 1382.80 |
 | mvtec | hazelnut | mhpatchcore | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 14.50 |
 | mvtec | hazelnut | padim | 40/70 | 0.62 | 0.15 | 0.15 | 0.30 | 0.90 | 0.11 | 0.78 | 0.10 | 0.78 | 0.06 | 13.00 |
 | mvtec | hazelnut | patchcore | 40/70 | 1.00 | 1.00 | 1.00 | 1.00 | 0.90 | 1.00 | 0.78 | 1.00 | 0.78 | 1.00 | 25.80 |
@@ -201,6 +268,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | candle | fastflow | 100/100 | 0.97 | 0.47 | 0.64 | 0.85 | 0.93 | 0.63 | 0.95 | 0.62 | 0.85 | 0.59 | 9.00 |
 | visa | candle | foundad-252 | 100/100 | 0.95 | 0.48 | 0.62 | 0.85 | 0.93 | 0.60 | 0.95 | 0.61 | 0.85 | 0.56 | 12.00 |
 | visa | candle | fre | 100/100 | 0.93 | 0.13 | 0.57 | 0.70 | 0.93 | 0.55 | 0.95 | 0.56 | 0.85 | 0.49 | 8.50 |
+| visa | candle | gemma4-e2b-lora | 100/100 | 0.96 | 0.36 | 0.40 | 0.87 | 0.93 | 0.41 | 0.95 | 0.40 | 0.85 | 0.36 | 710.30 |
+| visa | candle | gemma4-e2b-lora-lang | 100/100 | 0.95 | 0.31 | 0.31 | 0.52 | 0.93 | 0.32 | 0.95 | 0.32 | 0.85 | 0.27 | 712.60 |
+| visa | candle | gemma4-e2b-zs | 100/100 | 0.90 | 0.22 | 0.29 | 0.53 | 0.93 | 0.29 | 0.95 | 0.29 | 0.85 | 0.26 | 691.70 |
+| visa | candle | gemma4-e2b-zs-ref1 | 100/100 | 0.91 | 0.18 | 0.25 | 0.33 | 0.93 | 0.26 | 0.95 | 0.24 | 0.85 | 0.21 | 1128.60 |
+| visa | candle | gemma4-e4b-lora | 100/100 | 0.97 | 0.20 | 0.40 | 0.82 | 0.93 | 0.41 | 0.95 | 0.40 | 0.85 | 0.38 | 896.60 |
+| visa | candle | gemma4-e4b-zs | 100/100 | 0.93 | 0.12 | 0.35 | 0.46 | 0.93 | 0.35 | 0.95 | 0.36 | 0.85 | 0.32 | 882.60 |
+| visa | candle | gemma4-e4b-zs-ref1 | 100/100 | 0.94 | 0.16 | 0.42 | 0.73 | 0.93 | 0.44 | 0.95 | 0.42 | 0.85 | 0.40 | 1403.90 |
 | visa | candle | mhpatchcore | 100/100 | 0.96 | 0.44 | 0.70 | 0.76 | 0.93 | 0.69 | 0.95 | 0.71 | 0.85 | 0.69 | 15.00 |
 | visa | candle | padim | 100/100 | 0.93 | 0.55 | 0.58 | 0.68 | 0.93 | 0.56 | 0.95 | 0.58 | 0.85 | 0.52 | 8.90 |
 | visa | candle | patchcore | 100/100 | 0.97 | 0.33 | 0.66 | 0.93 | 0.93 | 0.66 | 0.95 | 0.65 | 0.85 | 0.61 | 37.30 |
@@ -223,6 +297,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | capsules | fastflow | 60/100 | 0.73 | 0.02 | 0.07 | 0.15 | 0.97 | 0.07 | 0.97 | 0.07 | 0.98 | 0.07 | 10.00 |
 | visa | capsules | foundad-252 | 60/100 | 0.94 | 0.25 | 0.35 | 0.60 | 0.97 | 0.33 | 0.97 | 0.34 | 0.98 | 0.36 | 15.60 |
 | visa | capsules | fre | 60/100 | 0.68 | 0.10 | 0.10 | 0.15 | 0.97 | 0.10 | 0.97 | 0.10 | 0.98 | 0.08 | 10.00 |
+| visa | capsules | gemma4-e2b-lora | 60/100 | 0.98 | 0.22 | 0.52 | 0.98 | 0.97 | 0.52 | 0.97 | 0.53 | 0.98 | 0.51 | 731.90 |
+| visa | capsules | gemma4-e2b-lora-lang | 60/100 | 0.96 | 0.13 | 0.62 | 0.75 | 0.97 | 0.62 | 0.97 | 0.62 | 0.98 | 0.61 | 726.60 |
+| visa | capsules | gemma4-e2b-zs | 60/100 | 0.64 | 0.02 | 0.05 | 0.18 | 0.97 | 0.05 | 0.97 | 0.05 | 0.98 | 0.05 | 687.50 |
+| visa | capsules | gemma4-e2b-zs-ref1 | 60/100 | 0.56 | 0.00 | 0.00 | 0.02 | 0.97 | 0.00 | 0.97 | 0.00 | 0.98 | 0.00 | 1125.20 |
+| visa | capsules | gemma4-e4b-lora | 60/100 | 0.98 | 0.28 | 0.28 | 0.90 | 0.97 | 0.29 | 0.97 | 0.29 | 0.98 | 0.27 | 908.90 |
+| visa | capsules | gemma4-e4b-zs | 60/100 | 0.73 | 0.05 | 0.08 | 0.17 | 0.97 | 0.07 | 0.97 | 0.09 | 0.98 | 0.08 | 853.80 |
+| visa | capsules | gemma4-e4b-zs-ref1 | 60/100 | 0.78 | 0.00 | 0.00 | 0.25 | 0.97 | 0.00 | 0.97 | 0.00 | 0.98 | 0.00 | 1383.10 |
 | visa | capsules | mhpatchcore | 60/100 | 0.81 | 0.02 | 0.03 | 0.32 | 0.97 | 0.03 | 0.97 | 0.03 | 0.98 | 0.03 | 11.90 |
 | visa | capsules | padim | 60/100 | 0.58 | 0.00 | 0.02 | 0.12 | 0.97 | 0.02 | 0.97 | 0.02 | 0.98 | 0.02 | 10.10 |
 | visa | capsules | patchcore | 60/100 | 0.72 | 0.02 | 0.03 | 0.05 | 0.97 | 0.03 | 0.97 | 0.03 | 0.98 | 0.03 | 25.70 |
@@ -245,6 +326,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | cashew | fastflow | 50/100 | 0.88 | 0.10 | 0.16 | 0.36 | 0.66 | 0.15 | 0.78 | 0.18 | 0.86 | 0.14 | 10.70 |
 | visa | cashew | foundad-252 | 50/100 | 0.94 | 0.24 | 0.48 | 0.74 | 0.66 | 0.45 | 0.78 | 0.49 | 0.86 | 0.49 | 16.00 |
 | visa | cashew | fre | 50/100 | 0.93 | 0.50 | 0.56 | 0.70 | 0.66 | 0.52 | 0.78 | 0.51 | 0.86 | 0.49 | 2.70 |
+| visa | cashew | gemma4-e2b-lora | 50/100 | 0.97 | 0.50 | 0.56 | 0.74 | 0.66 | 0.61 | 0.78 | 0.62 | 0.86 | 0.58 | 705.10 |
+| visa | cashew | gemma4-e2b-lora-lang | 50/100 | 0.92 | 0.22 | 0.32 | 0.48 | 0.66 | 0.33 | 0.78 | 0.38 | 0.86 | 0.30 | 703.50 |
+| visa | cashew | gemma4-e2b-zs | 50/100 | 0.85 | 0.02 | 0.08 | 0.38 | 0.66 | 0.06 | 0.78 | 0.08 | 0.86 | 0.09 | 691.60 |
+| visa | cashew | gemma4-e2b-zs-ref1 | 50/100 | 0.84 | 0.04 | 0.04 | 0.26 | 0.66 | 0.06 | 0.78 | 0.05 | 0.86 | 0.05 | 1129.40 |
+| visa | cashew | gemma4-e4b-lora | 50/100 | 0.99 | 0.74 | 0.88 | 0.94 | 0.66 | 0.88 | 0.78 | 0.92 | 0.86 | 0.91 | 875.60 |
+| visa | cashew | gemma4-e4b-zs | 50/100 | 0.85 | 0.06 | 0.06 | 0.12 | 0.66 | 0.06 | 0.78 | 0.08 | 0.86 | 0.07 | 866.20 |
+| visa | cashew | gemma4-e4b-zs-ref1 | 50/100 | 0.83 | 0.04 | 0.06 | 0.10 | 0.66 | 0.09 | 0.78 | 0.08 | 0.86 | 0.07 | 1392.00 |
 | visa | cashew | mhpatchcore | 50/100 | 0.97 | 0.40 | 0.70 | 0.82 | 0.66 | 0.64 | 0.78 | 0.64 | 0.86 | 0.65 | 12.70 |
 | visa | cashew | padim | 50/100 | 0.84 | 0.06 | 0.20 | 0.28 | 0.66 | 0.09 | 0.78 | 0.15 | 0.86 | 0.12 | 10.90 |
 | visa | cashew | patchcore | 50/100 | 0.97 | 0.66 | 0.66 | 0.80 | 0.66 | 0.64 | 0.78 | 0.62 | 0.86 | 0.63 | 25.10 |
@@ -267,6 +355,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | chewinggum | fastflow | 50/100 | 0.99 | 0.06 | 0.78 | 0.98 | 1.00 | 0.78 | 0.86 | 0.79 | 1.00 | 0.78 | 10.00 |
 | visa | chewinggum | foundad-252 | 50/100 | 1.00 | 0.58 | 0.96 | 1.00 | 1.00 | 0.96 | 0.86 | 0.95 | 1.00 | 0.96 | 16.00 |
 | visa | chewinggum | fre | 50/100 | 0.98 | 0.72 | 0.72 | 0.86 | 1.00 | 0.72 | 0.86 | 0.67 | 1.00 | 0.72 | 10.00 |
+| visa | chewinggum | gemma4-e2b-lora | 50/100 | 0.98 | 0.10 | 0.22 | 0.94 | 1.00 | 0.22 | 0.86 | 0.19 | 1.00 | 0.22 | 720.10 |
+| visa | chewinggum | gemma4-e2b-lora-lang | 50/100 | 0.95 | 0.06 | 0.06 | 0.26 | 1.00 | 0.06 | 0.86 | 0.07 | 1.00 | 0.06 | 721.90 |
+| visa | chewinggum | gemma4-e2b-zs | 50/100 | 0.96 | 0.12 | 0.12 | 0.82 | 1.00 | 0.12 | 0.86 | 0.12 | 1.00 | 0.12 | 698.40 |
+| visa | chewinggum | gemma4-e2b-zs-ref1 | 50/100 | 0.97 | 0.26 | 0.34 | 0.82 | 1.00 | 0.34 | 0.86 | 0.35 | 1.00 | 0.34 | 1137.50 |
+| visa | chewinggum | gemma4-e4b-lora | 50/100 | 0.98 | 0.32 | 0.34 | 1.00 | 1.00 | 0.34 | 0.86 | 0.33 | 1.00 | 0.34 | 904.50 |
+| visa | chewinggum | gemma4-e4b-zs | 50/100 | 0.97 | 0.18 | 0.46 | 0.82 | 1.00 | 0.46 | 0.86 | 0.44 | 1.00 | 0.46 | 884.50 |
+| visa | chewinggum | gemma4-e4b-zs-ref1 | 50/100 | 0.95 | 0.12 | 0.18 | 0.64 | 1.00 | 0.18 | 0.86 | 0.14 | 1.00 | 0.18 | 1402.00 |
 | visa | chewinggum | mhpatchcore | 50/100 | 1.00 | 0.90 | 0.94 | 1.00 | 1.00 | 0.94 | 0.86 | 0.93 | 1.00 | 0.94 | 12.00 |
 | visa | chewinggum | padim | 50/100 | 0.98 | 0.46 | 0.54 | 0.92 | 1.00 | 0.54 | 0.86 | 0.53 | 1.00 | 0.54 | 10.40 |
 | visa | chewinggum | patchcore | 50/100 | 1.00 | 0.80 | 0.84 | 1.00 | 1.00 | 0.84 | 0.86 | 0.84 | 1.00 | 0.84 | 24.60 |
@@ -286,6 +381,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | fryum | fastflow | 50/100 | 0.91 | 0.54 | 0.56 | 0.64 | 0.88 | 0.59 | 0.98 | 0.57 | 0.68 | 0.41 | 10.70 |
 | visa | fryum | foundad-252 | 50/100 | 0.96 | 0.24 | 0.30 | 0.76 | 0.88 | 0.30 | 0.98 | 0.31 | 0.68 | 0.24 | 16.00 |
 | visa | fryum | fre | 50/100 | 0.94 | 0.70 | 0.74 | 0.78 | 0.88 | 0.73 | 0.98 | 0.73 | 0.68 | 0.65 | 10.00 |
+| visa | fryum | gemma4-e2b-lora | 50/100 | 0.97 | 0.04 | 0.22 | 0.88 | 0.88 | 0.25 | 0.98 | 0.22 | 0.68 | 0.21 | 708.50 |
+| visa | fryum | gemma4-e2b-lora-lang | 50/100 | 0.95 | 0.00 | 0.14 | 0.66 | 0.88 | 0.16 | 0.98 | 0.14 | 0.68 | 0.09 | 703.20 |
+| visa | fryum | gemma4-e2b-zs | 50/100 | 0.80 | 0.12 | 0.12 | 0.26 | 0.88 | 0.14 | 0.98 | 0.12 | 0.68 | 0.03 | 694.60 |
+| visa | fryum | gemma4-e2b-zs-ref1 | 50/100 | 0.83 | 0.08 | 0.10 | 0.26 | 0.88 | 0.09 | 0.98 | 0.08 | 0.68 | 0.06 | 1126.90 |
+| visa | fryum | gemma4-e4b-lora | 50/100 | 0.97 | 0.02 | 0.32 | 0.92 | 0.88 | 0.30 | 0.98 | 0.31 | 0.68 | 0.26 | 883.70 |
+| visa | fryum | gemma4-e4b-zs | 50/100 | 0.92 | 0.04 | 0.10 | 0.42 | 0.88 | 0.11 | 0.98 | 0.10 | 0.68 | 0.09 | 869.60 |
+| visa | fryum | gemma4-e4b-zs-ref1 | 50/100 | 0.90 | 0.00 | 0.06 | 0.56 | 0.88 | 0.05 | 0.98 | 0.06 | 0.68 | 0.09 | 1392.80 |
 | visa | fryum | mhpatchcore | 50/100 | 0.96 | 0.38 | 0.42 | 0.74 | 0.88 | 0.39 | 0.98 | 0.43 | 0.68 | 0.41 | 12.00 |
 | visa | fryum | padim | 50/100 | 0.84 | 0.36 | 0.36 | 0.44 | 0.88 | 0.36 | 0.98 | 0.35 | 0.68 | 0.21 | 9.40 |
 | visa | fryum | patchcore | 50/100 | 0.96 | 0.46 | 0.56 | 0.68 | 0.88 | 0.59 | 0.98 | 0.57 | 0.68 | 0.50 | 22.50 |
@@ -308,6 +410,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | macaroni1 | fastflow | 100/100 | 0.88 | 0.22 | 0.27 | 0.61 | 0.89 | 0.26 | 0.99 | 0.27 | 0.90 | 0.22 | 8.50 |
 | visa | macaroni1 | foundad-252 | 100/100 | 0.96 | 0.63 | 0.64 | 0.80 | 0.89 | 0.65 | 0.99 | 0.64 | 0.90 | 0.64 | 14.00 |
 | visa | macaroni1 | fre | 100/100 | 0.77 | 0.10 | 0.13 | 0.33 | 0.89 | 0.12 | 0.99 | 0.13 | 0.90 | 0.10 | 9.00 |
+| visa | macaroni1 | gemma4-e2b-lora | 100/100 | 0.99 | 0.35 | 0.47 | 1.00 | 0.89 | 0.48 | 0.99 | 0.47 | 0.90 | 0.49 | 715.20 |
+| visa | macaroni1 | gemma4-e2b-lora-lang | 100/100 | 0.96 | 0.08 | 0.25 | 0.56 | 0.89 | 0.27 | 0.99 | 0.25 | 0.90 | 0.24 | 708.80 |
+| visa | macaroni1 | gemma4-e2b-zs | 100/100 | 0.78 | 0.06 | 0.07 | 0.18 | 0.89 | 0.08 | 0.99 | 0.07 | 0.90 | 0.08 | 698.40 |
+| visa | macaroni1 | gemma4-e2b-zs-ref1 | 100/100 | 0.77 | 0.00 | 0.01 | 0.08 | 0.89 | 0.01 | 0.99 | 0.01 | 0.90 | 0.01 | 1123.70 |
+| visa | macaroni1 | gemma4-e4b-lora | 100/100 | 0.99 | 0.51 | 0.82 | 1.00 | 0.89 | 0.81 | 0.99 | 0.83 | 0.90 | 0.83 | 884.60 |
+| visa | macaroni1 | gemma4-e4b-zs | 100/100 | 0.88 | 0.07 | 0.09 | 0.33 | 0.89 | 0.10 | 0.99 | 0.09 | 0.90 | 0.09 | 869.10 |
+| visa | macaroni1 | gemma4-e4b-zs-ref1 | 100/100 | 0.83 | 0.04 | 0.08 | 0.37 | 0.89 | 0.09 | 0.99 | 0.08 | 0.90 | 0.08 | 1382.10 |
 | visa | macaroni1 | mhpatchcore | 100/100 | 0.98 | 0.36 | 0.37 | 0.93 | 0.89 | 0.35 | 0.99 | 0.36 | 0.90 | 0.34 | 10.50 |
 | visa | macaroni1 | padim | 100/100 | 0.70 | 0.20 | 0.28 | 0.38 | 0.89 | 0.28 | 0.99 | 0.28 | 0.90 | 0.27 | 7.90 |
 | visa | macaroni1 | patchcore | 100/100 | 0.81 | 0.16 | 0.24 | 0.38 | 0.89 | 0.25 | 0.99 | 0.24 | 0.90 | 0.21 | 35.10 |
@@ -330,6 +439,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | macaroni2 | fastflow | 100/100 | 0.69 | 0.03 | 0.11 | 0.15 | 0.96 | 0.11 | 0.96 | 0.11 | 0.93 | 0.10 | 9.00 |
 | visa | macaroni2 | foundad-252 | 100/100 | 0.79 | 0.04 | 0.05 | 0.15 | 0.96 | 0.05 | 0.96 | 0.05 | 0.93 | 0.05 | 14.00 |
 | visa | macaroni2 | fre | 100/100 | 0.71 | 0.22 | 0.31 | 0.37 | 0.96 | 0.28 | 0.96 | 0.30 | 0.93 | 0.27 | 8.50 |
+| visa | macaroni2 | gemma4-e2b-lora | 100/100 | 0.98 | 0.19 | 0.29 | 0.99 | 0.96 | 0.30 | 0.96 | 0.30 | 0.93 | 0.28 | 712.80 |
+| visa | macaroni2 | gemma4-e2b-lora-lang | 100/100 | 0.93 | 0.10 | 0.25 | 0.46 | 0.96 | 0.25 | 0.96 | 0.26 | 0.93 | 0.25 | 721.40 |
+| visa | macaroni2 | gemma4-e2b-zs | 100/100 | 0.71 | 0.08 | 0.09 | 0.32 | 0.96 | 0.09 | 0.96 | 0.09 | 0.93 | 0.10 | 695.70 |
+| visa | macaroni2 | gemma4-e2b-zs-ref1 | 100/100 | 0.65 | 0.04 | 0.04 | 0.18 | 0.96 | 0.04 | 0.96 | 0.04 | 0.93 | 0.04 | 1129.70 |
+| visa | macaroni2 | gemma4-e4b-lora | 100/100 | 0.99 | 0.00 | 0.91 | 0.95 | 0.96 | 0.91 | 0.96 | 0.91 | 0.93 | 0.90 | 887.70 |
+| visa | macaroni2 | gemma4-e4b-zs | 100/100 | 0.69 | 0.04 | 0.06 | 0.09 | 0.96 | 0.06 | 0.96 | 0.06 | 0.93 | 0.06 | 864.40 |
+| visa | macaroni2 | gemma4-e4b-zs-ref1 | 100/100 | 0.66 | 0.00 | 0.00 | 0.05 | 0.96 | 0.00 | 0.96 | 0.00 | 0.93 | 0.00 | 1388.00 |
 | visa | macaroni2 | mhpatchcore | 100/100 | 0.87 | 0.11 | 0.11 | 0.44 | 0.96 | 0.08 | 0.96 | 0.09 | 0.93 | 0.10 | 10.50 |
 | visa | macaroni2 | padim | 100/100 | 0.60 | 0.12 | 0.14 | 0.15 | 0.96 | 0.12 | 0.96 | 0.12 | 0.93 | 0.10 | 8.00 |
 | visa | macaroni2 | patchcore | 100/100 | 0.66 | 0.02 | 0.11 | 0.15 | 0.96 | 0.10 | 0.96 | 0.10 | 0.93 | 0.10 | 35.50 |
@@ -352,6 +468,13 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | pipe_fryum | fastflow | 50/100 | 0.90 | 0.10 | 0.22 | 0.60 | 1.00 | 0.22 | 1.00 | 0.22 | 0.74 | 0.16 | 10.00 |
 | visa | pipe_fryum | foundad-252 | 50/100 | 0.97 | 0.30 | 0.78 | 0.86 | 1.00 | 0.78 | 1.00 | 0.78 | 0.74 | 0.78 | 2.70 |
 | visa | pipe_fryum | fre | 50/100 | 0.88 | 0.02 | 0.12 | 0.64 | 1.00 | 0.12 | 1.00 | 0.12 | 0.74 | 0.05 | 10.00 |
+| visa | pipe_fryum | gemma4-e2b-lora | 50/100 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 0.74 | 1.00 | 708.20 |
+| visa | pipe_fryum | gemma4-e2b-lora-lang | 50/100 | 1.00 | 0.96 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 0.74 | 1.00 | 707.60 |
+| visa | pipe_fryum | gemma4-e2b-zs | 50/100 | 0.96 | 0.32 | 0.38 | 0.72 | 1.00 | 0.38 | 1.00 | 0.38 | 0.74 | 0.35 | 694.00 |
+| visa | pipe_fryum | gemma4-e2b-zs-ref1 | 50/100 | 0.95 | 0.48 | 0.56 | 0.82 | 1.00 | 0.56 | 1.00 | 0.56 | 0.74 | 0.62 | 1131.00 |
+| visa | pipe_fryum | gemma4-e4b-lora | 50/100 | 1.00 | 0.98 | 0.98 | 1.00 | 1.00 | 0.98 | 1.00 | 0.98 | 0.74 | 0.97 | 880.50 |
+| visa | pipe_fryum | gemma4-e4b-zs | 50/100 | 0.95 | 0.02 | 0.16 | 0.68 | 1.00 | 0.16 | 1.00 | 0.16 | 0.74 | 0.19 | 882.30 |
+| visa | pipe_fryum | gemma4-e4b-zs-ref1 | 50/100 | 0.97 | 0.38 | 0.66 | 0.80 | 1.00 | 0.66 | 1.00 | 0.66 | 0.74 | 0.65 | 1399.30 |
 | visa | pipe_fryum | mhpatchcore | 50/100 | 1.00 | 0.84 | 0.92 | 1.00 | 1.00 | 0.92 | 1.00 | 0.92 | 0.74 | 0.89 | 12.70 |
 | visa | pipe_fryum | padim | 50/100 | 0.89 | 0.34 | 0.38 | 0.54 | 1.00 | 0.38 | 1.00 | 0.38 | 0.74 | 0.19 | 9.80 |
 | visa | pipe_fryum | patchcore | 50/100 | 0.99 | 0.68 | 0.94 | 0.94 | 1.00 | 0.94 | 1.00 | 0.94 | 0.74 | 0.92 | 22.80 |
@@ -394,6 +517,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | drink_bottle | fre-n400 | aligned | 356 | 0.01 | 0.01 | 0.97 | 0.46 | 0.01 |
 | goodsad | drink_bottle | fre-n400 | pca | 356 | 0.01 | 0.01 | 0.97 | 0.46 | 0.01 |
 | goodsad | drink_bottle | fre-n400 | tinypadim | 353 | 0.02 | 0.01 | 0.97 | 0.46 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-lora | aligned | 356 | 0.06 | 0.01 | 0.60 | 0.97 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-lora | pca | 356 | 0.06 | 0.01 | 0.60 | 0.97 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-lora | tinypadim | 353 | 0.06 | 0.01 | 0.60 | 0.97 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-lora-lang | aligned | 356 | 0.04 | 0.01 | 0.72 | 0.96 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-lora-lang | pca | 356 | 0.04 | 0.01 | 0.72 | 0.96 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-lora-lang | tinypadim | 353 | 0.05 | 0.01 | 0.71 | 0.96 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-zs | aligned | 356 | 0.02 | 0.01 | 0.90 | 0.90 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-zs | pca | 356 | 0.02 | 0.01 | 0.90 | 0.90 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-zs | tinypadim | 353 | 0.02 | 0.01 | 0.90 | 0.91 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-zs-ref1 | aligned | 356 | 0.01 | 0.01 | 0.95 | 0.64 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-zs-ref1 | pca | 356 | 0.01 | 0.01 | 0.95 | 0.64 | 0.01 |
+| goodsad | drink_bottle | gemma4-e2b-zs-ref1 | tinypadim | 353 | 0.01 | 0.01 | 0.96 | 0.72 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-lora | aligned | 356 | 0.15 | 0.01 | 0.58 | 0.97 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-lora | pca | 356 | 0.15 | 0.01 | 0.58 | 0.97 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-lora | tinypadim | 353 | 0.15 | 0.01 | 0.59 | 0.98 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-zs | aligned | 356 | 0.02 | 0.01 | 0.90 | 0.86 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-zs | pca | 356 | 0.02 | 0.01 | 0.90 | 0.86 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-zs | tinypadim | 353 | 0.03 | 0.01 | 0.90 | 0.89 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-zs-ref1 | aligned | 356 | 0.02 | 0.01 | 0.90 | 0.88 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-zs-ref1 | pca | 356 | 0.02 | 0.01 | 0.90 | 0.88 | 0.01 |
+| goodsad | drink_bottle | gemma4-e4b-zs-ref1 | tinypadim | 353 | 0.02 | 0.01 | 0.90 | 0.88 | 0.01 |
 | goodsad | drink_bottle | mhpatchcore-n400 | aligned | 356 | 0.01 | 0.01 | 0.96 | 0.63 | 0.01 |
 | goodsad | drink_bottle | mhpatchcore-n400 | pca | 356 | 0.01 | 0.01 | 0.96 | 0.63 | 0.01 |
 | goodsad | drink_bottle | mhpatchcore-n400 | tinypadim | 353 | 0.01 | 0.01 | 0.96 | 0.74 | 0.01 |
@@ -442,6 +586,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | drink_can | fre-n400 | aligned | 143 | 0.02 | 0.02 | 0.94 | 0.61 | 0.03 |
 | goodsad | drink_can | fre-n400 | pca | 147 | 0.03 | 0.02 | 0.95 | 0.58 | 0.03 |
 | goodsad | drink_can | fre-n400 | tinypadim | 145 | 0.02 | 0.02 | 0.94 | 0.56 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-lora | aligned | 143 | 0.20 | 0.01 | 0.48 | 0.98 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-lora | pca | 147 | 0.20 | 0.01 | 0.47 | 0.96 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-lora | tinypadim | 145 | 0.19 | 0.01 | 0.48 | 0.98 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-lora-lang | aligned | 143 | 0.34 | 0.02 | 0.46 | 0.97 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-lora-lang | pca | 147 | 0.35 | 0.02 | 0.45 | 0.97 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-lora-lang | tinypadim | 145 | 0.34 | 0.02 | 0.45 | 0.97 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-zs | aligned | 143 | 0.03 | 0.02 | 0.92 | 0.81 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-zs | pca | 147 | 0.03 | 0.02 | 0.92 | 0.86 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-zs | tinypadim | 145 | 0.03 | 0.02 | 0.91 | 0.89 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-zs-ref1 | aligned | 143 | 0.03 | 0.01 | 0.96 | 0.50 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-zs-ref1 | pca | 147 | 0.03 | 0.01 | 0.95 | 0.50 | 0.03 |
+| goodsad | drink_can | gemma4-e2b-zs-ref1 | tinypadim | 145 | 0.03 | 0.01 | 0.95 | 0.61 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-lora | aligned | 143 | 0.24 | 0.01 | 0.42 | 0.98 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-lora | pca | 147 | 0.27 | 0.01 | 0.41 | 0.97 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-lora | tinypadim | 145 | 0.24 | 0.01 | 0.42 | 0.97 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-zs | aligned | 143 | 0.01 | 0.01 | 0.90 | 0.86 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-zs | pca | 147 | 0.01 | 0.01 | 0.90 | 0.83 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-zs | tinypadim | 145 | 0.01 | 0.01 | 0.91 | 0.86 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-zs-ref1 | aligned | 143 | 0.06 | 0.01 | 0.94 | 0.33 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-zs-ref1 | pca | 147 | 0.07 | 0.01 | 0.94 | 0.25 | 0.03 |
+| goodsad | drink_can | gemma4-e4b-zs-ref1 | tinypadim | 145 | 0.06 | 0.01 | 0.94 | 0.20 | 0.03 |
 | goodsad | drink_can | mhpatchcore-n400 | aligned | 143 | 0.03 | 0.03 | 0.90 | 0.90 | 0.03 |
 | goodsad | drink_can | mhpatchcore-n400 | pca | 147 | 0.05 | 0.03 | 0.88 | 0.89 | 0.03 |
 | goodsad | drink_can | mhpatchcore-n400 | tinypadim | 145 | 0.05 | 0.03 | 0.89 | 0.90 | 0.03 |
@@ -490,6 +655,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | food_bottle | fre-n400 | aligned | 243 | 0.01 | 0.01 | 0.93 | 0.87 | 0.01 |
 | goodsad | food_bottle | fre-n400 | pca | 243 | 0.01 | 0.01 | 0.93 | 0.87 | 0.01 |
 | goodsad | food_bottle | fre-n400 | tinypadim | 242 | 0.01 | 0.01 | 0.94 | 0.90 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-lora | aligned | 243 | 0.15 | 0.01 | 0.50 | 0.97 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-lora | pca | 243 | 0.15 | 0.01 | 0.50 | 0.97 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-lora | tinypadim | 242 | 0.15 | 0.01 | 0.51 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-lora-lang | aligned | 243 | 0.05 | 0.01 | 0.63 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-lora-lang | pca | 243 | 0.05 | 0.01 | 0.63 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-lora-lang | tinypadim | 242 | 0.05 | 0.01 | 0.63 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-zs | aligned | 243 | 0.02 | 0.02 | 0.92 | 0.85 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-zs | pca | 243 | 0.02 | 0.02 | 0.92 | 0.85 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-zs | tinypadim | 242 | 0.02 | 0.02 | 0.93 | 0.85 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-zs-ref1 | aligned | 243 | 0.03 | 0.01 | 0.95 | 0.84 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-zs-ref1 | pca | 243 | 0.03 | 0.01 | 0.95 | 0.84 | 0.01 |
+| goodsad | food_bottle | gemma4-e2b-zs-ref1 | tinypadim | 242 | 0.03 | 0.01 | 0.94 | 0.81 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-lora | aligned | 243 | 0.10 | 0.01 | 0.53 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-lora | pca | 243 | 0.10 | 0.01 | 0.53 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-lora | tinypadim | 242 | 0.10 | 0.01 | 0.52 | 0.98 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-zs | aligned | 243 | 0.02 | 0.01 | 0.90 | 0.86 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-zs | pca | 243 | 0.02 | 0.01 | 0.90 | 0.86 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-zs | tinypadim | 242 | 0.02 | 0.01 | 0.90 | 0.92 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-zs-ref1 | aligned | 243 | 0.03 | 0.01 | 0.91 | 0.82 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-zs-ref1 | pca | 243 | 0.03 | 0.01 | 0.91 | 0.82 | 0.01 |
+| goodsad | food_bottle | gemma4-e4b-zs-ref1 | tinypadim | 242 | 0.03 | 0.01 | 0.91 | 0.90 | 0.01 |
 | goodsad | food_bottle | mhpatchcore-n400 | aligned | 243 | 0.00 | 0.01 | 0.92 | 0.85 | 0.01 |
 | goodsad | food_bottle | mhpatchcore-n400 | pca | 243 | 0.00 | 0.01 | 0.92 | 0.85 | 0.01 |
 | goodsad | food_bottle | mhpatchcore-n400 | tinypadim | 242 | 0.00 | 0.01 | 0.92 | 0.88 | 0.01 |
@@ -538,6 +724,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | food_box | fre-n400 | aligned | 146 | 0.03 | 0.01 | 0.94 | 0.86 | 0.01 |
 | goodsad | food_box | fre-n400 | pca | 146 | 0.03 | 0.01 | 0.94 | 0.86 | 0.01 |
 | goodsad | food_box | fre-n400 | tinypadim | 143 | 0.02 | 0.01 | 0.95 | 0.83 | 0.01 |
+| goodsad | food_box | gemma4-e2b-lora | aligned | 146 | 0.42 | 0.01 | 0.33 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e2b-lora | pca | 146 | 0.42 | 0.01 | 0.33 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e2b-lora | tinypadim | 143 | 0.43 | 0.01 | 0.33 | 0.99 | 0.01 |
+| goodsad | food_box | gemma4-e2b-lora-lang | aligned | 146 | 0.11 | 0.02 | 0.58 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e2b-lora-lang | pca | 146 | 0.11 | 0.02 | 0.58 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e2b-lora-lang | tinypadim | 143 | 0.10 | 0.02 | 0.58 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e2b-zs | aligned | 146 | 0.02 | 0.02 | 0.91 | 0.87 | 0.01 |
+| goodsad | food_box | gemma4-e2b-zs | pca | 146 | 0.02 | 0.02 | 0.91 | 0.87 | 0.01 |
+| goodsad | food_box | gemma4-e2b-zs | tinypadim | 143 | 0.02 | 0.02 | 0.93 | 0.88 | 0.01 |
+| goodsad | food_box | gemma4-e2b-zs-ref1 | aligned | 146 | 0.01 | 0.02 | 0.92 | 0.82 | 0.01 |
+| goodsad | food_box | gemma4-e2b-zs-ref1 | pca | 146 | 0.01 | 0.02 | 0.92 | 0.82 | 0.01 |
+| goodsad | food_box | gemma4-e2b-zs-ref1 | tinypadim | 143 | 0.01 | 0.02 | 0.91 | 0.86 | 0.01 |
+| goodsad | food_box | gemma4-e4b-lora | aligned | 146 | 0.25 | 0.02 | 0.37 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e4b-lora | pca | 146 | 0.25 | 0.02 | 0.37 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e4b-lora | tinypadim | 143 | 0.25 | 0.02 | 0.37 | 0.98 | 0.01 |
+| goodsad | food_box | gemma4-e4b-zs | aligned | 146 | 0.03 | 0.01 | 0.87 | 0.88 | 0.01 |
+| goodsad | food_box | gemma4-e4b-zs | pca | 146 | 0.03 | 0.01 | 0.87 | 0.88 | 0.01 |
+| goodsad | food_box | gemma4-e4b-zs | tinypadim | 143 | 0.03 | 0.01 | 0.87 | 0.92 | 0.01 |
+| goodsad | food_box | gemma4-e4b-zs-ref1 | aligned | 146 | 0.00 | 0.02 | 0.90 | 0.91 | 0.01 |
+| goodsad | food_box | gemma4-e4b-zs-ref1 | pca | 146 | 0.00 | 0.02 | 0.90 | 0.91 | 0.01 |
+| goodsad | food_box | gemma4-e4b-zs-ref1 | tinypadim | 143 | 0.00 | 0.02 | 0.90 | 0.91 | 0.01 |
 | goodsad | food_box | mhpatchcore-n400 | aligned | 146 | 0.07 | 0.01 | 0.92 | 0.89 | 0.01 |
 | goodsad | food_box | mhpatchcore-n400 | pca | 146 | 0.07 | 0.01 | 0.92 | 0.89 | 0.01 |
 | goodsad | food_box | mhpatchcore-n400 | tinypadim | 143 | 0.07 | 0.01 | 0.91 | 0.86 | 0.01 |
@@ -586,6 +793,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | goodsad | food_package | fre-n400 | aligned | 252 | 0.02 | 0.01 | 0.93 | 0.81 | 0.02 |
 | goodsad | food_package | fre-n400 | pca | 250 | 0.02 | 0.01 | 0.93 | 0.79 | 0.02 |
 | goodsad | food_package | fre-n400 | tinypadim | 253 | 0.02 | 0.01 | 0.93 | 0.81 | 0.02 |
+| goodsad | food_package | gemma4-e2b-lora | aligned | 252 | 0.11 | 0.01 | 0.60 | 0.96 | 0.02 |
+| goodsad | food_package | gemma4-e2b-lora | pca | 250 | 0.10 | 0.01 | 0.60 | 0.97 | 0.02 |
+| goodsad | food_package | gemma4-e2b-lora | tinypadim | 253 | 0.11 | 0.01 | 0.60 | 0.96 | 0.02 |
+| goodsad | food_package | gemma4-e2b-lora-lang | aligned | 252 | 0.09 | 0.02 | 0.70 | 0.95 | 0.02 |
+| goodsad | food_package | gemma4-e2b-lora-lang | pca | 250 | 0.08 | 0.02 | 0.71 | 0.96 | 0.02 |
+| goodsad | food_package | gemma4-e2b-lora-lang | tinypadim | 253 | 0.09 | 0.02 | 0.70 | 0.95 | 0.02 |
+| goodsad | food_package | gemma4-e2b-zs | aligned | 252 | 0.01 | 0.01 | 0.94 | 0.64 | 0.02 |
+| goodsad | food_package | gemma4-e2b-zs | pca | 250 | 0.01 | 0.01 | 0.94 | 0.66 | 0.02 |
+| goodsad | food_package | gemma4-e2b-zs | tinypadim | 253 | 0.01 | 0.01 | 0.94 | 0.66 | 0.02 |
+| goodsad | food_package | gemma4-e2b-zs-ref1 | aligned | 252 | 0.01 | 0.01 | 0.95 | 0.62 | 0.02 |
+| goodsad | food_package | gemma4-e2b-zs-ref1 | pca | 250 | 0.01 | 0.01 | 0.96 | 0.65 | 0.02 |
+| goodsad | food_package | gemma4-e2b-zs-ref1 | tinypadim | 253 | 0.01 | 0.01 | 0.95 | 0.64 | 0.02 |
+| goodsad | food_package | gemma4-e4b-lora | aligned | 252 | 0.17 | 0.01 | 0.57 | 0.96 | 0.02 |
+| goodsad | food_package | gemma4-e4b-lora | pca | 250 | 0.18 | 0.01 | 0.57 | 0.96 | 0.02 |
+| goodsad | food_package | gemma4-e4b-lora | tinypadim | 253 | 0.19 | 0.01 | 0.57 | 0.97 | 0.02 |
+| goodsad | food_package | gemma4-e4b-zs | aligned | 252 | 0.01 | 0.01 | 0.91 | 0.82 | 0.02 |
+| goodsad | food_package | gemma4-e4b-zs | pca | 250 | 0.01 | 0.01 | 0.91 | 0.83 | 0.02 |
+| goodsad | food_package | gemma4-e4b-zs | tinypadim | 253 | 0.01 | 0.01 | 0.92 | 0.82 | 0.02 |
+| goodsad | food_package | gemma4-e4b-zs-ref1 | aligned | 252 | 0.00 | 0.01 | 0.94 | 0.81 | 0.02 |
+| goodsad | food_package | gemma4-e4b-zs-ref1 | pca | 250 | 0.00 | 0.01 | 0.94 | 0.81 | 0.02 |
+| goodsad | food_package | gemma4-e4b-zs-ref1 | tinypadim | 253 | 0.00 | 0.01 | 0.94 | 0.78 | 0.02 |
 | goodsad | food_package | mhpatchcore-n400 | aligned | 252 | 0.02 | 0.01 | 0.95 | 0.60 | 0.02 |
 | goodsad | food_package | mhpatchcore-n400 | pca | 250 | 0.02 | 0.01 | 0.96 | 0.60 | 0.02 |
 | goodsad | food_package | mhpatchcore-n400 | tinypadim | 253 | 0.02 | 0.01 | 0.95 | 0.58 | 0.02 |
@@ -625,6 +853,20 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | mvtec | bottle | foundad-252 | pca | 16 | 1.00 | 0.02 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | fre | aligned | 19 | 0.93 | 0.02 | 0.00 | 0.99 | 0.06 |
 | mvtec | bottle | fre | pca | 16 | 0.93 | 0.02 | 0.00 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e2b-lora | aligned | 19 | 0.62 | 0.02 | 0.08 | 0.97 | 0.06 |
+| mvtec | bottle | gemma4-e2b-lora | pca | 16 | 0.53 | 0.02 | 0.09 | 0.97 | 0.06 |
+| mvtec | bottle | gemma4-e2b-lora-lang | aligned | 19 | 0.25 | 0.02 | 0.22 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e2b-lora-lang | pca | 16 | 0.25 | 0.02 | 0.19 | 0.97 | 0.06 |
+| mvtec | bottle | gemma4-e2b-zs | aligned | 19 | 0.10 | 0.02 | 0.40 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e2b-zs | pca | 16 | 0.07 | 0.02 | 0.39 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e2b-zs-ref1 | aligned | 19 | 0.10 | 0.03 | 0.38 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e2b-zs-ref1 | pca | 16 | 0.12 | 0.03 | 0.35 | 0.96 | 0.06 |
+| mvtec | bottle | gemma4-e4b-lora | aligned | 19 | 0.83 | 0.02 | 0.01 | 0.97 | 0.06 |
+| mvtec | bottle | gemma4-e4b-lora | pca | 16 | 0.88 | 0.02 | 0.01 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e4b-zs | aligned | 19 | 0.10 | 0.02 | 0.37 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e4b-zs | pca | 16 | 0.00 | 0.02 | 0.37 | 0.98 | 0.06 |
+| mvtec | bottle | gemma4-e4b-zs-ref1 | aligned | 19 | 0.83 | 0.02 | 0.03 | 0.99 | 0.06 |
+| mvtec | bottle | gemma4-e4b-zs-ref1 | pca | 16 | 0.93 | 0.02 | 0.00 | 0.99 | 0.06 |
 | mvtec | bottle | mhpatchcore | aligned | 19 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | mhpatchcore | pca | 16 | 1.00 | 0.03 | 0.00 | 1.00 | 0.06 |
 | mvtec | bottle | padim | aligned | 19 | 0.95 | 0.02 | 0.00 | 0.98 | 0.06 |
@@ -678,6 +920,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | mvtec | hazelnut | fre | aligned | 36 | 0.26 | 0.01 | 0.34 | 0.99 | 0.05 |
 | mvtec | hazelnut | fre | pca | 31 | 0.30 | 0.01 | 0.35 | 0.98 | 0.05 |
 | mvtec | hazelnut | fre | tinypadim | 31 | 0.12 | 0.01 | 0.38 | 0.98 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-lora | aligned | 36 | 0.97 | 0.01 | 0.01 | 0.99 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-lora | pca | 31 | 0.97 | 0.01 | 0.01 | 0.99 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-lora | tinypadim | 31 | 0.97 | 0.01 | 0.01 | 0.99 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-lora-lang | aligned | 36 | 1.00 | 0.03 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-lora-lang | pca | 31 | 1.00 | 0.03 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-lora-lang | tinypadim | 31 | 1.00 | 0.03 | 0.00 | 1.00 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-zs | aligned | 36 | 0.22 | 0.01 | 0.41 | 0.98 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-zs | pca | 31 | 0.20 | 0.01 | 0.38 | 0.97 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-zs | tinypadim | 31 | 0.22 | 0.01 | 0.40 | 0.98 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-zs-ref1 | aligned | 36 | 0.55 | 0.03 | 0.18 | 0.99 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-zs-ref1 | pca | 31 | 0.73 | 0.03 | 0.09 | 0.97 | 0.05 |
+| mvtec | hazelnut | gemma4-e2b-zs-ref1 | tinypadim | 31 | 0.50 | 0.03 | 0.19 | 0.98 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-lora | aligned | 36 | 0.89 | 0.01 | 0.03 | 0.97 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-lora | pca | 31 | 0.88 | 0.01 | 0.04 | 0.99 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-lora | tinypadim | 31 | 0.84 | 0.01 | 0.05 | 0.99 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-zs | aligned | 36 | 0.31 | 0.01 | 0.40 | 0.95 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-zs | pca | 31 | 0.32 | 0.01 | 0.39 | 0.97 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-zs | tinypadim | 31 | 0.39 | 0.01 | 0.36 | 0.96 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-zs-ref1 | aligned | 36 | 0.95 | 0.01 | 0.00 | 0.97 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-zs-ref1 | pca | 31 | 0.94 | 0.01 | 0.00 | 0.97 | 0.05 |
+| mvtec | hazelnut | gemma4-e4b-zs-ref1 | tinypadim | 31 | 0.94 | 0.01 | 0.00 | 0.97 | 0.05 |
 | mvtec | hazelnut | mhpatchcore | aligned | 36 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | mhpatchcore | pca | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
 | mvtec | hazelnut | mhpatchcore | tinypadim | 31 | 1.00 | 0.01 | 0.00 | 1.00 | 0.05 |
@@ -735,6 +998,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | candle | fre | aligned | 93 | 0.21 | 0.01 | 0.59 | 0.97 | 0.04 |
 | visa | candle | fre | pca | 95 | 0.20 | 0.01 | 0.59 | 0.97 | 0.04 |
 | visa | candle | fre | tinypadim | 85 | 0.13 | 0.01 | 0.63 | 0.98 | 0.04 |
+| visa | candle | gemma4-e2b-lora | aligned | 93 | 0.37 | 0.01 | 0.36 | 0.97 | 0.04 |
+| visa | candle | gemma4-e2b-lora | pca | 95 | 0.37 | 0.01 | 0.36 | 0.96 | 0.04 |
+| visa | candle | gemma4-e2b-lora | tinypadim | 85 | 0.35 | 0.01 | 0.37 | 0.98 | 0.04 |
+| visa | candle | gemma4-e2b-lora-lang | aligned | 93 | 0.32 | 0.00 | 0.42 | 0.98 | 0.04 |
+| visa | candle | gemma4-e2b-lora-lang | pca | 95 | 0.32 | 0.00 | 0.41 | 0.97 | 0.04 |
+| visa | candle | gemma4-e2b-lora-lang | tinypadim | 85 | 0.27 | 0.00 | 0.44 | 0.98 | 0.04 |
+| visa | candle | gemma4-e2b-zs | aligned | 93 | 0.22 | 0.01 | 0.62 | 0.96 | 0.04 |
+| visa | candle | gemma4-e2b-zs | pca | 95 | 0.22 | 0.01 | 0.65 | 0.97 | 0.04 |
+| visa | candle | gemma4-e2b-zs | tinypadim | 85 | 0.21 | 0.01 | 0.62 | 0.95 | 0.04 |
+| visa | candle | gemma4-e2b-zs-ref1 | aligned | 93 | 0.19 | 0.01 | 0.52 | 0.96 | 0.04 |
+| visa | candle | gemma4-e2b-zs-ref1 | pca | 95 | 0.18 | 0.01 | 0.58 | 0.96 | 0.04 |
+| visa | candle | gemma4-e2b-zs-ref1 | tinypadim | 85 | 0.14 | 0.01 | 0.61 | 0.97 | 0.04 |
+| visa | candle | gemma4-e4b-lora | aligned | 93 | 0.24 | 0.01 | 0.44 | 0.98 | 0.04 |
+| visa | candle | gemma4-e4b-lora | pca | 95 | 0.25 | 0.01 | 0.42 | 0.96 | 0.04 |
+| visa | candle | gemma4-e4b-lora | tinypadim | 85 | 0.21 | 0.01 | 0.44 | 0.97 | 0.04 |
+| visa | candle | gemma4-e4b-zs | aligned | 93 | 0.17 | 0.01 | 0.53 | 0.96 | 0.04 |
+| visa | candle | gemma4-e4b-zs | pca | 95 | 0.17 | 0.01 | 0.56 | 0.96 | 0.04 |
+| visa | candle | gemma4-e4b-zs | tinypadim | 85 | 0.14 | 0.01 | 0.55 | 0.96 | 0.04 |
+| visa | candle | gemma4-e4b-zs-ref1 | aligned | 93 | 0.19 | 0.01 | 0.51 | 0.97 | 0.04 |
+| visa | candle | gemma4-e4b-zs-ref1 | pca | 95 | 0.22 | 0.01 | 0.58 | 0.95 | 0.04 |
+| visa | candle | gemma4-e4b-zs-ref1 | tinypadim | 85 | 0.22 | 0.01 | 0.58 | 0.97 | 0.04 |
 | visa | candle | mhpatchcore | aligned | 93 | 0.47 | 0.03 | 0.37 | 0.97 | 0.04 |
 | visa | candle | mhpatchcore | pca | 95 | 0.48 | 0.03 | 0.36 | 0.96 | 0.04 |
 | visa | candle | mhpatchcore | tinypadim | 85 | 0.46 | 0.03 | 0.35 | 0.97 | 0.04 |
@@ -801,6 +1085,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | capsules | fre | aligned | 58 | 0.11 | 0.01 | 0.85 | 0.86 | 0.04 |
 | visa | capsules | fre | pca | 58 | 0.10 | 0.01 | 0.85 | 0.86 | 0.04 |
 | visa | capsules | fre | tinypadim | 59 | 0.08 | 0.01 | 0.86 | 0.86 | 0.04 |
+| visa | capsules | gemma4-e2b-lora | aligned | 58 | 0.24 | 0.01 | 0.28 | 0.99 | 0.04 |
+| visa | capsules | gemma4-e2b-lora | pca | 58 | 0.31 | 0.01 | 0.26 | 0.99 | 0.04 |
+| visa | capsules | gemma4-e2b-lora | tinypadim | 59 | 0.23 | 0.01 | 0.30 | 0.99 | 0.04 |
+| visa | capsules | gemma4-e2b-lora-lang | aligned | 58 | 0.24 | 0.02 | 0.39 | 0.98 | 0.04 |
+| visa | capsules | gemma4-e2b-lora-lang | pca | 58 | 0.28 | 0.02 | 0.37 | 0.98 | 0.04 |
+| visa | capsules | gemma4-e2b-lora-lang | tinypadim | 59 | 0.18 | 0.02 | 0.40 | 0.98 | 0.04 |
+| visa | capsules | gemma4-e2b-zs | aligned | 58 | 0.03 | 0.02 | 0.92 | 0.75 | 0.04 |
+| visa | capsules | gemma4-e2b-zs | pca | 58 | 0.02 | 0.02 | 0.94 | 0.92 | 0.04 |
+| visa | capsules | gemma4-e2b-zs | tinypadim | 59 | 0.03 | 0.02 | 0.91 | 0.80 | 0.04 |
+| visa | capsules | gemma4-e2b-zs-ref1 | aligned | 58 | 0.00 | 0.00 | 0.95 | 0.71 | 0.04 |
+| visa | capsules | gemma4-e2b-zs-ref1 | pca | 58 | 0.00 | 0.00 | 0.96 | 0.75 | 0.04 |
+| visa | capsules | gemma4-e2b-zs-ref1 | tinypadim | 59 | 0.00 | 0.00 | 0.95 | 0.71 | 0.04 |
+| visa | capsules | gemma4-e4b-lora | aligned | 58 | 0.29 | 0.00 | 0.28 | 0.97 | 0.04 |
+| visa | capsules | gemma4-e4b-lora | pca | 58 | 0.30 | 0.00 | 0.28 | 0.98 | 0.04 |
+| visa | capsules | gemma4-e4b-lora | tinypadim | 59 | 0.27 | 0.00 | 0.30 | 0.98 | 0.04 |
+| visa | capsules | gemma4-e4b-zs | aligned | 58 | 0.05 | 0.01 | 0.82 | 0.83 | 0.04 |
+| visa | capsules | gemma4-e4b-zs | pca | 58 | 0.07 | 0.01 | 0.81 | 0.91 | 0.04 |
+| visa | capsules | gemma4-e4b-zs | tinypadim | 59 | 0.05 | 0.01 | 0.82 | 0.88 | 0.04 |
+| visa | capsules | gemma4-e4b-zs-ref1 | aligned | 58 | 0.00 | 0.01 | 0.87 | 0.92 | 0.04 |
+| visa | capsules | gemma4-e4b-zs-ref1 | pca | 58 | 0.00 | 0.01 | 0.84 | 0.87 | 0.04 |
+| visa | capsules | gemma4-e4b-zs-ref1 | tinypadim | 59 | 0.00 | 0.01 | 0.87 | 0.92 | 0.04 |
 | visa | capsules | mhpatchcore | aligned | 58 | 0.02 | 0.01 | 0.68 | 0.96 | 0.04 |
 | visa | capsules | mhpatchcore | pca | 58 | 0.03 | 0.01 | 0.66 | 0.95 | 0.04 |
 | visa | capsules | mhpatchcore | tinypadim | 59 | 0.02 | 0.01 | 0.67 | 0.95 | 0.04 |
@@ -867,6 +1172,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | cashew | fre | aligned | 33 | 0.42 | 0.01 | 0.47 | 0.99 | 0.04 |
 | visa | cashew | fre | pca | 39 | 0.49 | 0.01 | 0.45 | 0.97 | 0.04 |
 | visa | cashew | fre | tinypadim | 43 | 0.44 | 0.01 | 0.46 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-lora | aligned | 33 | 0.54 | 0.01 | 0.23 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-lora | pca | 39 | 0.56 | 0.01 | 0.19 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-lora | tinypadim | 43 | 0.53 | 0.01 | 0.23 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-lora-lang | aligned | 33 | 0.21 | 0.01 | 0.38 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e2b-lora-lang | pca | 39 | 0.25 | 0.01 | 0.35 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-lora-lang | tinypadim | 43 | 0.21 | 0.01 | 0.41 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e2b-zs | aligned | 33 | 0.06 | 0.01 | 0.70 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-zs | pca | 39 | 0.03 | 0.01 | 0.59 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e2b-zs | tinypadim | 43 | 0.02 | 0.01 | 0.71 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-zs-ref1 | aligned | 33 | 0.06 | 0.01 | 0.62 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e2b-zs-ref1 | pca | 39 | 0.05 | 0.01 | 0.53 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e2b-zs-ref1 | tinypadim | 43 | 0.04 | 0.01 | 0.62 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e4b-lora | aligned | 33 | 0.82 | 0.01 | 0.11 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e4b-lora | pca | 39 | 0.82 | 0.01 | 0.06 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e4b-lora | tinypadim | 43 | 0.76 | 0.01 | 0.10 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e4b-zs | aligned | 33 | 0.06 | 0.01 | 0.54 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e4b-zs | pca | 39 | 0.08 | 0.01 | 0.46 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e4b-zs | tinypadim | 43 | 0.07 | 0.01 | 0.54 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e4b-zs-ref1 | aligned | 33 | 0.07 | 0.01 | 0.63 | 0.99 | 0.04 |
+| visa | cashew | gemma4-e4b-zs-ref1 | pca | 39 | 0.08 | 0.01 | 0.45 | 0.98 | 0.04 |
+| visa | cashew | gemma4-e4b-zs-ref1 | tinypadim | 43 | 0.07 | 0.01 | 0.57 | 0.99 | 0.04 |
 | visa | cashew | mhpatchcore | aligned | 33 | 0.45 | 0.03 | 0.23 | 0.98 | 0.04 |
 | visa | cashew | mhpatchcore | pca | 39 | 0.48 | 0.03 | 0.22 | 0.97 | 0.04 |
 | visa | cashew | mhpatchcore | tinypadim | 43 | 0.48 | 0.03 | 0.26 | 0.98 | 0.04 |
@@ -933,6 +1259,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | chewinggum | fre | aligned | 50 | 0.72 | 0.01 | 0.14 | 0.98 | 0.04 |
 | visa | chewinggum | fre | pca | 43 | 0.67 | 0.01 | 0.14 | 0.98 | 0.04 |
 | visa | chewinggum | fre | tinypadim | 50 | 0.72 | 0.01 | 0.14 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e2b-lora | aligned | 50 | 0.12 | 0.01 | 0.32 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-lora | pca | 43 | 0.12 | 0.01 | 0.28 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e2b-lora | tinypadim | 50 | 0.12 | 0.01 | 0.32 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-lora-lang | aligned | 50 | 0.06 | 0.00 | 0.35 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-lora-lang | pca | 43 | 0.07 | 0.00 | 0.32 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-lora-lang | tinypadim | 50 | 0.06 | 0.00 | 0.35 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-zs | aligned | 50 | 0.12 | 0.01 | 0.33 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-zs | pca | 43 | 0.12 | 0.01 | 0.31 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-zs | tinypadim | 50 | 0.12 | 0.01 | 0.33 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e2b-zs-ref1 | aligned | 50 | 0.28 | 0.01 | 0.27 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e2b-zs-ref1 | pca | 43 | 0.28 | 0.01 | 0.24 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e2b-zs-ref1 | tinypadim | 50 | 0.28 | 0.01 | 0.27 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-lora | aligned | 50 | 0.32 | 0.01 | 0.24 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-lora | pca | 43 | 0.31 | 0.01 | 0.22 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-lora | tinypadim | 50 | 0.32 | 0.01 | 0.24 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-zs | aligned | 50 | 0.22 | 0.01 | 0.29 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-zs | pca | 43 | 0.14 | 0.01 | 0.29 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-zs | tinypadim | 50 | 0.22 | 0.01 | 0.29 | 0.98 | 0.04 |
+| visa | chewinggum | gemma4-e4b-zs-ref1 | aligned | 50 | 0.12 | 0.01 | 0.39 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e4b-zs-ref1 | pca | 43 | 0.09 | 0.01 | 0.38 | 0.99 | 0.04 |
+| visa | chewinggum | gemma4-e4b-zs-ref1 | tinypadim | 50 | 0.12 | 0.01 | 0.39 | 0.99 | 0.04 |
 | visa | chewinggum | mhpatchcore | aligned | 50 | 0.90 | 0.01 | 0.03 | 0.97 | 0.04 |
 | visa | chewinggum | mhpatchcore | pca | 43 | 0.91 | 0.01 | 0.02 | 0.97 | 0.04 |
 | visa | chewinggum | mhpatchcore | tinypadim | 50 | 0.90 | 0.01 | 0.03 | 0.97 | 0.04 |
@@ -990,6 +1337,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | fryum | fre | aligned | 44 | 0.71 | 0.01 | 0.48 | 0.97 | 0.04 |
 | visa | fryum | fre | pca | 49 | 0.72 | 0.01 | 0.48 | 0.97 | 0.04 |
 | visa | fryum | fre | tinypadim | 34 | 0.64 | 0.01 | 0.55 | 0.97 | 0.04 |
+| visa | fryum | gemma4-e2b-lora | aligned | 44 | 0.07 | 0.01 | 0.35 | 0.97 | 0.04 |
+| visa | fryum | gemma4-e2b-lora | pca | 49 | 0.06 | 0.01 | 0.36 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e2b-lora | tinypadim | 34 | 0.06 | 0.01 | 0.30 | 0.99 | 0.04 |
+| visa | fryum | gemma4-e2b-lora-lang | aligned | 44 | 0.05 | 0.01 | 0.34 | 0.96 | 0.04 |
+| visa | fryum | gemma4-e2b-lora-lang | pca | 49 | 0.07 | 0.01 | 0.38 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e2b-lora-lang | tinypadim | 34 | 0.00 | 0.01 | 0.33 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e2b-zs | aligned | 44 | 0.14 | 0.01 | 0.66 | 0.97 | 0.04 |
+| visa | fryum | gemma4-e2b-zs | pca | 49 | 0.12 | 0.01 | 0.65 | 0.96 | 0.04 |
+| visa | fryum | gemma4-e2b-zs | tinypadim | 34 | 0.03 | 0.01 | 0.63 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e2b-zs-ref1 | aligned | 44 | 0.07 | 0.01 | 0.65 | 0.93 | 0.04 |
+| visa | fryum | gemma4-e2b-zs-ref1 | pca | 49 | 0.06 | 0.01 | 0.64 | 0.95 | 0.04 |
+| visa | fryum | gemma4-e2b-zs-ref1 | tinypadim | 34 | 0.06 | 0.01 | 0.58 | 0.97 | 0.04 |
+| visa | fryum | gemma4-e4b-lora | aligned | 44 | 0.11 | 0.01 | 0.31 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e4b-lora | pca | 49 | 0.10 | 0.01 | 0.32 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e4b-lora | tinypadim | 34 | 0.09 | 0.01 | 0.27 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e4b-zs | aligned | 44 | 0.07 | 0.01 | 0.43 | 0.99 | 0.04 |
+| visa | fryum | gemma4-e4b-zs | pca | 49 | 0.08 | 0.01 | 0.45 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e4b-zs | tinypadim | 34 | 0.03 | 0.01 | 0.41 | 0.98 | 0.04 |
+| visa | fryum | gemma4-e4b-zs-ref1 | aligned | 44 | 0.00 | 0.01 | 0.54 | 0.97 | 0.04 |
+| visa | fryum | gemma4-e4b-zs-ref1 | pca | 49 | 0.00 | 0.01 | 0.56 | 0.99 | 0.04 |
+| visa | fryum | gemma4-e4b-zs-ref1 | tinypadim | 34 | 0.00 | 0.01 | 0.54 | 0.99 | 0.04 |
 | visa | fryum | mhpatchcore | aligned | 44 | 0.36 | 0.01 | 0.28 | 0.98 | 0.04 |
 | visa | fryum | mhpatchcore | pca | 49 | 0.41 | 0.01 | 0.27 | 0.97 | 0.04 |
 | visa | fryum | mhpatchcore | tinypadim | 34 | 0.36 | 0.01 | 0.25 | 0.99 | 0.04 |
@@ -1056,6 +1424,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | macaroni1 | fre | aligned | 89 | 0.09 | 0.01 | 0.88 | 0.71 | 0.04 |
 | visa | macaroni1 | fre | pca | 99 | 0.10 | 0.01 | 0.89 | 0.70 | 0.04 |
 | visa | macaroni1 | fre | tinypadim | 90 | 0.08 | 0.01 | 0.90 | 0.70 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-lora | aligned | 89 | 0.38 | 0.01 | 0.29 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-lora | pca | 99 | 0.39 | 0.01 | 0.30 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-lora | tinypadim | 90 | 0.38 | 0.01 | 0.29 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-lora-lang | aligned | 89 | 0.13 | 0.01 | 0.44 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-lora-lang | pca | 99 | 0.14 | 0.01 | 0.45 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-lora-lang | tinypadim | 90 | 0.13 | 0.01 | 0.44 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-zs | aligned | 89 | 0.07 | 0.01 | 0.70 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-zs | pca | 99 | 0.06 | 0.01 | 0.73 | 0.94 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-zs | tinypadim | 90 | 0.07 | 0.01 | 0.73 | 0.94 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-zs-ref1 | aligned | 89 | 0.00 | 0.01 | 0.75 | 0.94 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-zs-ref1 | pca | 99 | 0.00 | 0.01 | 0.76 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e2b-zs-ref1 | tinypadim | 90 | 0.00 | 0.01 | 0.74 | 0.93 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-lora | aligned | 89 | 0.58 | 0.02 | 0.19 | 0.97 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-lora | pca | 99 | 0.66 | 0.02 | 0.16 | 0.96 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-lora | tinypadim | 90 | 0.60 | 0.02 | 0.19 | 0.98 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-zs | aligned | 89 | 0.08 | 0.01 | 0.62 | 0.95 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-zs | pca | 99 | 0.07 | 0.01 | 0.66 | 0.96 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-zs | tinypadim | 90 | 0.08 | 0.01 | 0.64 | 0.94 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-zs-ref1 | aligned | 89 | 0.06 | 0.01 | 0.67 | 0.95 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-zs-ref1 | pca | 99 | 0.05 | 0.01 | 0.69 | 0.95 | 0.04 |
+| visa | macaroni1 | gemma4-e4b-zs-ref1 | tinypadim | 90 | 0.04 | 0.01 | 0.67 | 0.94 | 0.04 |
 | visa | macaroni1 | mhpatchcore | aligned | 89 | 0.45 | 0.04 | 0.32 | 0.97 | 0.04 |
 | visa | macaroni1 | mhpatchcore | pca | 99 | 0.46 | 0.04 | 0.32 | 0.95 | 0.04 |
 | visa | macaroni1 | mhpatchcore | tinypadim | 90 | 0.43 | 0.04 | 0.34 | 0.96 | 0.04 |
@@ -1122,6 +1511,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | macaroni2 | fre | aligned | 96 | 0.21 | 0.01 | 0.85 | 0.69 | 0.04 |
 | visa | macaroni2 | fre | pca | 96 | 0.25 | 0.01 | 0.83 | 0.69 | 0.04 |
 | visa | macaroni2 | fre | tinypadim | 93 | 0.19 | 0.01 | 0.86 | 0.60 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-lora | aligned | 96 | 0.29 | 0.02 | 0.34 | 0.96 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-lora | pca | 96 | 0.29 | 0.02 | 0.35 | 0.97 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-lora | tinypadim | 93 | 0.26 | 0.02 | 0.35 | 0.97 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-lora-lang | aligned | 96 | 0.16 | 0.01 | 0.54 | 0.97 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-lora-lang | pca | 96 | 0.14 | 0.01 | 0.55 | 0.97 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-lora-lang | tinypadim | 93 | 0.15 | 0.01 | 0.47 | 0.94 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-zs | aligned | 96 | 0.08 | 0.01 | 0.88 | 0.80 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-zs | pca | 96 | 0.08 | 0.01 | 0.88 | 0.80 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-zs | tinypadim | 93 | 0.09 | 0.01 | 0.86 | 0.87 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-zs-ref1 | aligned | 96 | 0.04 | 0.01 | 0.90 | 0.90 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-zs-ref1 | pca | 96 | 0.04 | 0.01 | 0.89 | 0.89 | 0.04 |
+| visa | macaroni2 | gemma4-e2b-zs-ref1 | tinypadim | 93 | 0.04 | 0.01 | 0.90 | 0.85 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-lora | aligned | 96 | 0.15 | 0.01 | 0.44 | 0.97 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-lora | pca | 96 | 0.15 | 0.01 | 0.44 | 0.97 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-lora | tinypadim | 93 | 0.18 | 0.01 | 0.41 | 0.96 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-zs | aligned | 96 | 0.04 | 0.01 | 0.93 | 0.83 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-zs | pca | 96 | 0.04 | 0.01 | 0.93 | 0.80 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-zs | tinypadim | 93 | 0.05 | 0.01 | 0.93 | 0.79 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-zs-ref1 | aligned | 96 | 0.00 | 0.02 | 0.93 | 0.92 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-zs-ref1 | pca | 96 | 0.00 | 0.02 | 0.91 | 0.78 | 0.04 |
+| visa | macaroni2 | gemma4-e4b-zs-ref1 | tinypadim | 93 | 0.00 | 0.02 | 0.91 | 0.88 | 0.04 |
 | visa | macaroni2 | mhpatchcore | aligned | 96 | 0.08 | 0.02 | 0.75 | 0.94 | 0.04 |
 | visa | macaroni2 | mhpatchcore | pca | 96 | 0.09 | 0.02 | 0.74 | 0.94 | 0.04 |
 | visa | macaroni2 | mhpatchcore | tinypadim | 93 | 0.12 | 0.02 | 0.74 | 0.93 | 0.04 |
@@ -1188,6 +1598,27 @@ Held-out: the calibrated band below, about 1.2% expected escape on VisA, 2% on b
 | visa | pipe_fryum | fre | aligned | 50 | 0.04 | 0.01 | 0.65 | 0.98 | 0.04 |
 | visa | pipe_fryum | fre | pca | 50 | 0.04 | 0.01 | 0.65 | 0.98 | 0.04 |
 | visa | pipe_fryum | fre | tinypadim | 37 | 0.00 | 0.01 | 0.64 | 0.96 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-lora | aligned | 50 | 1.00 | 0.01 | 0.00 | 1.00 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-lora | pca | 50 | 1.00 | 0.01 | 0.00 | 1.00 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-lora | tinypadim | 37 | 1.00 | 0.01 | 0.00 | 1.00 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-lora-lang | aligned | 50 | 0.96 | 0.01 | 0.00 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-lora-lang | pca | 50 | 0.96 | 0.01 | 0.00 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-lora-lang | tinypadim | 37 | 0.97 | 0.01 | 0.00 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-zs | aligned | 50 | 0.32 | 0.01 | 0.33 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-zs | pca | 50 | 0.32 | 0.01 | 0.33 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-zs | tinypadim | 37 | 0.30 | 0.01 | 0.29 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-zs-ref1 | aligned | 50 | 0.48 | 0.01 | 0.55 | 0.97 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-zs-ref1 | pca | 50 | 0.48 | 0.01 | 0.55 | 0.97 | 0.04 |
+| visa | pipe_fryum | gemma4-e2b-zs-ref1 | tinypadim | 37 | 0.54 | 0.01 | 0.56 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-lora | aligned | 50 | 0.98 | 0.01 | 0.00 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-lora | pca | 50 | 0.98 | 0.01 | 0.00 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-lora | tinypadim | 37 | 0.97 | 0.01 | 0.00 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-zs | aligned | 50 | 0.06 | 0.01 | 0.43 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-zs | pca | 50 | 0.06 | 0.01 | 0.43 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-zs | tinypadim | 37 | 0.05 | 0.01 | 0.39 | 0.99 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-zs-ref1 | aligned | 50 | 0.48 | 0.02 | 0.29 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-zs-ref1 | pca | 50 | 0.48 | 0.02 | 0.29 | 0.98 | 0.04 |
+| visa | pipe_fryum | gemma4-e4b-zs-ref1 | tinypadim | 37 | 0.44 | 0.02 | 0.28 | 0.97 | 0.04 |
 | visa | pipe_fryum | mhpatchcore | aligned | 50 | 0.86 | 0.01 | 0.03 | 0.96 | 0.04 |
 | visa | pipe_fryum | mhpatchcore | pca | 50 | 0.86 | 0.01 | 0.03 | 0.96 | 0.04 |
 | visa | pipe_fryum | mhpatchcore | tinypadim | 37 | 0.81 | 0.01 | 0.04 | 0.98 | 0.04 |

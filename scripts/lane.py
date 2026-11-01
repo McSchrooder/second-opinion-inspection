@@ -207,10 +207,14 @@ def write_docs(df: pd.DataFrame, frr_df: pd.DataFrame, path: Path, escape: float
         "",
         "Band: two thresholds set on 4 of 5 folds, measured on the 5th. The lower line lets through at most",
         f"{escape:.0%} of the calibration defects. Under 100 calibration defects that is the weakest one, so a new defect",
-        "slips under it about 1/(n+1) of the time: 1.2% on VisA (80 defects), 2% on bottle (50). GoodsAD has enough",
-        "defects for a real 1%. The rule and its check are in evaluation/.",
+        "slips under it about 1/(n+1) of the time: 1.2% on VisA (80 defects), 2% on bottle (50). On GoodsAD the line",
+        "sits at the 2nd to 4th weakest of 117 to 340, 1.0 to 1.7% expected. The rule and its check are in evaluation/.",
         "Trained models (dinomaly, foundad, cflow, cfa, fre, fastflow, stfpm) ran with a 6-minute training cap.",
         "UniNet and SuperSimpleNet are left out: their image scores had not converged in that time.",
+        "gemma4-*: Gemma 4 vision-language model (E2B, E4B), one image per call at 1120 image tokens, score = logP(defect) - logP(good)",
+        "at the verdict token of a forced JSON answer. -zs: zero-shot (-ref1: one good training image in the prompt). -lora: one LoRA",
+        "over all 15 categories, trained on train/good plus the test defects of the other half, 2-fold, scored out of fold.",
+        "Unlike every other row the -lora models have seen real defects of the category, so compare them with that in mind.",
         "recovery = auto-passed goods, escape = auto-passed defects, review = sent to a human.",
         *glance_section(df, escape),
         "",
@@ -357,7 +361,8 @@ def make_figures(df: pd.DataFrame, frr_df: pd.DataFrame, scores: dict, standins:
     # one dot per model and category, main models only, fixed colours
     main = [("padim", "#2a78d6"), ("patchcore", "#eb6834"), ("rd", "#1baf7a"),
             ("patchcore-320-n300", "#eda100"), ("patchcore-r18", "#e87ba4"),
-            ("mhpatchcore", "#008300"), ("anomalydino", "#e34948"), ("rad", "#6250d6"), ("dinomaly", "#00a3a3")]
+            ("mhpatchcore", "#008300"), ("anomalydino", "#e34948"), ("rad", "#6250d6"), ("dinomaly", "#00a3a3"),
+            ("gemma4-e4b-zs", "#8a8a8a"), ("gemma4-e4b-lora", "#000000")]
     fig, ax = plt.subplots(figsize=(6, 5))
     for model, color in main:
         g = main_rows(df, model)

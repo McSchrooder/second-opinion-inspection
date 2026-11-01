@@ -28,7 +28,8 @@ TIERS = [
 ]
 MODELS = [("padim", "PaDiM"), ("patchcore", "PatchCore"), ("rd", "Reverse Dist."),
           ("patchcore-320-n300", "PatchCore 320\n300 img"), ("patchcore-r18", "PatchCore\nresnet18"),
-          ("mhpatchcore", "MH-PatchCore"), ("anomalydino", "AnomalyDINO"), ("rad", "Rad"), ("dinomaly", "Dinomaly")]
+          ("mhpatchcore", "MH-PatchCore"), ("anomalydino", "AnomalyDINO"), ("rad", "Rad"), ("dinomaly", "Dinomaly"),
+          ("gemma4-e4b-zs", "Gemma E4B\nzero-shot"), ("gemma4-e4b-lora", "Gemma E4B\nLoRA")]
 VARIANTS = [("patchcore", "256 px, all images"), ("patchcore-n150", "256 px, 150 images"),
             ("patchcore-320-n150", "320 px, 150 images"), ("patchcore-384-n150", "384 px, 150 images"),
             ("patchcore-320-n300", "320 px, 300 images")]
@@ -61,7 +62,7 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
             if len(r):
                 mat[i, j] = r[COL].iloc[0]
     cmap = matplotlib.colors.ListedColormap(SEQ)
-    fig, ax = plt.subplots(figsize=(11.5, 6.4))
+    fig, ax = plt.subplots(figsize=(13.5, 6.4))
     ax.imshow(np.nan_to_num(mat, nan=0), cmap=cmap, vmin=0, vmax=1, aspect="auto")
     ax.set_xticks(range(len(keys)))
     ax.set_xticklabels([n for _, n in MODELS], fontsize=8, color=INK2)
@@ -91,7 +92,7 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
         s.set_visible(False)
     fig.text(0.01, 0.025, "held-out: line from 4 of 5 folds at the weakest calibration defect, about 1.2% expected escape on VisA, 2% on bottle. Dinomaly trained with a 6-minute cap.", fontsize=6.5, color=INK2)
     fig.text(0.01, 0.005, "packaged goods: GoodsAD, bank models on 400 training images. Rad: 300 on VisA and GoodsAD. "
-             "AnomalyDINO: 450 on the four 900-image VisA categories", fontsize=6.5, color=INK2)
+             "AnomalyDINO: 450 on the four 900-image VisA categories. Gemma LoRA: trained on the other half's test defects, out of fold.", fontsize=6.5, color=INK2)
     fig.tight_layout(rect=(0, 0.045, 1, 1))
     fig.savefig(out / "recovery_heatmap.png", dpi=160)
     plt.close(fig)

@@ -2,7 +2,7 @@
 
 usage: python scripts/figures.py [--results results] [--out docs/figures]
 
-  recovery_heatmap.png   category (grouped by tier) x model, recovery at 1% escape on the lane
+  recovery_heatmap.png   category (grouped by tier) x model, held-out recovery on the lane
   resolution_effect.png  PatchCore at 256/320/384 px and 150/300/all training images, weak categories
   speed_vs_recovery.png  mean lane recovery vs inference latency per model
 """
@@ -17,19 +17,24 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
+from common import main_rows  # noqa: E402
+
 # tiers: rigid single objects / textured single items / multi-instance trays
 TIERS = [
     ("rigid object", ["bottle", "hazelnut"]),
     ("textured single item", ["pipe_fryum", "chewinggum", "cashew", "candle", "fryum"]),
     ("multi-instance tray", ["macaroni1", "capsules", "macaroni2"]),
+    ("packaged goods", ["drink_can", "drink_bottle", "food_bottle", "food_package", "food_box"]),
 ]
-MODELS = [("padim", "PaDiM 256"), ("patchcore", "PatchCore 256"), ("rd", "Reverse Dist. 256"),
-          ("patchcore-320-n300", "PatchCore 320 (300 img)"), ("patchcore-r18", "PatchCore 256 resnet18")]
+MODELS = [("padim", "PaDiM"), ("patchcore", "PatchCore"), ("rd", "Reverse Dist."),
+          ("patchcore-320-n300", "PatchCore 320\n300 img"), ("patchcore-r18", "PatchCore\nresnet18"),
+          ("mhpatchcore", "MH-PatchCore"), ("anomalydino", "AnomalyDINO"), ("rad", "Rad"), ("dinomaly", "Dinomaly"),
+          ("gemma4-e4b-zs", "Gemma E4B\nzero-shot"), ("gemma4-e4b-lora", "Gemma E4B\nLoRA")]
 VARIANTS = [("patchcore", "256 px, all images"), ("patchcore-n150", "256 px, 150 images"),
             ("patchcore-320-n150", "320 px, 150 images"), ("patchcore-384-n150", "384 px, 150 images"),
             ("patchcore-320-n300", "320 px, 300 images")]
 WEAK = ["candle", "cashew", "fryum", "macaroni1", "capsules", "macaroni2"]
-COL = "aligned_rec@0.01"
+COL = "aligned_cv_recovery"  # held-out, the number the report quotes
 
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
 SEQ = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6",
@@ -53,11 +58,11 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
     mat = np.full((len(cats), len(keys)), np.nan)
     for i, c in enumerate(cats):
         for j, m in enumerate(keys):
-            r = df[(df.category == c) & (df.model == m)]
+            r = main_rows(df[df.category == c], m)
             if len(r):
                 mat[i, j] = r[COL].iloc[0]
     cmap = matplotlib.colors.ListedColormap(SEQ)
-    fig, ax = plt.subplots(figsize=(8.2, 5.6))
+    fig, ax = plt.subplots(figsize=(13.5, 6.4))
     ax.imshow(np.nan_to_num(mat, nan=0), cmap=cmap, vmin=0, vmax=1, aspect="auto")
     ax.set_xticks(range(len(keys)))
     ax.set_xticklabels([n for _, n in MODELS], fontsize=8, color=INK2)
@@ -82,10 +87,13 @@ def heatmap(df: pd.DataFrame, out: Path) -> None:
         row += len(cs)
         if row < len(cats) - 0.5:
             ax.axhline(row, color=INK2, linewidth=1.2)
-    ax.set_title("Share of good items recovered at 1% escape, simulated reject lane", fontsize=10, color=INK, loc="left")
+    ax.set_title("Share of good items recovered, simulated reject lane, held-out folds", fontsize=10, color=INK, loc="left")
     for s in ax.spines.values():
         s.set_visible(False)
-    fig.tight_layout()
+    fig.text(0.01, 0.025, "held-out: line from 4 of 5 folds at the weakest calibration defect, about 1.2% expected escape on VisA, 2% on bottle. Dinomaly trained with a 6-minute cap.", fontsize=6.5, color=INK2)
+    fig.text(0.01, 0.005, "packaged goods: GoodsAD, bank models on 400 training images. Rad: 300 on VisA and GoodsAD. "
+             "AnomalyDINO: 450 on the four 900-image VisA categories. Gemma LoRA: trained on the other half's test defects, out of fold.", fontsize=6.5, color=INK2)
+    fig.tight_layout(rect=(0, 0.045, 1, 1))
     fig.savefig(out / "recovery_heatmap.png", dpi=160)
     plt.close(fig)
 
@@ -101,8 +109,8 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
     ax.set_xticks(x)
     ax.set_xticklabels(WEAK, fontsize=8, color=INK2)
     ax.set_ylim(0, 1)
-    ax.set_ylabel("recovery at 1% escape (lane)", fontsize=8, color=INK2)
-    ax.set_title("PatchCore recovery by input resolution and training-set size, lane, 1% escape", fontsize=10, color=INK, loc="left")
+    ax.set_ylabel("held-out recovery (lane)", fontsize=8, color=INK2)
+    ax.set_title("PatchCore recovery by input resolution and training-set size, lane, held-out folds", fontsize=10, color=INK, loc="left")
     style(ax)
     ax.legend(fontsize=7, frameon=False, ncol=3, loc="upper right")
     fig.tight_layout()
@@ -110,18 +118,30 @@ def resolution(df: pd.DataFrame, out: Path) -> None:
     plt.close(fig)
 
 
+def short(device: str) -> str:
+    """'NVIDIA GeForce RTX 4090' -> 'RTX 4090'"""
+    return device.replace("NVIDIA GeForce ", "").replace("AMD Radeon ", "")
+
+
 def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
     """Mean lane recovery vs latency per model on the GPU. A hollow marker at the same height shows
     the same model's latency on the CPU where it was timed (tag suffix -cpu, bottle only)."""
     names = dict(MODELS)
-    gpu = df[df.model.isin(names)].groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
+    rows = pd.concat([main_rows(df, m).assign(model=m) for m in names])
+    full = rows.groupby("category").model.nunique() == len(names)  # categories with every main model
+    rows = rows[rows.category.isin(full[full].index)]
+    gpu = rows.groupby("model").agg(rec=(COL, "mean"), ms=("ms_per_image", "mean"))
+    gpu_devs = [devices.get(m, "") for m in gpu.index if not m.endswith("-cpu")]
+    main_gpu = max(set(gpu_devs), key=gpu_devs.count) if gpu_devs else ""  # the GPU most models ran on
     cpu = df[df.model.str.endswith("-cpu")].groupby("model").agg(ms=("ms_per_image", "mean"))
-    offsets = {"patchcore": (-6, 8), "patchcore-320-n300": (6, 4), "patchcore-r18": (6, -11)}
+    offsets = {"patchcore": (6, 5), "patchcore-320-n300": (6, -10), "patchcore-r18": (-6, 6), "anomalydino": (6, -10)}
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     for m, r in gpu.iterrows():
         ax.scatter(r.ms, r.rec, s=48, color=SERIES[0], edgecolor="#ffffff", linewidth=1.5, zorder=3)
         dx, dy = offsets.get(m, (6, 2))
-        ax.annotate(names[m], (r.ms, r.rec), xytext=(dx, dy), textcoords="offset points", fontsize=7, color=INK2,
+        dev = devices.get(m, "")
+        label = names[m].replace("\n", " ") + (f" ({short(dev)})" if dev and dev != main_gpu else "")
+        ax.annotate(label, (r.ms, r.rec), xytext=(dx, dy), textcoords="offset points", fontsize=7, color=INK2,
                     ha="right" if dx < 0 else "left")
         if f"{m}-cpu" in cpu.index:
             cms = cpu.loc[f"{m}-cpu", "ms"]
@@ -130,10 +150,11 @@ def speed(df: pd.DataFrame, devices: dict, out: Path) -> None:
             ax.annotate("cpu", (cms, r.rec), xytext=(6, 2), textcoords="offset points", fontsize=7, color=INK2)
     ax.set_xscale("log")
     ax.set_xlabel("inference ms per image, log scale. Filled: GPU. Hollow: same model on CPU", fontsize=8, color=INK2)
-    ax.set_ylabel("mean recovery at 1% escape, lane, 10 categories", fontsize=8, color=INK2)
-    ax.set_ylim(0.3, 0.8)
+    ax.set_ylabel(f"mean held-out recovery, lane, {rows.category.nunique()} categories", fontsize=8, color=INK2)
+    ax.set_ylim(max(0.0, gpu.rec.min() - 0.08), min(1.0, gpu.rec.max() + 0.08))
     ax.set_title("Latency vs recovery per model", fontsize=10, color=INK, loc="left")
-    fig.text(0.01, 0.01, ", ".join(f"{k}: {v}" for k, v in sorted(devices.items())), fontsize=6.5, color=INK2)
+    fig.text(0.01, 0.01, "gpu: " + main_gpu + "; cpu: " + ", ".join(sorted({v for k, v in devices.items() if k.endswith("-cpu")}))
+             + "; in brackets: models timed on another GPU", fontsize=6.5, color=INK2)
     style(ax)
     ax.xaxis.grid(True, color=GRID, linewidth=0.6)
     fig.tight_layout(rect=(0, 0.04, 1, 1))
@@ -151,7 +172,7 @@ def main() -> None:
     for f in Path(a.results).glob("*.json"):
         j = json.load(open(f))
         if "device" in j:
-            devices["cpu" if j["model"].endswith("-cpu") else "gpu"] = j["device"]
+            devices[j["model"]] = j["device"]  # one entry per model; runs of one model share a device
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     heatmap(df, out)

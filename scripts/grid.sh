@@ -70,4 +70,38 @@ for c in $VISA;  do run visa  "$c" patchcore "-r18" --backbone resnet18; done
 for c in $GOODSAD; do standin goodsad "$c"; done
 for c in $GOODSAD; do run goodsad "$c" padim ""; run goodsad "$c" patchcore "-n400" --train-n 400; done
 
+# anomalib candidates, bank models first: one pass over the goods, no gradient steps
+# DINO banks: AnomalyDINO peaks at 9 GB with 450 images and fails at 900, Rad at 8.5 GB with 391, so both get subsets
+CAND_BANK="dfm dfkde mhpatchcore anomalydino winclip rad"
+BIG="candle macaroni1 macaroni2 capsules"   # 900 training images
+for m in $CAND_BANK; do
+  for c in $MVTEC; do run mvtec "$c" "$m" ""; done
+  for c in $VISA; do
+    if [ "$m" = rad ]; then run visa "$c" "$m" "-n300" --train-n 300
+    elif [ "$m" = anomalydino ] && [[ " $BIG " == *" $c "* ]]; then run visa "$c" "$m" "-n450" --train-n 450
+    else run visa "$c" "$m" ""; fi
+  done
+  for c in $GOODSAD; do
+    if [ "$m" = rad ]; then run goodsad "$c" "$m" "-n300" --train-n 300
+    else run goodsad "$c" "$m" "-n400" --train-n 400; fi
+  done
+done
+
+# SuperADD: its default ViT-huge+ does not fit 16 GB, base DINOv3 backbone on 100 training images instead
+for c in $MVTEC;   do run mvtec   "$c" superadd "-vitb-n100" --backbone vit_base_patch16_dinov3 --train-n 100; done
+for c in $VISA;    do run visa    "$c" superadd "-vitb-n100" --backbone vit_base_patch16_dinov3 --train-n 100; done
+for c in $GOODSAD; do run goodsad "$c" superadd "-vitb-n100" --backbone vit_base_patch16_dinov3 --train-n 100; done
+
+# trained candidates, 6 minutes of training each (anomalib defaults train far longer), epoch caps near the defaults.
+# UniNet and SuperSimpleNet are left out: their image scores had not converged in 6 minutes.
+# FoundAD's ViT needs a multiple of 14, so 252 px.
+for spec in dinomaly:50:8 stfpm:100:16 fastflow:500:16 cfa:30:16 fre:220:16 cflow:50:16 foundad:50:16; do
+  IFS=: read -r m ep bs <<< "$spec"
+  size=(); sfx=""
+  [ "$m" = foundad ] && { size=(--size 252); sfx="-252"; }
+  for c in $MVTEC;   do run mvtec   "$c" "$m" "$sfx" --epochs "$ep" --max-minutes 6 --batch "$bs" "${size[@]}"; done
+  for c in $VISA;    do run visa    "$c" "$m" "$sfx" --epochs "$ep" --max-minutes 6 --batch "$bs" "${size[@]}"; done
+  for c in $GOODSAD; do run goodsad "$c" "$m" "$sfx-n400" --epochs "$ep" --max-minutes 6 --batch "$bs" --train-n 400 "${size[@]}"; done
+done
+
 log "grid finished"

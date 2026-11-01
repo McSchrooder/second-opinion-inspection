@@ -21,12 +21,11 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchvision.transforms.v2 import Resize
 
-from anomalib.data import MVTecAD, Visa
 from anomalib.engine import Engine
 from anomalib.models import Padim
 from anomalib.post_processing import PostProcessor
+from common import DATASETS, make_datamodule
 
-DATASETS = {"visa": Visa, "mvtec": MVTecAD, "goodsad": MVTecAD}  # GoodsAD ships in MVTec AD layout
 NAMES = ("template", "aligned", "pca", "tinypadim")
 
 
@@ -126,8 +125,8 @@ def main() -> None:
 
     root = Path(a.root) / a.dataset
     # resize at load time, GoodsAD images are 3000 px
-    dm = DATASETS[a.dataset](root=root, category=a.category, train_batch_size=16, eval_batch_size=16, num_workers=4,
-                             augmentations=Resize((256, 256)))
+    dm = make_datamodule(a.dataset, root, a.category, train_batch_size=16, eval_batch_size=16, num_workers=4,
+                         augmentations=Resize((256, 256)))
     dm.setup()
     dm._is_setup = True  # keep this setup through the PaDiM trainer  # noqa: SLF001
     out = Path(a.out) / "standin"

@@ -20,12 +20,3 @@ SO_DEMO=1 streamlit run app.py                     # demo version with the score
 | Mode: **Study + look-here ring** | Round 2. Yellow ring on the hottest point; logged as `mark_peak = 1`. |
 | Mode: **Demo** | **Only exists if you start the app with `SO_DEMO=1`** (presentations, videos). Shows score and thresholds, "Demo mode" badge, logs go to `logs/demo/`. A normal study session can never show the score. |
 
-## Differences from the original (all visual, except the last)
-- New layout, IBM Plex Sans (needs internet on the moderator's laptop; falls back to the system font).
-- "Start" button on the first screen; the sidebar "Start / restart this set" still works.
-- Demo mode writes to `logs/demo/` so demos cannot pollute study data. 
-
-
-## Placeholder data
-`results/placeholder/` is synthetic (drawn rings, not bottles; invented scores and thresholds 0.60 / 1.10).
-

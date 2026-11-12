@@ -1,6 +1,6 @@
-# Second Opinion – interface (Sally)
+# Second Opinion – interface
 
-Restyled review app for the user tests. **Study logic and log format are identical to `reference_prototype/app.py`**
+Review app for the user tests. **Study logic and log format are identical to `reference_prototype/app.py`**
 (same items, sets, planted-error rule, timing and the same 12 log columns), so `analyze_user_tests.py` keeps working.
 
 ## Run
@@ -23,11 +23,10 @@ SO_DEMO=1 streamlit run app.py                     # demo version with the score
 ## Differences from the original (all visual, except the last)
 - New layout, IBM Plex Sans (needs internet on the moderator's laptop; falls back to the system font).
 - "Start" button on the first screen; the sidebar "Start / restart this set" still works.
-- Demo mode writes to `logs/demo/` so demos cannot pollute study data. **Check with Tiago.**
-
+- Demo mode writes to `logs/demo/` so demos cannot pollute study data. 
 ## Logo
 Drop `assets/logo.svg` (or `logo.png`) next to `app.py`; it replaces the "SO" placeholder.
 
 ## Placeholder data
 `results/placeholder/` is synthetic (drawn rings, not bottles; invented scores and thresholds 0.60 / 1.10).
-Never use it for screenshots in the report or deck.
+

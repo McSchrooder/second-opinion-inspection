@@ -24,8 +24,7 @@ SO_DEMO=1 streamlit run app.py                     # demo version with the score
 - New layout, IBM Plex Sans (needs internet on the moderator's laptop; falls back to the system font).
 - "Start" button on the first screen; the sidebar "Start / restart this set" still works.
 - Demo mode writes to `logs/demo/` so demos cannot pollute study data. 
-## Logo
-Drop `assets/logo.svg` (or `logo.png`) next to `app.py`; it replaces the "SO" placeholder.
+
 
 ## Placeholder data
 `results/placeholder/` is synthetic (drawn rings, not bottles; invented scores and thresholds 0.60 / 1.10).

@@ -6,11 +6,11 @@ same items, same sets, same planted-error rule, same timing, same 12 log columns
 Run:   streamlit run app.py -- --results results/bottle
        (or, with placeholder data:  streamlit run app.py)
 
-Moderator panel (sidebar, collapsed by default):
-  Tool  : "Without tool" / "With tool"      -> logged as `mode`   (same strings as the original)
-  Mode  : Study                             -> score hidden, no ring            (round 1)
-          Study + look-here ring            -> ring on hottest point            (round 2) -> logged as mark_peak=1
-          Demo                              -> only available if started with SO_DEMO=1; shows score; logs to logs/demo/
+Moderator panel (sidebar, collapsed by default) - same controls as the original app:
+  Participant ID, Image set, Mode ("Without tool" / "With tool" -> logged as `mode`),
+  [x] Mark where to look        -> yellow ring on the hottest point (round 2 option) -> logged as mark_peak=1
+  [x] Show score and thresholds -> ONLY exists if the app is started with SO_DEMO=1 (presentations).
+                                   A demo-started app also logs to logs/demo/, never to logs/.
 """
 from __future__ import annotations
 
@@ -36,8 +36,8 @@ LABEL = {"recover": "Likely good: propose to recover",
          "defect": "Defect confirmed: keep the reject",
          "human": "Uncertain: your decision"}
 ICON = {"recover": "✓", "defect": "✕", "human": "?"}   # neutral glyphs, same weight for all three
-# Demo mode (shows the score) exists ONLY when started with SO_DEMO=1, so a study session can never show it.
-MODES = ["Study", "Study + look-here ring"] + (["Demo"] if os.environ.get("SO_DEMO") == "1" else [])
+# The score can only be shown when the app is started with SO_DEMO=1, so a study session can never show it.
+DEMO = os.environ.get("SO_DEMO") == "1"
 IMG_W = 400   # source images are 224 px: keep them near 2x so they stay sharp
 
 
@@ -122,18 +122,19 @@ section[data-testid="stSidebar"] { background:var(--surface); border-right:1px s
 with st.sidebar:
     st.markdown("### Moderator panel")
     participant = st.text_input("Participant ID", "P1")
-    line_set = st.radio("Image set", list(sets), horizontal=True)
-    tool_mode = st.radio("Tool", ["Without tool", "With tool"], horizontal=True)
-    app_mode = st.radio("Mode", MODES, help="Study = standard test. Study + look-here ring = round 2 option. "
-                        "Demo (only when started with SO_DEMO=1) shows the score and logs to logs/demo/.")
+    line_set = st.selectbox("Image set", list(sets))
+    mode = st.radio("Mode", ["Without tool", "With tool"])
+    mark_peak = st.checkbox("Mark where to look", value=False,
+                            help="Draws a ring at the hottest point of the heatmap, even when the score is low. "
+                                 "Off in round 1; round 2 option.")
+    show_score = DEMO and st.checkbox("Show score and thresholds", value=False,
+                                      help="Demo only. Never in the user tests.")
     if st.button("Start / restart this set", key="start_side"):
         st.session_state.update(i=0, t_start=time.time(), started=True)
-    st.caption("Ground truth is never shown. Decisions are saved to logs/ "
-               "(Demo mode saves to logs/demo/ so it never mixes with study data).")
+    st.caption("Ground truth is never shown. Decisions are saved to logs/"
+               + (" (demo build: logs/demo/)." if DEMO else "."))
 
-mark_peak = app_mode == "Study + look-here ring"
-demo = app_mode == "Demo"
-mode = tool_mode
+demo = DEMO
 
 queue = sets[line_set]
 i = st.session_state.get("i", 0)
@@ -197,7 +198,7 @@ with right:
 
 if mode == "With tool":
     score_line = ""
-    if demo:
+    if show_score:
         score_line = (f'<div class="so-score">Anomaly score {float(it["score"]):.2f} · recover below '
                       f'{thr["t_low"]:.2f} · confirm defect above {thr["t_high"]:.2f}<br>'
                       'The score is a model measure, not a probability of a defect.</div>')

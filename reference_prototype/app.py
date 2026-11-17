@@ -30,7 +30,7 @@ R = Path(args.results)
 
 LABEL = {"recover": "Likely good: propose to recover",
          "defect": "Defect confirmed: keep the reject",
-         "human": "Uncertain: your decision"}
+         "human": "Uncertain: check the marked area before recovering"}
 
 
 @st.cache_data
@@ -52,9 +52,9 @@ with st.sidebar:
     participant = st.text_input("Participant ID", "P1")
     line_set = st.selectbox("Image set", list(sets))
     mode = st.radio("Mode", ["Without tool", "With tool"])
-    mark_peak = st.checkbox("Mark where to look", value=False,
+    mark_peak = st.checkbox("Mark where to look", value=True,
                             help="Draws a ring at the hottest point of the heatmap, even when the score is low. "
-                                 "Off in round 1; candidate change for round 2.")
+                                 "Off in round 1; on from round 2, after two of three participants followed the planted error.")
     show_score = st.checkbox("Show score and thresholds", value=False,
                              help="Off in the user tests: with a planted error the score would contradict "
                                   "the answer shown. Useful for demos and debugging.")

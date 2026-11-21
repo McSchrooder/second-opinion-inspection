@@ -1,5 +1,7 @@
 # Reference prototype (Tiago, v0.3, 26 Oct 2026)
 
+> Status, 20 Nov 2026: this folder is the MVP used in both user test rounds (round 2 on commit `e6b6f87`). The results below are the 26 Oct state of the bottle prototype; current model results are in `docs/results.md`. The open questions at the end were answered later: a conformal cut replaced the lowest-defect rule (`evaluation/`), and VisA food categories are in `docs/results.md`.
+
 A complete, small baseline of the whole product loop: simulate a camera's reject pile, score it with a PatchCore-style model, make a three-way decision, evaluate, and review items in an app. It lives in its own folder so it does not clash with the main model code. Take whatever pieces are useful.
 
 ## What is inside

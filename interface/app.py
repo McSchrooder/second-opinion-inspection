@@ -6,7 +6,7 @@ same items, same sets, same planted-error rule, same timing, same 12 log columns
 Run:   streamlit run app.py -- --results results/bottle
        (or, with placeholder data:  streamlit run app.py)
 
-Moderator panel (sidebar, collapsed by default) - same controls as the original app:
+Moderator panel (sidebar, open by default; start with SO_HIDE_PANEL=1 to fold it away) - same controls as the original app:
   Participant ID, Image set, Mode ("Without tool" / "With tool" -> logged as `mode`),
   [x] Mark where to look        -> yellow ring on the hottest point (round 2 option) -> logged as mark_peak=1
   [x] Show score and thresholds -> ONLY exists if the app is started with SO_DEMO=1 (presentations).
@@ -63,7 +63,7 @@ def logo_html() -> str:
 items, sets, thr, planted = load(str(R))
 
 st.set_page_config(page_title="Second Opinion – reject review", layout="wide",
-                   initial_sidebar_state="collapsed")
+                   initial_sidebar_state="collapsed" if os.environ.get("SO_HIDE_PANEL") == "1" else "expanded")
 
 st.markdown("""
 <style>
